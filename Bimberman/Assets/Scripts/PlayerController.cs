@@ -1,10 +1,12 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
 {
     public float moveSpeed = 5f;
     public Camera playerCamera;
+    public bool canMove = true;
 
     private Rigidbody rb;
     private PlayerInputActions inputActions;
@@ -30,6 +32,12 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (!canMove)
+        {
+            moveInput = Vector2.zero;
+            return;
+        }
+
         moveInput = inputActions.Player.Move.ReadValue<Vector2>();
         mousePosition = inputActions.Player.Look.ReadValue<Vector2>();
 
@@ -82,5 +90,10 @@ public class PlayerController : MonoBehaviour
                 transform.rotation = targetRotation;
             }
         }
+    }
+
+    public void SetMovementEnabled(bool enabled)
+    {
+        canMove = enabled;
     }
 }

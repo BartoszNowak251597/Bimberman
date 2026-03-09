@@ -12,8 +12,11 @@ GameObject:
   - component: {fileID: 7182626666774017705}
   - component: {fileID: 1186853140404092621}
   - component: {fileID: 8376648247509358827}
+  - component: {fileID: 6189542198943896391}
   - component: {fileID: 8464565825167053937}
   - component: {fileID: 6404828200693246055}
+  - component: {fileID: 8844941783687293676}
+  - component: {fileID: 6084737295130101396}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -116,6 +119,27 @@ CapsuleCollider:
   m_Height: 3.5631096
   m_Direction: 1
   m_Center: {x: 0.036298394, y: 0.2140199, z: -0.36471176}
+--- !u!135 &6189542198943896391
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2122760885898743182}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 4
+  m_Center: {x: -0.0019105077, y: 0.3248765, z: -0.076187015}
 --- !u!54 &8464565825167053937
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -157,3 +181,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   moveSpeed: 5
   playerCamera: {fileID: 0}
+--- !u!114 &8844941783687293676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2122760885898743182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52296072d4f60cb41af648c4666f82da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+--- !u!114 &6084737295130101396
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2122760885898743182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88f9a86adc0d5154489f739f8196decb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
