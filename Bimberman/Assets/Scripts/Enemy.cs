@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -12,5 +13,13 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         
+    }
+
+    void OnMouseDown()
+    {
+        // Destroy the gameObject after clicking on it
+        Destroy(gameObject);
+        Debug.Log("Clicked");
+        Console.WriteLine("Enemy destroyed!");
     }
 }
