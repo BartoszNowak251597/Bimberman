@@ -131,7 +131,7 @@ GameObject:
   - component: {fileID: 59179678}
   - component: {fileID: 59179677}
   - component: {fileID: 59179676}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Wall (11)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -243,7 +243,7 @@ GameObject:
   - component: {fileID: 97751719}
   - component: {fileID: 97751718}
   - component: {fileID: 97751717}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Wall (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -355,7 +355,7 @@ GameObject:
   - component: {fileID: 167327952}
   - component: {fileID: 167327951}
   - component: {fileID: 167327950}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Ground (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -371,7 +371,7 @@ Transform:
   m_GameObject: {fileID: 167327948}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -10.571751, y: 0, z: -6.91224}
+  m_LocalPosition: {x: -10.44, y: 0, z: -6.91224}
   m_LocalScale: {x: 2.5, y: 1, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -622,7 +622,7 @@ GameObject:
   - component: {fileID: 710958042}
   - component: {fileID: 710958041}
   - component: {fileID: 710958040}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -734,7 +734,7 @@ GameObject:
   - component: {fileID: 782753345}
   - component: {fileID: 782753344}
   - component: {fileID: 782753343}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Wall (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -846,7 +846,7 @@ GameObject:
   - component: {fileID: 1066457144}
   - component: {fileID: 1066457143}
   - component: {fileID: 1066457142}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1020,7 +1020,7 @@ GameObject:
   - component: {fileID: 1119385504}
   - component: {fileID: 1119385503}
   - component: {fileID: 1119385502}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Wall (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1132,6 +1132,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 2122760885898743182, guid: 1db5be717280b254192dc7994f83da94, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 6404828200693246055, guid: 1db5be717280b254192dc7994f83da94, type: 3}
       propertyPath: playerCamera
       value: 
@@ -1202,7 +1206,7 @@ GameObject:
   - component: {fileID: 1487219085}
   - component: {fileID: 1487219084}
   - component: {fileID: 1487219083}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Ground (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1312,6 +1316,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1501037317}
+  - component: {fileID: 1501037318}
   m_Layer: 0
   m_Name: Rooms
   m_TagString: Untagged
@@ -1349,6 +1354,38 @@ Transform:
   - {fileID: 59179675}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1501037318
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1501037316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
+  m_SerializedVersion: 0
+  m_AgentTypeID: 0
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_UseGeometry: 0
+  m_DefaultArea: 0
+  m_GenerateLinks: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.16666667
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 23800000, guid: 616f0b1bf63b503429fb761fa2716e89, type: 2}
+  m_BuildHeightMesh: 0
 --- !u!1 &1541857972
 GameObject:
   m_ObjectHideFlags: 0
@@ -1361,7 +1398,7 @@ GameObject:
   - component: {fileID: 1541857976}
   - component: {fileID: 1541857975}
   - component: {fileID: 1541857974}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Wall (10)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1473,7 +1510,7 @@ GameObject:
   - component: {fileID: 1617524448}
   - component: {fileID: 1617524447}
   - component: {fileID: 1617524446}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Wall (9)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1585,7 +1622,7 @@ GameObject:
   - component: {fileID: 1823979354}
   - component: {fileID: 1823979353}
   - component: {fileID: 1823979352}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Wall (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1697,7 +1734,7 @@ GameObject:
   - component: {fileID: 1978164973}
   - component: {fileID: 1978164972}
   - component: {fileID: 1978164971}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Wall (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1809,7 +1846,7 @@ GameObject:
   - component: {fileID: 2031102458}
   - component: {fileID: 2031102457}
   - component: {fileID: 2031102456}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Wall (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1921,7 +1958,7 @@ GameObject:
   - component: {fileID: 2096220359}
   - component: {fileID: 2096220358}
   - component: {fileID: 2096220357}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Wall (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2033,7 +2070,7 @@ GameObject:
   - component: {fileID: 2113160314}
   - component: {fileID: 2113160313}
   - component: {fileID: 2113160312}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Wall (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2268,6 +2305,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2486392991051860825, guid: 3edb369026d9fd04d8c008feb0912dd5, type: 3}
+      propertyPath: enemyShoot
+      value: 
+      objectReference: {fileID: 5604516967968833624, guid: b6805d59da434fc43a0050c5772a8438, type: 3}
+    - target: {fileID: 2486392991051860825, guid: 3edb369026d9fd04d8c008feb0912dd5, type: 3}
+      propertyPath: sightRange
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2486392991051860825, guid: 3edb369026d9fd04d8c008feb0912dd5, type: 3}
+      propertyPath: attackRange
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2486392991051860825, guid: 3edb369026d9fd04d8c008feb0912dd5, type: 3}
+      propertyPath: walkPoint.x
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2486392991051860825, guid: 3edb369026d9fd04d8c008feb0912dd5, type: 3}
+      propertyPath: playerInSightRange
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2486392991051860825, guid: 3edb369026d9fd04d8c008feb0912dd5, type: 3}
+      propertyPath: timeBetweenAttacks
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 3764808103327360133, guid: 3edb369026d9fd04d8c008feb0912dd5, type: 3}
       propertyPath: m_Enabled
       value: 1
