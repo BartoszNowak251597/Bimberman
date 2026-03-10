@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class Interaction : MonoBehaviour
 {
@@ -18,13 +19,25 @@ public class Interaction : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Debug.Log("Klikniêto obiekt:");
+            //Debug.Log("Klikniêto obiekt:");
             //Instantiate(attackInstance, new Vector3( Input.mousePosition.x, 0, Input.mousePosition.z),Quaternion.identity);
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
-                Instantiate(attackInstance, hit.point, Quaternion.identity);
+                InteractiveItem item = hit.collider.GetComponent<InteractiveItem>();
+                string currentScene = SceneManager.GetActiveScene().name;
+
+                // Jeœli jesteœmy w scenie "base" i obiekt jest interaktywny – wykonaj interakcjê
+                if (item != null && currentScene == "base")
+                {
+                    item.Interact();
+                }
+                else
+                {
+                    // W przeciwnym razie (inna scena lub obiekt nieinteraktywny) – instancjonuj atak
+                    Instantiate(attackInstance, hit.point, Quaternion.identity);
+                }
             }
         }
     }
