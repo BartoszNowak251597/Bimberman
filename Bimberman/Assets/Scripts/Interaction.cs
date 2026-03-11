@@ -28,12 +28,14 @@ public class Interaction : MonoBehaviour
                 InteractiveItem item = hit.collider.GetComponent<InteractiveItem>();
                 string currentScene = SceneManager.GetActiveScene().name;
 
-                
-                if (item != null && currentScene == "Base")
+                if (GameObject.FindAnyObjectByType<BaseScript>() != null)
                 {
-                    item.Interact();
+                    if (item != null)
+                    {
+                        item.Interact();
+                    }
                 }
-                else if (currentScene != "Base")
+                else
                 {
                     Instantiate(attackInstance, hit.point, Quaternion.identity);
                 }

@@ -23,12 +23,7 @@ public class attackInstance : MonoBehaviour
 
     private bool canAttack()
     {
-        string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
-        if (sceneName == "Base" ||sceneName=="base")
-        {
-            return false;
-        }
-        return true;
+        return GameObject.FindAnyObjectByType<BaseScript>() == null;
     }
 
 
