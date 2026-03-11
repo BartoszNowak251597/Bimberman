@@ -87,16 +87,11 @@ public class Enemy : MonoBehaviour
         transform.LookAt(player);
         if (!alreadyAttacked)
         {
-            ///Attack code here
-            ///
+            Vector3 direction = (player.position - transform.position).normalized;
 
-            Rigidbody rb = Instantiate(enemyShoot, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
-            rb.AddForce(transform.forward * 32f, ForceMode.Impulse);
-            rb.AddForce(transform.up * 8f, ForceMode.Impulse);
-
-            //Instantiate(enemyShoot, transform.position, Quaternion.identity);
-
-
+            GameObject projectile = Instantiate(enemyShoot, transform.position + direction * 1f, Quaternion.LookRotation(direction));
+            Rigidbody rb = projectile.GetComponent<Rigidbody>();
+            rb.linearVelocity = direction * 20f; 
 
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
