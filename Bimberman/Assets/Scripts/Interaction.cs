@@ -37,7 +37,18 @@ public class Interaction : MonoBehaviour
                 }
                 else
                 {
-                    Instantiate(attackInstance, hit.point, Quaternion.identity);
+                    if (
+                        hit.collider.gameObject.layer == LayerMask.NameToLayer("WhatIsGround")
+                        ||
+                        hit.collider.gameObject.CompareTag("Enemy")
+                    )
+                    {
+                        Vector3 spawnPoint = hit.point;
+
+                        spawnPoint.y = 0;
+
+                        Instantiate(attackInstance, spawnPoint, Quaternion.identity);
+                    }
                 }
             }
         }
