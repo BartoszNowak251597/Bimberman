@@ -83,18 +83,30 @@ public class Enemy : MonoBehaviour
 
     private void AttackPlayer()
     {
-        agent.SetDestination(transform.position);
-        transform.LookAt(player);
-        if (!alreadyAttacked)
+        float distance = Vector3.Distance(transform.position, player.position);
+
+        if (distance < attackRange * 0.8f)
         {
-            Vector3 direction = (player.position - transform.position).normalized;
+            Vector3 directionAway = (transform.position - player.position).normalized;
+            Vector3 newPos = player.position + directionAway * attackRange; 
+            transform.LookAt(player);
+            agent.SetDestination(newPos);
+        }
+        else 
+        {
+            agent.SetDestination(transform.position); 
+            transform.LookAt(player);
 
-            GameObject projectile = Instantiate(enemyShoot, transform.position + direction * 1f, Quaternion.LookRotation(direction));
-            Rigidbody rb = projectile.GetComponent<Rigidbody>();
-            rb.linearVelocity = direction * 20f; 
+            if (!alreadyAttacked)
+            {
+                Vector3 direction = (player.position - transform.position).normalized;
+                GameObject projectile = Instantiate(enemyShoot, transform.position + direction * 1f, Quaternion.LookRotation(direction));
+                Rigidbody rb = projectile.GetComponent<Rigidbody>();
+                rb.linearVelocity = direction * 20f;
 
-            alreadyAttacked = true;
-            Invoke(nameof(ResetAttack), timeBetweenAttacks);
+                alreadyAttacked = true;
+                Invoke(nameof(ResetAttack), timeBetweenAttacks);
+            }
         }
     }
 
