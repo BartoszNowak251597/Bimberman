@@ -19,6 +19,8 @@ public class Enemy : MonoBehaviour
     public bool playerInSightRange, playerInAttackRange;
     public GameObject enemyShoot;
 
+    public GameObject enemyDrop;
+
     public float health = 10;
 
 
@@ -122,5 +124,11 @@ public class Enemy : MonoBehaviour
     }
     public void DestroyEnemy() {
         Destroy(gameObject);
+        DropItem();
+    }
+
+    public void DropItem()
+    {
+        Instantiate(enemyDrop, transform.position, Quaternion.identity);
     }
 }

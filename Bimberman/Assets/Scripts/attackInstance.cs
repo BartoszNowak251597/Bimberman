@@ -44,11 +44,16 @@ public class attackInstance : MonoBehaviour
 
             foreach (var hit in hits)
             {
-                Debug.Log("Hit: " + hit.collider.gameObject.name);
+                //Debug.Log("Hit: " + hit.collider.gameObject.name);
                 if (hit.collider.gameObject.CompareTag("Enemy"))
                 {
-                    Debug.Log("Enemy hit!");
-                    Destroy(hit.collider.gameObject);
+                    //Debug.Log("Enemy hit!");
+                    //Destroy(hit.collider.gameObject);
+                    Enemy enemyComponent = hit.collider.gameObject.GetComponent<Enemy>();
+                    if (enemyComponent != null)
+                    {
+                        enemyComponent.TakeDamage(5);
+                    }
                 }
             }
         }

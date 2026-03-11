@@ -257,6 +257,7 @@ MonoBehaviour:
   playerInSightRange: 0
   playerInAttackRange: 0
   enemyShoot: {fileID: 5234729079900706033, guid: 84803f13e9a7b614c986e3e5e2f166f9, type: 3}
+  enemyDrop: {fileID: 7996618573282628087, guid: e3191593968049245ae164cdbd014ace, type: 3}
   health: 10
 --- !u!195 &2173673110846289304
 NavMeshAgent:
