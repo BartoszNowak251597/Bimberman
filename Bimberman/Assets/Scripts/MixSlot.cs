@@ -6,8 +6,8 @@ public class MixSlot : MonoBehaviour
     [SerializeField] private GameObject potionObject;
     [SerializeField] private StationInteraction stationInteraction;
 
-    private List<IngredientType> requiredIngredients;
-    private List<IngredientType> placedIngredients;
+    private List<IngredientType> requiredIngredients = new List<IngredientType>();
+    private List<IngredientType> placedIngredients = new List<IngredientType>();
 
     public void SetRecipe(List<IngredientType> ingredients)
     {
@@ -64,14 +64,14 @@ public class MixSlot : MonoBehaviour
 
     private void CheckIfComplete()
     {
-        if (IsComplete())
-        {
-            if (potionObject != null)
-                potionObject.SetActive(true);
+        if (!IsComplete())
+            return;
 
-            if (stationInteraction != null)
-                stationInteraction.OnPotionCreated();
-        }
+        if (potionObject != null)
+            potionObject.SetActive(true);
+
+        if (stationInteraction != null)
+            stationInteraction.OnPotionCreated();
     }
 
     private int CountOccurrences(List<IngredientType> list, IngredientType type)
