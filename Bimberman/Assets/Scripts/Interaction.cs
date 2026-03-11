@@ -11,6 +11,8 @@ public class Interaction : MonoBehaviour
     public GameObject attackInstance;
     private InteractiveItem currentFocusedItem;
 
+    public PlayerInventory playerInventory;
+
     void Awake()
     {
         if (inputActions == null)
@@ -70,6 +72,9 @@ public class Interaction : MonoBehaviour
                             Color randomColor = hit.rigidbody.gameObject.GetComponent<Renderer>().material.color;
                             renderer.material.color = randomColor;
                         }
+                        CollectableType type = CollectableType.SomeDeadBodyPart;
+                        playerInventory.collectables.Add(type);
+
                     }
                     Destroy(hit.collider.gameObject);
                 }

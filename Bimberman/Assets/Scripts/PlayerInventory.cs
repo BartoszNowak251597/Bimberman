@@ -17,6 +17,8 @@ public class PlayerInventory : MonoBehaviour
         BimberType.ClassicBimber
     };
 
+    public List<CollectableType> collectables = new List<CollectableType>();
+
     public void EquipBimber(BimberType bimber)
     {
         equippedBimber = bimber;
