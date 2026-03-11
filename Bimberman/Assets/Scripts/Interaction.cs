@@ -19,8 +19,6 @@ public class Interaction : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            //Debug.Log("Klikniêto obiekt:");
-            //Instantiate(attackInstance, new Vector3( Input.mousePosition.x, 0, Input.mousePosition.z),Quaternion.identity);
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out hit, Mathf.Infinity))
@@ -28,15 +26,41 @@ public class Interaction : MonoBehaviour
                 InteractiveItem item = hit.collider.GetComponent<InteractiveItem>();
                 string currentScene = SceneManager.GetActiveScene().name;
 
-                // Jeœli jesteœmy w scenie "base" i obiekt jest interaktywny – wykonaj interakcjê
+                
                 if (item != null && currentScene == "base")
                 {
                     item.Interact();
                 }
                 else
                 {
-                    // W przeciwnym razie (inna scena lub obiekt nieinteraktywny) – instancjonuj atak
+                   
                     Instantiate(attackInstance, hit.point, Quaternion.identity);
+                }
+            }
+        }
+        if (Input.GetMouseButtonDown(1))
+        {
+            if (Input.GetMouseButtonDown(1)) 
+            {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray, out hit))
+                {
+                    if (hit.collider.CompareTag("Collectable"))
+                    {
+                        GameObject player = GameObject.FindGameObjectWithTag("Player");
+                        if (player != null)
+                        {
+                            Renderer renderer = player.GetComponent<Renderer>();
+                            if (renderer != null)
+                            {
+                                Color randomColor = hit.rigidbody.gameObject.GetComponent<Renderer>().material.color;
+                                renderer.material.color = randomColor;
+                            }
+                        }
+                        Destroy(hit.collider.gameObject);
+                    }
                 }
             }
         }
