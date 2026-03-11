@@ -7,13 +7,18 @@ public class StationInteraction : InteractiveItem
     [Header("Widok stacji")]
     public Transform stationCameraPoint;
 
-    [Header("Podgląd bimbru")]
+    [Header("Obiekt gotowej mikstury")]
     public GameObject bimberDisplayObject;
 
     [Header("UI")]
     public BrewStationUI brewStationUI;
 
+    [Header("Mieszanie")]
+    public MixSlot mixSlot;
+    public List<DraggableIngredient> sceneIngredients = new List<DraggableIngredient>();
+
     private bool inStationView = false;
+    private bool isBrewingActive = false;
 
     private CameraController cameraController;
     private PlayerController playerController;
@@ -21,6 +26,9 @@ public class StationInteraction : InteractiveItem
 
     private List<BimberRecipe> recipes;
     private int currentRecipeIndex;
+    private BimberRecipe currentRecipe;
+
+    public bool IsBrewingActive => isBrewingActive;
 
     public override void Interact()
     {
@@ -35,6 +43,7 @@ public class StationInteraction : InteractiveItem
 
         recipes = BimberRecipeBook.GetRecipes();
         currentRecipeIndex = 0;
+        currentRecipe = null;
 
         if (playerController != null)
             playerController.SetMovementEnabled(false);
@@ -43,49 +52,75 @@ public class StationInteraction : InteractiveItem
             cameraController.EnterStationMode(stationCameraPoint);
 
         if (bimberDisplayObject != null)
-            bimberDisplayObject.SetActive(true);
+            bimberDisplayObject.SetActive(false);
+
+        HideAllSceneIngredients();
+        mixSlot?.ResetSlot();
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
 
         if (brewStationUI != null)
         {
+            brewStationUI.gameObject.SetActive(true);
             brewStationUI.Show();
 
             if (brewStationUI.previousButton != null)
+            {
+                brewStationUI.previousButton.onClick.RemoveListener(SelectPreviousRecipe);
                 brewStationUI.previousButton.onClick.AddListener(SelectPreviousRecipe);
+            }
 
             if (brewStationUI.nextButton != null)
+            {
+                brewStationUI.nextButton.onClick.RemoveListener(SelectNextRecipe);
                 brewStationUI.nextButton.onClick.AddListener(SelectNextRecipe);
+            }
 
             if (brewStationUI.distillButton != null)
-                brewStationUI.distillButton.onClick.AddListener(DistillCurrentRecipe);
+            {
+                brewStationUI.distillButton.onClick.RemoveListener(BeginBrewing);
+                brewStationUI.distillButton.onClick.AddListener(BeginBrewing);
+            }
 
             if (brewStationUI.leaveButton != null)
+            {
+                brewStationUI.leaveButton.onClick.RemoveListener(ExitStationView);
                 brewStationUI.leaveButton.onClick.AddListener(ExitStationView);
+            }
         }
 
         RefreshUI();
         inStationView = true;
+        isBrewingActive = false;
     }
 
-    void Update()
+    private void Update()
     {
         if (!inStationView) return;
 
-        if (Keyboard.current.qKey.wasPressedThisFrame)
-            SelectPreviousRecipe();
+        if (!isBrewingActive)
+        {
+            if (Keyboard.current != null)
+            {
+                if (Keyboard.current.qKey.wasPressedThisFrame)
+                    SelectPreviousRecipe();
 
-        if (Keyboard.current.eKey.wasPressedThisFrame)
-            SelectNextRecipe();
+                if (Keyboard.current.eKey.wasPressedThisFrame)
+                    SelectNextRecipe();
 
-        if (Keyboard.current.fKey.wasPressedThisFrame)
-            DistillCurrentRecipe();
+                if (Keyboard.current.fKey.wasPressedThisFrame)
+                    BeginBrewing();
+            }
+        }
 
-        if (Keyboard.current.escapeKey.wasPressedThisFrame)
+        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
             ExitStationView();
     }
 
-    void SelectPreviousRecipe()
+    private void SelectPreviousRecipe()
     {
-        if (recipes == null || recipes.Count == 0) return;
+        if (recipes == null || recipes.Count == 0 || isBrewingActive) return;
 
         currentRecipeIndex--;
         if (currentRecipeIndex < 0)
@@ -94,9 +129,9 @@ public class StationInteraction : InteractiveItem
         RefreshUI();
     }
 
-    void SelectNextRecipe()
+    private void SelectNextRecipe()
     {
-        if (recipes == null || recipes.Count == 0) return;
+        if (recipes == null || recipes.Count == 0 || isBrewingActive) return;
 
         currentRecipeIndex++;
         if (currentRecipeIndex >= recipes.Count)
@@ -105,12 +140,12 @@ public class StationInteraction : InteractiveItem
         RefreshUI();
     }
 
-    void DistillCurrentRecipe()
+    private void BeginBrewing()
     {
-        if (recipes == null || recipes.Count == 0 || playerInventory == null)
+        if (recipes == null || recipes.Count == 0 || playerInventory == null || mixSlot == null)
             return;
 
-        BimberRecipe currentRecipe = recipes[currentRecipeIndex];
+        currentRecipe = recipes[currentRecipeIndex];
 
         if (!playerInventory.HasIngredients(currentRecipe.ingredients))
         {
@@ -120,36 +155,138 @@ public class StationInteraction : InteractiveItem
             return;
         }
 
+        if (brewStationUI != null)
+            brewStationUI.gameObject.SetActive(false);
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        isBrewingActive = true;
+
+        mixSlot.SetRecipe(currentRecipe.ingredients);
+
+        if (bimberDisplayObject != null)
+            bimberDisplayObject.SetActive(false);
+
+        ShowOnlyNeededIngredients(currentRecipe.ingredients);
+    }
+
+    public void CollectPotion()
+    {
+        if (!isBrewingActive || currentRecipe == null || playerInventory == null || mixSlot == null)
+            return;
+
+        if (!mixSlot.IsComplete())
+            return;
+
         bool removed = playerInventory.RemoveIngredients(currentRecipe.ingredients);
         if (!removed)
         {
             if (brewStationUI != null)
+            {
+                brewStationUI.gameObject.SetActive(true);
+                brewStationUI.Show();
                 brewStationUI.SetStatus("Nie udało się zużyć składników");
+            }
+
+            isBrewingActive = false;
+            HideAllSceneIngredients();
+            mixSlot.ResetSlot();
+
+            if (bimberDisplayObject != null)
+                bimberDisplayObject.SetActive(false);
 
             return;
         }
 
         playerInventory.EquipBimber(currentRecipe.bimberType);
-
-        if (brewStationUI != null)
-            brewStationUI.SetStatus("Uwarzono: " + currentRecipe.displayName);
-
         ExitStationView();
     }
 
-    void RefreshUI()
+    public void OnPotionCreated()
+    {
+        HideAllSceneIngredients();
+    }
+
+    private void RefreshUI()
     {
         if (brewStationUI == null || recipes == null || recipes.Count == 0 || playerInventory == null)
             return;
 
-        BimberRecipe currentRecipe = recipes[currentRecipeIndex];
-        bool canDistill = playerInventory.HasIngredients(currentRecipe.ingredients);
+        BimberRecipe recipe = recipes[currentRecipeIndex];
+        bool canDistill = playerInventory.HasIngredients(recipe.ingredients);
 
-        brewStationUI.UpdateRecipeView(currentRecipe, canDistill);
+        brewStationUI.UpdateRecipeView(recipe, canDistill);
     }
 
-    void ExitStationView()
+    private void HideAllSceneIngredients()
     {
+        foreach (DraggableIngredient ingredient in sceneIngredients)
+        {
+            if (ingredient != null)
+                ingredient.gameObject.SetActive(false);
+        }
+    }
+
+    private void ShowOnlyNeededIngredients(List<IngredientType> requiredIngredients)
+    {
+        HideAllSceneIngredients();
+
+        List<IngredientType> alreadyActivated = new List<IngredientType>();
+
+        foreach (IngredientType required in requiredIngredients)
+        {
+            int neededCount = CountOccurrences(requiredIngredients, required);
+            int currentCount = CountOccurrences(alreadyActivated, required);
+
+            if (currentCount >= neededCount)
+                continue;
+
+            foreach (DraggableIngredient ingredient in sceneIngredients)
+            {
+                if (ingredient == null) continue;
+                if (ingredient.IngredientType != required) continue;
+                if (ingredient.gameObject.activeSelf) continue;
+
+                ingredient.gameObject.SetActive(true);
+                ingredient.Init(this);
+                alreadyActivated.Add(required);
+                break;
+            }
+        }
+    }
+
+    private int CountOccurrences(List<IngredientType> list, IngredientType type)
+    {
+        int count = 0;
+
+        foreach (IngredientType item in list)
+        {
+            if (item == type)
+                count++;
+        }
+
+        return count;
+    }
+
+    public Vector3 GetIngredientOffset(IngredientType type)
+    {
+        return type switch
+        {
+            IngredientType.Water => new Vector3(-0.15f, 0f, 0f),
+            IngredientType.Sugar => new Vector3(0.15f, 0f, 0f),
+            _ => Vector3.zero
+        };
+    }
+
+    private void ExitStationView()
+    {
+        isBrewingActive = false;
+        currentRecipe = null;
+
+        HideAllSceneIngredients();
+        mixSlot?.ResetSlot();
+
         if (playerController != null)
             playerController.SetMovementEnabled(true);
 
@@ -168,13 +305,17 @@ public class StationInteraction : InteractiveItem
                 brewStationUI.nextButton.onClick.RemoveListener(SelectNextRecipe);
 
             if (brewStationUI.distillButton != null)
-                brewStationUI.distillButton.onClick.RemoveListener(DistillCurrentRecipe);
+                brewStationUI.distillButton.onClick.RemoveListener(BeginBrewing);
 
             if (brewStationUI.leaveButton != null)
                 brewStationUI.leaveButton.onClick.RemoveListener(ExitStationView);
 
+            brewStationUI.gameObject.SetActive(true);
             brewStationUI.Hide();
         }
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
 
         inStationView = false;
     }

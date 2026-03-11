@@ -4,26 +4,33 @@ using UnityEngine.InputSystem;
 
 public class Interaction : MonoBehaviour
 {
-    private readonly List<InteractiveItem> availableItems = new();
+    private readonly List<InteractiveItem> availableItems = new List<InteractiveItem>();
     private PlayerInputActions inputActions;
 
     private InteractiveItem currentFocusedItem;
 
     void Awake()
     {
-        inputActions = new PlayerInputActions();
+        if (inputActions == null)
+            inputActions = new PlayerInputActions();
     }
 
     void OnEnable()
     {
+        if (inputActions == null)
+            inputActions = new PlayerInputActions();
+
         inputActions.Enable();
         inputActions.Player.Interact.performed += OnInteractPerformed;
     }
 
     void OnDisable()
     {
-        inputActions.Player.Interact.performed -= OnInteractPerformed;
-        inputActions.Disable();
+        if (inputActions != null)
+        {
+            inputActions.Player.Interact.performed -= OnInteractPerformed;
+            inputActions.Disable();
+        }
     }
 
     private void Update()
@@ -33,6 +40,9 @@ public class Interaction : MonoBehaviour
 
     private void OnInteractPerformed(InputAction.CallbackContext context)
     {
+        if (currentFocusedItem == null)
+            return;
+
         currentFocusedItem.Interact();
     }
 
@@ -85,7 +95,7 @@ public class Interaction : MonoBehaviour
         InteractiveItem closest = null;
         float closestDistance = float.MaxValue;
 
-        foreach (var item in availableItems)
+        foreach (InteractiveItem item in availableItems)
         {
             if (item == null)
                 continue;

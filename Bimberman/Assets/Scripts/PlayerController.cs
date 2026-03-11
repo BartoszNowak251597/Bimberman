@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
@@ -17,17 +16,23 @@ public class PlayerController : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        inputActions = new PlayerInputActions();
+
+        if (inputActions == null)
+            inputActions = new PlayerInputActions();
     }
 
-    void OnEnable()
+    private void OnEnable()
     {
+        if (inputActions == null)
+            inputActions = new PlayerInputActions();
+
         inputActions.Enable();
     }
 
     void OnDisable()
     {
-        inputActions.Disable();
+        if (inputActions != null)
+            inputActions.Disable();
     }
 
     void Update()
@@ -37,6 +42,9 @@ public class PlayerController : MonoBehaviour
             moveInput = Vector2.zero;
             return;
         }
+
+        if (inputActions == null)
+            return;
 
         moveInput = inputActions.Player.Move.ReadValue<Vector2>();
         mousePosition = inputActions.Player.Look.ReadValue<Vector2>();
@@ -51,7 +59,6 @@ public class PlayerController : MonoBehaviour
 
     void Move()
     {
-        if (playerCamera == null) return;
 
         Vector3 cameraForward = playerCamera.transform.forward;
         Vector3 cameraRight = playerCamera.transform.right;
@@ -67,7 +74,7 @@ public class PlayerController : MonoBehaviour
         if (movement.sqrMagnitude > 1f)
             movement.Normalize();
 
-        Vector3 newPosition = rb.position + moveSpeed * movement *  Time.fixedDeltaTime;
+        Vector3 newPosition = rb.position + moveSpeed * movement * Time.fixedDeltaTime;
         rb.MovePosition(newPosition);
     }
 

@@ -15,7 +15,6 @@ public class PlayerInventory : MonoBehaviour
     public void EquipBimber(BimberType bimber)
     {
         equippedBimber = bimber;
-        Debug.Log("Wyposażono bimber: " + equippedBimber);
     }
 
     public bool HasBimber()
