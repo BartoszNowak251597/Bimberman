@@ -12,6 +12,11 @@ public class PlayerInventory : MonoBehaviour
         IngredientType.Water
     };
 
+    public List<BimberType> potions = new List<BimberType>()
+    {
+        BimberType.ClassicBimber
+    };
+
     public void EquipBimber(BimberType bimber)
     {
         equippedBimber = bimber;
