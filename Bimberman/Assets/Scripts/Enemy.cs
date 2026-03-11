@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 public class Enemy : MonoBehaviour
 {
@@ -129,6 +130,27 @@ public class Enemy : MonoBehaviour
 
     public void DropItem()
     {
-        Instantiate(enemyDrop, transform.position, Quaternion.identity);
+        int count = Random.Range(3, 6); 
+        for (int i = 0; i < count; i++)
+        {
+            
+            GameObject drop = Instantiate(enemyDrop, transform.position, Quaternion.identity);
+
+            
+            Renderer renderer = drop.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                Color randomColor = new Color(Random.value, Random.value, Random.value);
+                renderer.material.color = randomColor; 
+            }
+
+           
+            Rigidbody rb = drop.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                Vector3 randomForce = Random.insideUnitSphere * 3f; 
+                rb.AddForce(randomForce, ForceMode.Impulse);
+            }
+        }
     }
 }
