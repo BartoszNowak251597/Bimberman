@@ -17,11 +17,10 @@ public class LevelLoader : MonoBehaviour
 
             PlayerOrigin newOrigin = FindAnyObjectByType<PlayerOrigin>();
 
-            Debug.Log(newOrigin);
-
             if (newOrigin != null)
             {
                 PlayerController.playerInstance.transform.position = newOrigin.transform.position;
+                PlayerController.playerInstance.GetComponent<Rigidbody>().MovePosition(newOrigin.transform.position);
                 PlayerController.playerInstance.transform.rotation = newOrigin.transform.rotation;
             }
         }
