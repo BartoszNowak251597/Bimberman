@@ -2319,6 +2319,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI
       objectReference: {fileID: 0}
+    - target: {fileID: 5311647528910846321, guid: 370038735f9ced445b2da71d8adca1b3, type: 3}
+      propertyPath: m_UiScaleMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5311647528910846321, guid: 370038735f9ced445b2da71d8adca1b3, type: 3}
+      propertyPath: m_ReferenceResolution.x
+      value: 2560
+      objectReference: {fileID: 0}
+    - target: {fileID: 5311647528910846321, guid: 370038735f9ced445b2da71d8adca1b3, type: 3}
+      propertyPath: m_ReferenceResolution.y
+      value: 1600
+      objectReference: {fileID: 0}
     - target: {fileID: 8321202890686304730, guid: 370038735f9ced445b2da71d8adca1b3, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
