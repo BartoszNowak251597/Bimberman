@@ -3,9 +3,12 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
 {
+    public static PlayerController playerInstance;
+
     public float moveSpeed = 5f;
     public Camera playerCamera;
     public bool canMove = true;
+    public PlayerInventory inventory;
 
     private Rigidbody rb;
     private PlayerInputActions inputActions;
@@ -19,6 +22,8 @@ public class PlayerController : MonoBehaviour
 
         if (inputActions == null)
             inputActions = new PlayerInputActions();
+
+        playerInstance = this;
     }
 
     private void OnEnable()

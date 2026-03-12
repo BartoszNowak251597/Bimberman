@@ -11,7 +11,7 @@ public class BaseScript : MonoBehaviour
     void Awake()
     {
         UI.SetActive(false);
-
+        LevelLoader.currentLoadedScene = "Base";
     }
 
     void Start()
@@ -21,6 +21,11 @@ public class BaseScript : MonoBehaviour
 
     void Update()
     {
+        if (PlayerController.playerInstance == null)
+		{
+            return;
+		}
+
         if (Input.GetKeyDown(KeyCode.I))
         {
             UI.SetActive(!UI.activeSelf);
@@ -34,17 +39,17 @@ public class BaseScript : MonoBehaviour
                 }
                 textComponent.text = "Inventory: \n";
                 textComponent.text += "Ingredients: \n";
-                foreach (IngredientType ingredient in playerInventory.ingredients)
+                foreach (IngredientType ingredient in PlayerController.playerInstance.inventory.ingredients)
                 {
                     textComponent.text += "- " + ingredient.ToString() + "\n";
                 }
                 textComponent.text += "Potions: \n";
-                foreach (BimberType bimber in playerInventory.potions)
+                foreach (BimberType bimber in PlayerController.playerInstance.inventory.potions)
                 {
                     textComponent.text += "- " + bimber.ToString() + "\n";
                 }
                 textComponent.text += "Collectables: \n";
-                foreach (CollectableType collectable in playerInventory.collectables)
+                foreach (CollectableType collectable in PlayerController.playerInstance.inventory.collectables)
                 {
                     textComponent.text += "- " + collectable.ToString() + "\n";
                 }

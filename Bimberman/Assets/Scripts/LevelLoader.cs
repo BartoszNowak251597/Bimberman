@@ -1,15 +1,29 @@
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class LevelLoader : MonoBehaviour
 {
+    public static string currentLoadedScene;
     public string sceneToLoad;
 
-    private void OnTriggerEnter(Collider other)
+    private async Task OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            SceneManager.LoadScene(sceneToLoad);
+            await SceneManager.UnloadSceneAsync(currentLoadedScene);
+
+            await SceneManager.LoadSceneAsync(sceneToLoad, LoadSceneMode.Additive);
+
+            PlayerOrigin newOrigin = FindAnyObjectByType<PlayerOrigin>();
+
+            Debug.Log(newOrigin);
+
+            if (newOrigin != null)
+            {
+                PlayerController.playerInstance.transform.position = newOrigin.transform.position;
+                PlayerController.playerInstance.transform.rotation = newOrigin.transform.rotation;
+            }
         }
     }
 }
