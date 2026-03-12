@@ -3,10 +3,10 @@
 public class InteractiveItem : MonoBehaviour
 {
     [Header("Prompt nad obiektem")]
-    [SerializeField] private GameObject interactPrompt;
+    public Transform interactPrompt;
 
     [Header("Outline")]
-    [SerializeField] private GameObject outlineObject;
+    public GameObject outlineObject;
 
     public virtual void Interact()
     {
@@ -15,7 +15,13 @@ public class InteractiveItem : MonoBehaviour
 
     public virtual void SetFocused(bool focused)
     {
-        interactPrompt.SetActive(focused);
-        outlineObject.SetActive(focused);
+        if (outlineObject)
+        {
+            outlineObject.SetActive(focused);
+        }
+    }
+
+    public virtual bool CanInteract() {
+        return true;
     }
 }

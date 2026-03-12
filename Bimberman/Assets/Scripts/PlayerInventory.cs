@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerInventory : MonoBehaviour
 {
@@ -17,7 +18,7 @@ public class PlayerInventory : MonoBehaviour
         BimberType.ClassicBimber
     };
 
-    public List<CollectableType> collectables = new List<CollectableType>();
+    public List<Collectible> collectables = new List<Collectible>();
 
     public void EquipBimber(BimberType bimber)
     {
@@ -55,5 +56,18 @@ public class PlayerInventory : MonoBehaviour
         }
 
         return true;
+    }
+
+    public void Collect(Collectible item)
+    {
+        if (item == null || this.collectables.Contains(item))
+        {
+            return;
+        }
+
+        this.collectables.Add(item);
+        item.gameObject.SetActive(false);
+
+        SceneManager.MoveGameObjectToScene(item.gameObject, this.gameObject.scene);
     }
 }

@@ -319,4 +319,9 @@ public class StationInteraction : InteractiveItem
 
         inStationView = false;
     }
+
+	public override bool CanInteract()
+	{
+		return !inStationView;
+	}
 }

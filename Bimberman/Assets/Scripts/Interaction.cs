@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -12,11 +13,47 @@ public class Interaction : MonoBehaviour
     private InteractiveItem currentFocusedItem;
 
     public PlayerInventory playerInventory;
+    public GameObject interactionPrompt;
 
     void Awake()
     {
         if (inputActions == null)
             inputActions = new PlayerInputActions();
+    }
+
+    private void UpdateInteractionPrompt()
+    {
+        InteractiveItem targetItem = null;
+
+        for (int i = 0; i < this.availableItems.Count; i++) {
+            if (this.availableItems[i] != null && this.availableItems[i].isActiveAndEnabled && this.availableItems[i].CanInteract())
+            {
+                targetItem = this.availableItems[i];
+
+                break;
+            }
+        }
+        
+        if (!targetItem)
+        {
+            this.interactionPrompt.SetActive(false);
+            if (currentFocusedItem != null)
+            {
+                currentFocusedItem.SetFocused(false);
+            }
+            
+            return;
+        }
+
+        this.interactionPrompt.SetActive(true);
+        this.interactionPrompt.transform.position = targetItem.interactPrompt.transform.position;
+        this.interactionPrompt.transform.rotation = Quaternion.LookRotation(
+            this.interactionPrompt.transform.position - Camera.main.transform.position
+        );
+
+        currentFocusedItem = targetItem;
+
+        currentFocusedItem.SetFocused(true);
     }
 
     private void Update()
@@ -49,37 +86,42 @@ public class Interaction : MonoBehaviour
 
                         spawnPoint.y = 0;
 
-                        Instantiate(attackInstance, spawnPoint, Quaternion.identity);
+                        Instantiate(attackInstance, spawnPoint, Quaternion.identity).SetActive(true);
                     }
                 }
             }
         }
-        if (Input.GetMouseButtonDown(1))
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
+        // if (Input.GetMouseButtonDown(1))
+        // {
+        //     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        //     RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit))
-            {
-                if (hit.collider.CompareTag("Collectable"))
-                {
-                    GameObject player = GameObject.FindGameObjectWithTag("Player");
-                    if (player != null)
-                    {
-                        Renderer renderer = player.GetComponent<Renderer>();
-                        if (renderer != null)
-                        {
-                            Color randomColor = hit.rigidbody.gameObject.GetComponent<Renderer>().material.color;
-                            renderer.material.color = randomColor;
-                        }
-                        CollectableType type = CollectableType.SomeDeadBodyPart;
-                        playerInventory.collectables.Add(type);
+        //     if (Physics.Raycast(ray, out hit))
+        //     {
+        //         if (hit.collider.CompareTag("Collectable"))
+        //         {
+        //             GameObject player = GameObject.FindGameObjectWithTag("Player");
+        //             if (player != null)
+        //             {
+        //                 Renderer renderer = player.GetComponent<Renderer>();
+        //                 if (renderer != null)
+        //                 {
+        //                     Color randomColor = hit.rigidbody.gameObject.GetComponent<Renderer>().material.color;
+        //                     renderer.material.color = randomColor;
+        //                 }
+        //                 CollectableType type = CollectableType.SomeDeadBodyPart;
+        //                 playerInventory.collectables.Add(type);
 
-                    }
-                    Destroy(hit.collider.gameObject);
-                }
-            }
-        }
+        //             }
+        //             Destroy(hit.collider.gameObject);
+        //         }
+        //     }
+        // }
+    }
+
+    private void LateUpdate()
+    {
+        UpdateInteractionPrompt();
     }
 
     void OnEnable()
@@ -101,10 +143,17 @@ public class Interaction : MonoBehaviour
 
     private void OnInteractPerformed(InputAction.CallbackContext context)
     {
-        if (availableItems.Count > 0)
+        if (currentFocusedItem != null)
         {
-            availableItems[0].Interact();
+            currentFocusedItem.Interact();
         }
+
+        this.availableItems.RemoveAll(item => item == null || !item.isActiveAndEnabled);
+    }
+
+    public void ClearAvailable()
+    {
+        // this.availableItems.Clear();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -117,7 +166,6 @@ public class Interaction : MonoBehaviour
         if (item != null && !availableItems.Contains(item))
         {
             availableItems.Add(item);
-            UpdateFocusedItem();
         }
     }
 
@@ -134,59 +182,11 @@ public class Interaction : MonoBehaviour
 
             if (currentFocusedItem == item)
                 currentFocusedItem.SetFocused(false);
-
-            UpdateFocusedItem();
         }
     }
 
     private void UpdateFocusedItem()
     {
-        availableItems.RemoveAll(item => item == null);
-
-        if (availableItems.Count == 0)
-        {
-            if (currentFocusedItem != null)
-            {
-                currentFocusedItem.SetFocused(false);
-                currentFocusedItem = null;
-            }
-            return;
-        }
-
-        InteractiveItem closest = null;
-        float closestDistance = float.MaxValue;
-
-        foreach (InteractiveItem item in availableItems)
-        {
-            if (item == null)
-                continue;
-
-            float distance = (transform.position - item.transform.position).sqrMagnitude;
-
-            if (distance < closestDistance)
-            {
-                closestDistance = distance;
-                closest = item;
-            }
-        }
-
-        if (closest == null)
-        {
-            if (currentFocusedItem != null)
-            {
-                currentFocusedItem.SetFocused(false);
-                currentFocusedItem = null;
-            }
-            return;
-        }
-
-        if (currentFocusedItem == closest)
-            return;
-
-        if (currentFocusedItem != null)
-            currentFocusedItem.SetFocused(false);
-
-        currentFocusedItem = closest;
-        currentFocusedItem.SetFocused(true);
+        currentFocusedItem.SetFocused(false);
     }
 }

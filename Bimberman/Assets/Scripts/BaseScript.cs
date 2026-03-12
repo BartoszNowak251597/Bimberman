@@ -49,7 +49,7 @@ public class BaseScript : MonoBehaviour
                     textComponent.text += "- " + bimber.ToString() + "\n";
                 }
                 textComponent.text += "Collectables: \n";
-                foreach (CollectableType collectable in PlayerController.playerInstance.inventory.collectables)
+                foreach (Collectible collectable in PlayerController.playerInstance.inventory.collectables)
                 {
                     textComponent.text += "- " + collectable.ToString() + "\n";
                 }
