@@ -9,7 +9,7 @@ public class Enemy : MonoBehaviour
 {
 
     public NavMeshAgent agent;
-    public Transform player;
+   //public Transform player;
     public LayerMask whatIsGround, whatIsPlayer;
     public Vector3 walkPoint;
     bool walkPointSet;
@@ -27,7 +27,7 @@ public class Enemy : MonoBehaviour
 
     private void Awake()
     {
-        player = GameObject.Find("Player").transform;
+        //player = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
     }
 
@@ -81,28 +81,28 @@ public class Enemy : MonoBehaviour
 
     private void ChasePlayer()
     {
-        agent.SetDestination(player.position);
+        agent.SetDestination(PlayerController.playerInstance.transform.position);
     }
 
     private void AttackPlayer()
     {
-        float distance = Vector3.Distance(transform.position, player.position);
+        float distance = Vector3.Distance(transform.position, PlayerController.playerInstance.transform.position);
 
         if (distance < attackRange * 0.8f)
         {
-            Vector3 directionAway = (transform.position - player.position).normalized;
-            Vector3 newPos = player.position + directionAway * attackRange; 
-            transform.LookAt(player);
+            Vector3 directionAway = (transform.position - PlayerController.playerInstance.transform.position).normalized;
+            Vector3 newPos = PlayerController.playerInstance.transform.position + directionAway * attackRange; 
+            transform.LookAt(PlayerController.playerInstance.transform);
             agent.SetDestination(newPos);
         }
         else 
         {
             agent.SetDestination(transform.position); 
-            transform.LookAt(player);
+            transform.LookAt(PlayerController.playerInstance.transform);
 
             if (!alreadyAttacked)
             {
-                Vector3 direction = (player.position - transform.position).normalized;
+                Vector3 direction = (PlayerController.playerInstance.transform.position - transform.position).normalized;
                 GameObject projectile = Instantiate(enemyShoot, transform.position + direction * 1f, Quaternion.LookRotation(direction));
                 Rigidbody rb = projectile.GetComponent<Rigidbody>();
                 rb.linearVelocity = direction * 20f;

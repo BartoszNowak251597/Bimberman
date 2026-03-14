@@ -285,6 +285,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 2122760885898743182, guid: 1db5be717280b254192dc7994f83da94, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 2170750338459807091, guid: 1db5be717280b254192dc7994f83da94, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 3224379897785769158, guid: 1db5be717280b254192dc7994f83da94, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 6404828200693246055, guid: 1db5be717280b254192dc7994f83da94, type: 3}
       propertyPath: moveSpeed
       value: 8
@@ -332,6 +344,10 @@ PrefabInstance:
     - target: {fileID: 6789813031784029539, guid: 1db5be717280b254192dc7994f83da94, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7821561096749016710, guid: 1db5be717280b254192dc7994f83da94, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
