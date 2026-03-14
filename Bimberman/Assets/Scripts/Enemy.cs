@@ -105,7 +105,7 @@ public class Enemy : MonoBehaviour
                 Vector3 direction = (PlayerController.playerInstance.transform.position - transform.position).normalized;
                 GameObject projectile = Instantiate(enemyShoot, transform.position + direction * 1f, Quaternion.LookRotation(direction));
                 Rigidbody rb = projectile.GetComponent<Rigidbody>();
-                rb.linearVelocity = direction * 20f;
+                rb.linearVelocity = direction * 50f;
 
                 alreadyAttacked = true;
                 Invoke(nameof(ResetAttack), timeBetweenAttacks);

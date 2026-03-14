@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class enemyBullet : MonoBehaviour
 {
-    
+    public int damage = 1;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -17,12 +17,21 @@ public class enemyBullet : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("Collision detected with: " + collision.gameObject.name);
         if (collision.collider.CompareTag("Player"))
         {
-            Debug.Log("Player hit!");
-            // Here you can add code to reduce the player's health or trigger a death animation
-            //Destroy(collision.gameObject); // This will destroy the player object
+            PlayerController player = collision.collider.GetComponent<PlayerController>();
+            if (player != null)
+            {
+                player.TakeDamage(damage); 
+            }
+            else
+            {
+                player = collision.collider.GetComponentInParent<PlayerController>();
+                if (player != null)
+                {
+                    player.TakeDamage(damage);
+                }
+            }
         }
         Destroy(gameObject); // This will destroy the bullet after it hits something
     }

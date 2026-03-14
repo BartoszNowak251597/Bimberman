@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
@@ -16,6 +17,9 @@ public class PlayerController : MonoBehaviour
     private Vector2 moveInput;
     private Vector2 mousePosition;
 
+    public Slider healthBar;
+    public int health = 10;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -24,6 +28,8 @@ public class PlayerController : MonoBehaviour
             inputActions = new PlayerInputActions();
 
         playerInstance = this;
+
+        healthBar = GameObject.Find("Healthbar").GetComponent<Slider>();
     }
 
     private void OnEnable()
@@ -107,5 +113,12 @@ public class PlayerController : MonoBehaviour
     public void SetMovementEnabled(bool enabled)
     {
         canMove = enabled;
+    }
+
+    public void TakeDamage(int damage)
+    {
+        health -= damage;
+        healthBar.value -= damage;
+
     }
 }
