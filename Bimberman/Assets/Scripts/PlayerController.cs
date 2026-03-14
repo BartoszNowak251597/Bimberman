@@ -20,6 +20,8 @@ public class PlayerController : MonoBehaviour
     public Slider healthBar;
     public int health = 10;
 
+    public Canvas pauseMenu;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -30,6 +32,8 @@ public class PlayerController : MonoBehaviour
         playerInstance = this;
 
         healthBar = GameObject.Find("Healthbar").GetComponent<Slider>();
+        pauseMenu = GameObject.Find("PauseScreen").GetComponent<Canvas>();
+        pauseMenu.enabled = false;
     }
 
     private void OnEnable()
@@ -61,6 +65,17 @@ public class PlayerController : MonoBehaviour
         mousePosition = inputActions.Player.Look.ReadValue<Vector2>();
 
         RotateToMouse();
+
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            Time.timeScale = 0f;
+            pauseMenu.enabled = true;
+        }
+        else if (Input.GetKeyUp(KeyCode.Tab))
+        {
+            Time.timeScale = 1f;
+            pauseMenu.enabled = false;
+        }
     }
 
     void FixedUpdate()
