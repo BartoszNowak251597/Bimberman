@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
@@ -17,6 +18,9 @@ public class Interaction : MonoBehaviour
 
     public GameObject throwablePrefab;  
     public float throwSpeed = 10f;      
+    public float throwCooldown = 1;
+
+    private float lastThrowTime;
 
     void Awake()
     {
@@ -59,46 +63,54 @@ public class Interaction : MonoBehaviour
         currentFocusedItem.SetFocused(true);
     }
 
+    private void ThrowProjectile(GameObject projectile, Vector3 target) {
+        Vector3 startPos = transform.position + transform.forward * 1f;
+        startPos.y = transform.position.y+0.5f; 
+
+        Vector3 horizontalStart = new Vector3(startPos.x, 0, startPos.z);
+        Vector3 horizontalTarget = new Vector3(target.x, 0, target.z);
+        float distance = Vector3.Distance(horizontalStart, horizontalTarget);
+        float heightDiff = target.y - startPos.y; 
+        float timeToTarget = distance / this.throwSpeed;
+
+        float gravity = Physics.gravity.magnitude; 
+        float v_y = (heightDiff + 0.5f * gravity * timeToTarget * timeToTarget) / timeToTarget;
+
+        Vector3 horizontalDir = (horizontalTarget - horizontalStart).normalized;
+        Vector3 velocity = horizontalDir * this.throwSpeed + Vector3.up * v_y;
+
+        projectile.transform.position = startPos;
+        projectile.transform.rotation = Quaternion.LookRotation(velocity);
+
+        Rigidbody rb = projectile.GetComponent<Rigidbody>();
+        rb.linearVelocity = velocity;
+
+        lastThrowTime = Time.time;
+    }
+
     private void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
+            bool isInBase = GameObject.FindAnyObjectByType<BaseScript>() != null;
+
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity))
-            {
-                if (GameObject.FindAnyObjectByType<BaseScript>() != null)
-                {
+
+            if (isInBase) {
+                if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity)) {
                     InteractiveItem item = hit.collider.GetComponent<InteractiveItem>();
                     if (item != null) item.Interact();
                 }
-                else
-                {
-                    if (hit.collider.gameObject.layer == LayerMask.NameToLayer("WhatIsGround") ||
-                        hit.collider.gameObject.CompareTag("Enemy"))
-                    {
-                        Vector3 targetPos = hit.point;
-                        Vector3 startPos = transform.position + transform.forward * 1f;
-                        startPos.y = transform.position.y+0.5f; 
+            }
+            else if (Time.time > this.lastThrowTime + this.throwCooldown) {
+                Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
 
-                        float speed = 20f; 
-                        Vector3 horizontalStart = new Vector3(startPos.x, 0, startPos.z);
-                        Vector3 horizontalTarget = new Vector3(targetPos.x, 0, targetPos.z);
-                        float distance = Vector3.Distance(horizontalStart, horizontalTarget);
-                        float heightDiff = targetPos.y - startPos.y; 
-                        float timeToTarget = distance / speed;
+                groundPlane.Raycast(ray, out float dist);
 
-                        float gravity = Physics.gravity.magnitude; 
-                        float v_y = (heightDiff + 0.5f * gravity * timeToTarget * timeToTarget) / timeToTarget;
+                Vector3 targetPos = ray.GetPoint(dist);
+                GameObject projectile = Instantiate(throwablePrefab);
 
-                        Vector3 horizontalDir = (horizontalTarget - horizontalStart).normalized;
-                        Vector3 velocity = horizontalDir * speed + Vector3.up * v_y;
-
-                        GameObject projectile = Instantiate(throwablePrefab, startPos, Quaternion.LookRotation(velocity));
-                        Rigidbody rb = projectile.GetComponent<Rigidbody>();
-                        rb.linearVelocity = velocity;
-
-                    }
-                }
+                ThrowProjectile(projectile, targetPos);
             }
         }
     }
