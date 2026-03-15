@@ -15,6 +15,9 @@ public class Interaction : MonoBehaviour
     public PlayerInventory playerInventory;
     public GameObject interactionPrompt;
 
+    public GameObject throwablePrefab;  
+    public float throwSpeed = 10f;      
+
     void Awake()
     {
         if (inputActions == null)
@@ -60,37 +63,45 @@ public class Interaction : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity))
             {
-                InteractiveItem item = hit.collider.GetComponent<InteractiveItem>();
-                string currentScene = SceneManager.GetActiveScene().name;
-
                 if (GameObject.FindAnyObjectByType<BaseScript>() != null)
                 {
-                    if (item != null)
-                    {
-                        item.Interact();
-                    }
+                    InteractiveItem item = hit.collider.GetComponent<InteractiveItem>();
+                    if (item != null) item.Interact();
                 }
                 else
                 {
-                    if (
-                        hit.collider.gameObject.layer == LayerMask.NameToLayer("WhatIsGround")
-                        ||
-                        hit.collider.gameObject.CompareTag("Enemy")
-                    )
+                    if (hit.collider.gameObject.layer == LayerMask.NameToLayer("WhatIsGround") ||
+                        hit.collider.gameObject.CompareTag("Enemy"))
                     {
-                        Vector3 spawnPoint = hit.point;
+                        Vector3 targetPos = hit.point;
+                        Vector3 startPos = transform.position + transform.forward * 1f;
+                        startPos.y = transform.position.y+0.5f; 
 
-                        spawnPoint.y = 0;
+                        float speed = 20f; 
+                        Vector3 horizontalStart = new Vector3(startPos.x, 0, startPos.z);
+                        Vector3 horizontalTarget = new Vector3(targetPos.x, 0, targetPos.z);
+                        float distance = Vector3.Distance(horizontalStart, horizontalTarget);
+                        float heightDiff = targetPos.y - startPos.y; 
+                        float timeToTarget = distance / speed;
 
-                        Instantiate(attackInstance, spawnPoint, Quaternion.identity).SetActive(true);
+                        float gravity = Physics.gravity.magnitude; 
+                        float v_y = (heightDiff + 0.5f * gravity * timeToTarget * timeToTarget) / timeToTarget;
+
+                        Vector3 horizontalDir = (horizontalTarget - horizontalStart).normalized;
+                        Vector3 velocity = horizontalDir * speed + Vector3.up * v_y;
+
+                        GameObject projectile = Instantiate(throwablePrefab, startPos, Quaternion.LookRotation(velocity));
+                        Rigidbody rb = projectile.GetComponent<Rigidbody>();
+                        rb.linearVelocity = velocity;
+
                     }
                 }
             }
         }
+    }
         // if (Input.GetMouseButtonDown(1))
         // {
         //     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -117,7 +128,7 @@ public class Interaction : MonoBehaviour
         //         }
         //     }
         // }
-    }
+    
 
     private void LateUpdate()
     {
