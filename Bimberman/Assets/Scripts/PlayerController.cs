@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -19,6 +20,8 @@ public class PlayerController : MonoBehaviour
 
     public Slider healthBar;
     public int health = 10;
+
+    public LevelLoader loader;
 
     void Awake()
     {
@@ -119,6 +122,18 @@ public class PlayerController : MonoBehaviour
     {
         health -= damage;
         healthBar.value -= damage;
+        if(health <= 0)
+        {
+            Die();
+        }
 
+    }
+    public void Die()
+    {
+        // Corrected the argument passed to SceneManager.LoadScene to use the scene name as a string
+        Debug.Log("Player has died.");
+        //SceneMan loader = ager.LoadScene("DieScene");
+       
+        loader.LoadLevel();
     }
 }

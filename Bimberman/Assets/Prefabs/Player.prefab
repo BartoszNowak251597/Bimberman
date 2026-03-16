@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 6404828200693246055}
   - component: {fileID: 8844941783687293676}
   - component: {fileID: 6084737295130101396}
+  - component: {fileID: 3693494836854922230}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -129,7 +130,7 @@ MonoBehaviour:
   inventory: {fileID: 6084737295130101396}
   healthBar: {fileID: 0}
   health: 10
-  pauseMenu: {fileID: 0}
+  loader: {fileID: 3693494836854922230}
 --- !u!114 &8844941783687293676
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -163,6 +164,19 @@ MonoBehaviour:
   ingredients: 0100000002000000
   potions: 01000000
   collectables: []
+--- !u!114 &3693494836854922230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2122760885898743182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38db6b8b0226c834ebc44d3f602bb209, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelLoader
+  sceneToLoad: DieScene
 --- !u!1 &3224379897785769158
 GameObject:
   m_ObjectHideFlags: 0
