@@ -6,8 +6,11 @@ public class ThrowableInteraction : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("WhatIsGround"))
-        {
+        if (
+            collision.gameObject.layer == LayerMask.NameToLayer("WhatIsGround")
+            ||
+            collision.gameObject.tag == "Enemy"
+        ) {
             Vector3 hitPoint = collision.contacts[0].point;
             hitPoint.y = 0; 
             Instantiate(attackInstancePrefab, hitPoint, Quaternion.identity);
