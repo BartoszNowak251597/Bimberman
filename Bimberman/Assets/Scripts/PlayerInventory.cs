@@ -4,70 +4,50 @@ using UnityEngine.SceneManagement;
 
 public class PlayerInventory : MonoBehaviour
 {
-    public BimberType equippedBimber = BimberType.None;
+    public List<Ingredient> ingredients = new List<Ingredient>();
+    public List<Potion> potions = new List<Potion>();
+    public List<CollectibleRecipe> recipes = new List<CollectibleRecipe>();
 
-    [Header("Testowe składniki")]
-    public List<IngredientType> ingredients = new List<IngredientType>()
+    public void CollectRecipe(CollectibleRecipe recipe)
     {
-        IngredientType.Sugar,
-        IngredientType.Water
-    };
-
-    public List<BimberType> potions = new List<BimberType>()
-    {
-        BimberType.ClassicBimber
-    };
-
-    public List<Collectible> collectables = new List<Collectible>();
-
-    public void EquipBimber(BimberType bimber)
-    {
-        equippedBimber = bimber;
-    }
-
-    public bool HasBimber()
-    {
-        return equippedBimber != BimberType.None;
-    }
-
-    public bool HasIngredients(List<IngredientType> required)
-    {
-        List<IngredientType> temp = new List<IngredientType>(ingredients);
-
-        foreach (IngredientType ingredient in required)
-        {
-            if (!temp.Contains(ingredient))
-                return false;
-
-            temp.Remove(ingredient);
-        }
-
-        return true;
-    }
-
-    public bool RemoveIngredients(List<IngredientType> required)
-    {
-        if (!HasIngredients(required))
-            return false;
-
-        foreach (IngredientType ingredient in required)
-        {
-            ingredients.Remove(ingredient);
-        }
-
-        return true;
-    }
-
-    public void Collect(Collectible item)
-    {
-        if (item == null || this.collectables.Contains(item))
+        if (this.recipes.Contains(recipe))
         {
             return;
         }
 
-        this.collectables.Add(item);
-        item.gameObject.SetActive(false);
+        this.recipes.Add(recipe);
+        recipe.gameObject.SetActive(false);
 
-        SceneManager.MoveGameObjectToScene(item.gameObject, this.gameObject.scene);
+        SceneManager.MoveGameObjectToScene(recipe.gameObject, this.gameObject.scene);
+    }
+
+    public void CollectIngredient(Ingredient ingredient)
+    {
+        if (this.ingredients.Contains(ingredient))
+        {
+            return;
+        }
+
+        this.ingredients.Add(ingredient);
+        ingredient.gameObject.SetActive(false);
+
+        SceneManager.MoveGameObjectToScene(ingredient.gameObject, this.gameObject.scene);
+    }
+
+    public void Collect(Collectible item)
+    {
+        if (item == null)
+        {
+            return;
+        }
+
+        if (item is Ingredient)
+        {
+            CollectIngredient(item as Ingredient);
+        }
+        else if (item is CollectibleRecipe)
+        {
+            CollectRecipe(item as CollectibleRecipe);
+        }
     }
 }

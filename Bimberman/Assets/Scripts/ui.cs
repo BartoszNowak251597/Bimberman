@@ -1,22 +1,28 @@
 using UnityEngine;
+using TMPro;
 
-public class ui : MonoBehaviour
+public class UI : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public GameObject InventoryText;
+    public InventoryUI inventoryUI;
+    public KeyCode inventoryKey;
+
 
     void Awake()
     {
-
+        inventoryUI.gameObject.SetActive(false);
     }
 
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKeyDown(inventoryKey))
+        {
+            inventoryUI.OpenUI();
+        }
+
+        if (Input.GetKeyUp(inventoryKey))
+        {
+            inventoryUI.HideUI();
+        }
     }
 }

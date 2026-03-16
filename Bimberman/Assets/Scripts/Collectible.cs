@@ -9,4 +9,9 @@ public class Collectible : InteractiveItem {
 	{
 		PlayerController.playerInstance.inventory.Collect(this);
 	}
+
+	public virtual string DisplayName()
+	{
+		return "";
+	}
 }

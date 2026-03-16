@@ -147,13 +147,13 @@ public class StationInteraction : InteractiveItem
 
         currentRecipe = recipes[currentRecipeIndex];
 
-        if (!playerInventory.HasIngredients(currentRecipe.ingredients))
-        {
-            if (brewStationUI != null)
-                brewStationUI.SetStatus("Brakuje składników");
+        // if (!playerInventory.HasIngredients(currentRecipe.ingredients))
+        // {
+        //     if (brewStationUI != null)
+        //         brewStationUI.SetStatus("Brakuje składników");
 
-            return;
-        }
+        //     return;
+        // }
 
         if (brewStationUI != null)
             brewStationUI.gameObject.SetActive(false);
@@ -179,27 +179,27 @@ public class StationInteraction : InteractiveItem
         if (!mixSlot.IsComplete())
             return;
 
-        bool removed = playerInventory.RemoveIngredients(currentRecipe.ingredients);
-        if (!removed)
-        {
-            if (brewStationUI != null)
-            {
-                brewStationUI.gameObject.SetActive(true);
-                brewStationUI.Show();
-                brewStationUI.SetStatus("Nie udało się zużyć składników");
-            }
+        // bool removed = playerInventory.RemoveIngredients(currentRecipe.ingredients);
+        // if (!removed)
+        // {
+        //     if (brewStationUI != null)
+        //     {
+        //         brewStationUI.gameObject.SetActive(true);
+        //         brewStationUI.Show();
+        //         brewStationUI.SetStatus("Nie udało się zużyć składników");
+        //     }
 
-            isBrewingActive = false;
-            HideAllSceneIngredients();
-            mixSlot.ResetSlot();
+        //     isBrewingActive = false;
+        //     HideAllSceneIngredients();
+        //     mixSlot.ResetSlot();
 
-            if (bimberDisplayObject != null)
-                bimberDisplayObject.SetActive(false);
+        //     if (bimberDisplayObject != null)
+        //         bimberDisplayObject.SetActive(false);
 
-            return;
-        }
+        //     return;
+        // }
 
-        playerInventory.EquipBimber(currentRecipe.bimberType);
+        // playerInventory.EquipBimber(currentRecipe.bimberType);
         ExitStationView();
     }
 
@@ -214,9 +214,9 @@ public class StationInteraction : InteractiveItem
             return;
 
         BimberRecipe recipe = recipes[currentRecipeIndex];
-        bool canDistill = playerInventory.HasIngredients(recipe.ingredients);
+        // bool canDistill = playerInventory.HasIngredients(recipe.ingredients);
 
-        brewStationUI.UpdateRecipeView(recipe, canDistill);
+        // brewStationUI.UpdateRecipeView(recipe, canDistill);
     }
 
     private void HideAllSceneIngredients()

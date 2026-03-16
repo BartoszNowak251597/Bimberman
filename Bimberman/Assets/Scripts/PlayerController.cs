@@ -85,7 +85,7 @@ public class PlayerController : MonoBehaviour
         if (movement.sqrMagnitude > 1f)
             movement.Normalize();
 
-        Vector3 newPosition = rb.position + moveSpeed * movement * Time.fixedDeltaTime;
+        Vector3 newPosition = rb.position + moveSpeed * movement * Time.fixedDeltaTime * Time.timeScale;
         rb.MovePosition(newPosition);
     }
 

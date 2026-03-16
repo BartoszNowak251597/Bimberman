@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 1265295869058821628}
   - component: {fileID: 7685899978484333469}
   - component: {fileID: 504244210524971710}
-  - component: {fileID: 8815872595294681795}
+  - component: {fileID: -6515699151945634513}
   m_Layer: 0
   m_Name: enemyDrop
   m_TagString: Collectable
@@ -266,7 +266,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &8815872595294681795
+--- !u!114 &-6515699151945634513
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -275,8 +275,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 7996618573282628087}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4dc1ac3e314f7124fb9e8e0479f86a9b, type: 3}
+  m_Script: {fileID: 11500000, guid: a2cf7db2fe2928e409f5d1e94ed19fdf, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Collectible
+  m_EditorClassIdentifier: Assembly-CSharp::Ingredient
   interactPrompt: {fileID: 6654279739947605244}
   outlineObject: {fileID: 58377719708510402}
+  type: 3
