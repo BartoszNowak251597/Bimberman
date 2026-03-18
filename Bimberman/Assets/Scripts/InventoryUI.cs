@@ -5,6 +5,8 @@ using TMPro;
 
 public class InventoryUI : MonoBehaviour
 {
+    const int MinPotionSlots = 9;
+
     private struct ItemSlot
     {
         public Image slotImage;
@@ -16,7 +18,7 @@ public class InventoryUI : MonoBehaviour
     public GameObject itemsContainer;
 
     private ItemSlot[] itemSlots;
-
+    public float circleSize;
 
     public void Awake()
     {
@@ -38,7 +40,7 @@ public class InventoryUI : MonoBehaviour
 
         PlayerInventory inventory = PlayerController.playerInstance.inventory;
 
-        int circlesCount = Mathf.Max(inventory.potions.Count, 4);
+        int circlesCount = Mathf.Max(inventory.potions.Count, MinPotionSlots);
 
         if (circlesCount != bars.Count)
         {
@@ -67,7 +69,7 @@ public class InventoryUI : MonoBehaviour
         
         var potions = inventory.potions;
 
-        float angleStep = Mathf.PI * 2 / Mathf.Max(potions.Count, 4);
+        float angleStep = Mathf.PI * 2 / Mathf.Max(potions.Count, MinPotionSlots);
         for (int i = 0; i < potions.Count; i++)
         {
             float angle = angleStep * (i + 0.5f);
@@ -122,10 +124,18 @@ public class InventoryUI : MonoBehaviour
 
     public void Update()
     {
-        Vector2 mousePos = Input.mousePosition / new Vector2(Screen.width, Screen.height);
+        var scaler = GetComponentInParent<CanvasScaler>();
 
-        mousePos -= new Vector2(0.5f, 0.5f);
-        
+        Vector2 mousePos = Input.mousePosition / new Vector2(Screen.height, Screen.height);
+
+        float scale = scaler.referenceResolution.y / circleRenderer.rectTransform.sizeDelta.y;
+
+        float aspectRatio = (float) Screen.width / Screen.height;
+
+        mousePos -= new Vector2(aspectRatio * 0.5f, 0.5f);
+
+        mousePos *= -scale;
+
         var potions = PlayerController.playerInstance.inventory.potions;
 
         for (int i = 0; i < potions.Count; i++)
@@ -135,7 +145,7 @@ public class InventoryUI : MonoBehaviour
             potions[i].transform.rotation *= Quaternion.AngleAxis(20, Camera.main.transform.right);
         }
 
-        if (mousePos.magnitude < 0.25f)
+        if (mousePos.magnitude < circleSize)
         {
             float tan = ((Mathf.Atan2(mousePos.x, mousePos.y) + Mathf.PI) * bars.Count) / (Mathf.PI * 2);
 
@@ -150,5 +160,16 @@ public class InventoryUI : MonoBehaviour
         {
             circleRenderer.material.SetFloat("_Highlight", -1);
         }
+
+        foreach (var bar in bars)
+        {
+            Vector2 delta = bar.GetComponent<RectTransform>().sizeDelta;
+
+            delta.y = circleRenderer.rectTransform.sizeDelta.y * circleSize;
+
+            bar.GetComponent<RectTransform>().sizeDelta = delta;
+        }
+
+        circleRenderer.material.SetFloat("_Size", circleSize);
     }
 }

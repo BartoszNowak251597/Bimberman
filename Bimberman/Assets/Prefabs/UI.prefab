@@ -445,7 +445,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 10, y: 571.19}
+  m_SizeDelta: {x: 10, y: 480}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &7910912261927980190
 CanvasRenderer:
@@ -1575,6 +1575,7 @@ MonoBehaviour:
   - {fileID: 2313545445960348459}
   circleRenderer: {fileID: 2930676699344268026}
   itemsContainer: {fileID: 495188731890882495}
+  circleSize: 0
 --- !u!1 &5849549662488938954
 GameObject:
   m_ObjectHideFlags: 0
