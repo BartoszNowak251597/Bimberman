@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     public Camera playerCamera;
     public bool canMove = true;
     public PlayerInventory inventory;
+    public Interaction interaction;
 
     private Rigidbody rb;
     private PlayerInputActions inputActions;
@@ -119,6 +120,21 @@ public class PlayerController : MonoBehaviour
     {
         health -= damage;
         healthBar.value -= damage;
+    }
 
+    public void EnterStationMode()
+    {
+        SetMovementEnabled(false);
+
+        interaction.interactionPrompt.SetActive(false);
+        interaction.enabled = false;
+    }
+
+    public void ExitStationMode()
+    {
+        SetMovementEnabled(true);
+
+        interaction.enabled = true;
+        interaction.interactionPrompt.SetActive(true);
     }
 }

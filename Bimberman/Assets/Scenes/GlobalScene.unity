@@ -348,78 +348,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 406098545}
   m_CullTransparentMesh: 1
---- !u!1001 &826048296
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 3513966773589861927, guid: 7a8fc911dd831e44aa68b185e46a4218, type: 3}
-      propertyPath: m_Name
-      value: ClassicBimberPrefab
-      objectReference: {fileID: 0}
-    - target: {fileID: 3513966773589861927, guid: 7a8fc911dd831e44aa68b185e46a4218, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8093220176816142763, guid: 7a8fc911dd831e44aa68b185e46a4218, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 2.24522
-      objectReference: {fileID: 0}
-    - target: {fileID: 8093220176816142763, guid: 7a8fc911dd831e44aa68b185e46a4218, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8093220176816142763, guid: 7a8fc911dd831e44aa68b185e46a4218, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 2.36743
-      objectReference: {fileID: 0}
-    - target: {fileID: 8093220176816142763, guid: 7a8fc911dd831e44aa68b185e46a4218, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8093220176816142763, guid: 7a8fc911dd831e44aa68b185e46a4218, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8093220176816142763, guid: 7a8fc911dd831e44aa68b185e46a4218, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8093220176816142763, guid: 7a8fc911dd831e44aa68b185e46a4218, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8093220176816142763, guid: 7a8fc911dd831e44aa68b185e46a4218, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8093220176816142763, guid: 7a8fc911dd831e44aa68b185e46a4218, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8093220176816142763, guid: 7a8fc911dd831e44aa68b185e46a4218, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 7a8fc911dd831e44aa68b185e46a4218, type: 3}
---- !u!114 &826048297 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5015377425571659158, guid: 7a8fc911dd831e44aa68b185e46a4218, type: 3}
-  m_PrefabInstance: {fileID: 826048296}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0cbaed7d4c8e3748801c4d041f6d66a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Potion
 --- !u!1 &897130663
 GameObject:
   m_ObjectHideFlags: 0
@@ -627,16 +555,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6084737295130101396, guid: 1db5be717280b254192dc7994f83da94, type: 3}
       propertyPath: potions.Array.size
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6084737295130101396, guid: 1db5be717280b254192dc7994f83da94, type: 3}
       propertyPath: 'potions.Array.data[0]'
       value: 
-      objectReference: {fileID: 826048297}
+      objectReference: {fileID: 0}
     - target: {fileID: 6084737295130101396, guid: 1db5be717280b254192dc7994f83da94, type: 3}
       propertyPath: 'potions.Array.data[1]'
       value: 
-      objectReference: {fileID: 1915877424}
+      objectReference: {fileID: 0}
     - target: {fileID: 6084737295130101396, guid: 1db5be717280b254192dc7994f83da94, type: 3}
       propertyPath: 'potions.Array.data[2]'
       value: 
@@ -649,6 +577,10 @@ PrefabInstance:
       propertyPath: moveSpeed
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 6404828200693246055, guid: 1db5be717280b254192dc7994f83da94, type: 3}
+      propertyPath: interaction
+      value: 
+      objectReference: {fileID: 1446922157}
     - target: {fileID: 6404828200693246055, guid: 1db5be717280b254192dc7994f83da94, type: 3}
       propertyPath: playerCamera
       value: 
@@ -727,6 +659,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6789813031784029539, guid: 1db5be717280b254192dc7994f83da94, type: 3}
   m_PrefabInstance: {fileID: 1066640193}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1446922157 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8844941783687293676, guid: 1db5be717280b254192dc7994f83da94, type: 3}
+  m_PrefabInstance: {fileID: 1066640193}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52296072d4f60cb41af648c4666f82da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
 --- !u!1 &1628572121
 GameObject:
   m_ObjectHideFlags: 0
@@ -931,78 +874,6 @@ RectTransform:
   m_AnchoredPosition: {x: -5, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1001 &1915877423
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 3513966773589861927, guid: 19b07223f3d14aa4d8ef3f31ac08317e, type: 3}
-      propertyPath: m_Name
-      value: CherryBimberPrefab
-      objectReference: {fileID: 0}
-    - target: {fileID: 3513966773589861927, guid: 19b07223f3d14aa4d8ef3f31ac08317e, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8093220176816142763, guid: 19b07223f3d14aa4d8ef3f31ac08317e, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -2.02539
-      objectReference: {fileID: 0}
-    - target: {fileID: 8093220176816142763, guid: 19b07223f3d14aa4d8ef3f31ac08317e, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8093220176816142763, guid: 19b07223f3d14aa4d8ef3f31ac08317e, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 1.20359
-      objectReference: {fileID: 0}
-    - target: {fileID: 8093220176816142763, guid: 19b07223f3d14aa4d8ef3f31ac08317e, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8093220176816142763, guid: 19b07223f3d14aa4d8ef3f31ac08317e, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8093220176816142763, guid: 19b07223f3d14aa4d8ef3f31ac08317e, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8093220176816142763, guid: 19b07223f3d14aa4d8ef3f31ac08317e, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8093220176816142763, guid: 19b07223f3d14aa4d8ef3f31ac08317e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8093220176816142763, guid: 19b07223f3d14aa4d8ef3f31ac08317e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8093220176816142763, guid: 19b07223f3d14aa4d8ef3f31ac08317e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 19b07223f3d14aa4d8ef3f31ac08317e, type: 3}
---- !u!114 &1915877424 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5015377425571659158, guid: 19b07223f3d14aa4d8ef3f31ac08317e, type: 3}
-  m_PrefabInstance: {fileID: 1915877423}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0cbaed7d4c8e3748801c4d041f6d66a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Potion
 --- !u!1001 &2124109198
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1150,8 +1021,6 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1066640193}
-  - {fileID: 1915877423}
-  - {fileID: 826048296}
   - {fileID: 330585546}
   - {fileID: 897130667}
   - {fileID: 2124109198}

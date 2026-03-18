@@ -50,4 +50,18 @@ public class PlayerInventory : MonoBehaviour
             CollectRecipe(item as CollectibleRecipe);
         }
     }
+
+    public void Collect(Potion potion)
+    {
+        if (potion == null)
+        {
+            return;
+        }
+
+        this.potions.Add(potion);
+        potion.gameObject.SetActive(false);
+        potion.transform.parent = null;
+
+        SceneManager.MoveGameObjectToScene(potion.gameObject, this.gameObject.scene);
+    }
 }

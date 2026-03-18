@@ -55,6 +55,18 @@ PrefabInstance:
     m_TransformParent: {fileID: 8093220176816142763}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 514a0cac40c8b3548af2442cc8516e6e, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 514a0cac40c8b3548af2442cc8516e6e, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 514a0cac40c8b3548af2442cc8516e6e, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 514a0cac40c8b3548af2442cc8516e6e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -106,6 +118,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[3]'
       value: 
       objectReference: {fileID: 2100000, guid: f31d5e8d8a457de4faea3dbac69bcce0, type: 2}
+    - target: {fileID: -5754084199372789682, guid: 514a0cac40c8b3548af2442cc8516e6e, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 6121590469811200223, guid: 80c95d8beab6ea54f9402f930f6ea00e, type: 3}
     - target: {fileID: 919132149155446097, guid: 514a0cac40c8b3548af2442cc8516e6e, type: 3}
       propertyPath: m_Name
       value: Kossu

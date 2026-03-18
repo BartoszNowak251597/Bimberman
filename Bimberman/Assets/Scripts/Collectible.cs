@@ -2,7 +2,10 @@ using UnityEngine;
 
 public class Collectible : InteractiveItem {
 	public void Update() {
-		this.interactPrompt.position = this.transform.position + Vector3.up;
+		if (this.interactPrompt)
+		{
+			this.interactPrompt.position = this.transform.position + Vector3.up;
+		}
 	}
 
 	public override void Interact()

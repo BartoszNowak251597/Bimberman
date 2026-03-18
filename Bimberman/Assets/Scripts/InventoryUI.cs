@@ -1,10 +1,36 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class InventoryUI : MonoBehaviour
 {
+    private struct ItemSlot
+    {
+        public Image slotImage;
+        public TextMeshProUGUI slotText;
+    }
+
     public List<GameObject> bars;
     public UnityEngine.UI.RawImage circleRenderer;
+    public GameObject itemsContainer;
+
+    private ItemSlot[] itemSlots;
+
+
+    public void Awake()
+    {
+        itemSlots = new ItemSlot[itemsContainer.transform.childCount];
+
+        for (int i = 0; i < itemSlots.Length; i++)
+        {
+            itemSlots[i] = new ItemSlot()
+            {
+                slotImage = itemsContainer.transform.GetChild(i).GetComponent<Image>(),
+                slotText = itemsContainer.transform.GetChild(i).Find("text").GetComponent<TextMeshProUGUI>()
+            };
+        }
+    }
 
     public void OpenUI()
     {
@@ -39,7 +65,7 @@ public class InventoryUI : MonoBehaviour
 
         circleRenderer.material.SetFloat("_SplitCount", bars.Count);
         
-        var potions = PlayerController.playerInstance.inventory.potions;
+        var potions = inventory.potions;
 
         float angleStep = Mathf.PI * 2 / Mathf.Max(potions.Count, 4);
         for (int i = 0; i < potions.Count; i++)
@@ -63,7 +89,21 @@ public class InventoryUI : MonoBehaviour
             potions[i].gameObject.SetActive(true);
         }
 
-        Time.timeScale = 0.2f;
+        // Time.timeScale = 0.2f;
+
+        var items = inventory.ingredients;
+
+        for (int i = 0; i < Mathf.Min(itemSlots.Length, items.Count); i++)
+        {
+            itemSlots[i].slotImage.color = Color.limeGreen;
+            itemSlots[i].slotText.text = items[i].DisplayName();
+        }
+
+        for (int i = items.Count; i < itemSlots.Length; i++)
+        {
+            itemSlots[i].slotImage.color = Color.white;
+            itemSlots[i].slotText.text = "Empty";
+        }
     }
 
     public void HideUI()
@@ -85,11 +125,7 @@ public class InventoryUI : MonoBehaviour
         Vector2 mousePos = Input.mousePosition / new Vector2(Screen.width, Screen.height);
 
         mousePos -= new Vector2(0.5f, 0.5f);
-
-        float tan = ((Mathf.Atan2(mousePos.x, mousePos.y) + Mathf.PI) * bars.Count) / (Mathf.PI * 2);
-
-        circleRenderer.material.SetFloat("_Highlight", (int) tan);
-
+        
         var potions = PlayerController.playerInstance.inventory.potions;
 
         for (int i = 0; i < potions.Count; i++)
@@ -99,9 +135,20 @@ public class InventoryUI : MonoBehaviour
             potions[i].transform.rotation *= Quaternion.AngleAxis(20, Camera.main.transform.right);
         }
 
-        if (Input.GetMouseButtonDown(0))
+        if (mousePos.magnitude < 0.25f)
         {
-            HideUI();
+            float tan = ((Mathf.Atan2(mousePos.x, mousePos.y) + Mathf.PI) * bars.Count) / (Mathf.PI * 2);
+
+            circleRenderer.material.SetFloat("_Highlight", (int) tan);
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                HideUI();
+            }
+        }
+        else
+        {
+            circleRenderer.material.SetFloat("_Highlight", -1);
         }
     }
 }
