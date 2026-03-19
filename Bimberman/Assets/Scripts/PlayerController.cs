@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     public bool canMove = true;
     public PlayerInventory inventory;
     public Interaction interaction;
+    public LevelLoader loader;
 
     private Rigidbody rb;
     private PlayerInputActions inputActions;
@@ -19,7 +20,8 @@ public class PlayerController : MonoBehaviour
     private Vector2 mousePosition;
 
     public Slider healthBar;
-    public int health = 10;
+    public int maxHealth = 10;
+    private int health = 10;
 
     void Awake()
     {
@@ -31,6 +33,8 @@ public class PlayerController : MonoBehaviour
         playerInstance = this;
 
         healthBar = GameObject.Find("Healthbar").GetComponent<Slider>();
+        health = maxHealth;
+        healthBar.maxValue = maxHealth;
     }
 
     private void OnEnable()
@@ -119,7 +123,21 @@ public class PlayerController : MonoBehaviour
     public void TakeDamage(int damage)
     {
         health -= damage;
-        healthBar.value -= damage;
+        healthBar.value = health;
+
+        if(health <= 0)
+        {
+            Die();
+        }
+
+    }
+    public void Die()
+    {
+        Debug.Log("Player has died.");
+
+        this.gameObject.SetActive(false);
+       
+        loader.LoadLevel();
     }
 
     public void EnterStationMode()

@@ -102,7 +102,7 @@ public class Enemy : MonoBehaviour
 
             if (!alreadyAttacked)
             {
-                Vector3 direction = (PlayerController.playerInstance.transform.position - transform.position).normalized;
+                Vector3 direction = (PlayerController.playerInstance.transform.position + Vector3.up - transform.position).normalized;
                 GameObject projectile = Instantiate(enemyShoot, transform.position + direction * 1f, Quaternion.LookRotation(direction));
                 Rigidbody rb = projectile.GetComponent<Rigidbody>();
                 rb.linearVelocity = direction * 50f;

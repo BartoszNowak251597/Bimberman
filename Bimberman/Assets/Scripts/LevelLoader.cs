@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -6,8 +7,31 @@ public class LevelLoader : MonoBehaviour
 {
     public static string currentLoadedScene;
     public string sceneToLoad;
+    public bool preserveAfterLoad;
 
-    public async Task LoadLevel()
+    private IEnumerator LoadLevelCoroutine()
+    {
+        transform.parent = null;
+        SceneManager.MoveGameObjectToScene(this.gameObject, PlayerController.playerInstance.gameObject.scene);
+
+        Debug.Log(currentLoadedScene);
+
+        var loadLevelTask = LoadLevelAsync();
+
+        while (!loadLevelTask.IsCompleted)
+        {
+            yield return null;
+        }
+
+        if (!preserveAfterLoad)
+        {
+            Destroy(this.gameObject);
+        }
+
+        yield break;
+    }
+
+    public async Task LoadLevelAsync()
     {
         PlayerController.playerInstance.GetComponent<Interaction>().ClearAvailable();
 
@@ -25,5 +49,12 @@ public class LevelLoader : MonoBehaviour
         }
 
         SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneToLoad));
+
+        currentLoadedScene = sceneToLoad;
+    }
+
+    public void LoadLevel()
+    {
+        StartCoroutine(LoadLevelCoroutine());
     }
 }

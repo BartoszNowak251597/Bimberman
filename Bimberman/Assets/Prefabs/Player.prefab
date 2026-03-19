@@ -127,9 +127,10 @@ MonoBehaviour:
   playerCamera: {fileID: 0}
   canMove: 1
   inventory: {fileID: 6084737295130101396}
+  interaction: {fileID: 0}
+  loader: {fileID: 0}
   healthBar: {fileID: 0}
-  health: 10
-  pauseMenu: {fileID: 0}
+  maxHealth: 10
 --- !u!114 &8844941783687293676
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -145,8 +146,8 @@ MonoBehaviour:
   attackInstance: {fileID: 2170750338459807091}
   playerInventory: {fileID: 6084737295130101396}
   interactionPrompt: {fileID: 3224379897785769158}
-  throwablePrefab: {fileID: 1928285255023996056, guid: 6f8e91e60bf06864090cdf07cc8f00a2, type: 3}
   throwSpeed: 10
+  throwCooldown: 1
 --- !u!114 &6084737295130101396
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -159,10 +160,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88f9a86adc0d5154489f739f8196decb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  equippedBimber: 0
-  ingredients: 0100000002000000
-  potions: 01000000
-  collectables: []
+  ingredients: []
+  potions: []
+  recipes: []
+  equippedPotion: {fileID: 0}
 --- !u!1 &3224379897785769158
 GameObject:
   m_ObjectHideFlags: 0
