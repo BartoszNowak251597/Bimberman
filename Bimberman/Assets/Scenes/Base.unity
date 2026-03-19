@@ -2495,7 +2495,19 @@ MonoBehaviour:
     m_Options: []
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 677848913}
+        m_TargetAssemblyTypeName: BrewingContraptionScript, Assembly-CSharp
+        m_MethodName: OnDropdownSet
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_AlphaFadeSpeed: 0.15
 --- !u!114 &544315603
 MonoBehaviour:
@@ -3914,7 +3926,7 @@ MonoBehaviour:
   recipes:
   - ingredients:
     - ingredient: 3
-      count: 1
+      count: 2
     resultPrefab: {fileID: 3513966773589861927, guid: 19b07223f3d14aa4d8ef3f31ac08317e, type: 3}
   makeRecipeButton: {fileID: 654832769}
   potionPlacement: {fileID: 864640126}
@@ -6906,7 +6918,19 @@ MonoBehaviour:
     m_Options: []
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 677848913}
+        m_TargetAssemblyTypeName: BrewingContraptionScript, Assembly-CSharp
+        m_MethodName: OnDropdownSet
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_AlphaFadeSpeed: 0.15
 --- !u!114 &1294897189
 MonoBehaviour:

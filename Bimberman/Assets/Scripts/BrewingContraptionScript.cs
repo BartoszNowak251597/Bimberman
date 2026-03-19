@@ -117,6 +117,7 @@ public class BrewingContraptionScript : InteractiveItem {
 			}
 		}
 
+		Debug.Log(workingRecipe.HasValue);
 		makeRecipeButton.gameObject.SetActive(workingRecipe.HasValue);
 	}
 

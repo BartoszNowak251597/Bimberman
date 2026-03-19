@@ -7,7 +7,10 @@ public class BaseScript : GameModeScript
     void Awake()
     {
         LevelLoader.currentLoadedScene = "Base";
-        PlayerController.playerInstance.gameObject.SetActive(true);
+        if (PlayerController.playerInstance != null)
+        {
+            PlayerController.playerInstance.gameObject.SetActive(true);
+        }
     }
 
     void Update()
