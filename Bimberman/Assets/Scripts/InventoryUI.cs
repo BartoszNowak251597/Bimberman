@@ -5,7 +5,7 @@ using TMPro;
 
 public class InventoryUI : MonoBehaviour
 {
-    const int MinPotionSlots = 9;
+    const int MinPotionSlots = 3;
 
     private struct ItemSlot
     {

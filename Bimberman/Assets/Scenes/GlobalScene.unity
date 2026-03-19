@@ -349,7 +349,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AttackGenerator
   explosionEffectPrefab: {fileID: 5604516967968833624, guid: b6805d59da434fc43a0050c5772a8438, type: 3}
-  wallEffectPrefab: {fileID: 0}
+  wallEffectPrefab: {fileID: 481879377358493277, guid: 56d23cf723652624b933ca1ad7112606, type: 3}
 --- !u!4 &1025311391
 Transform:
   m_ObjectHideFlags: 0
@@ -399,12 +399,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6084737295130101396, guid: 1db5be717280b254192dc7994f83da94, type: 3}
       propertyPath: potions.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6084737295130101396, guid: 1db5be717280b254192dc7994f83da94, type: 3}
       propertyPath: 'potions.Array.data[0]'
       value: 
-      objectReference: {fileID: 1818253137}
+      objectReference: {fileID: 0}
     - target: {fileID: 6084737295130101396, guid: 1db5be717280b254192dc7994f83da94, type: 3}
       propertyPath: 'potions.Array.data[1]'
       value: 
@@ -592,78 +592,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
---- !u!1001 &1818253136
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 3513966773589861927, guid: 7a8fc911dd831e44aa68b185e46a4218, type: 3}
-      propertyPath: m_Name
-      value: ClassicBimberPrefab
-      objectReference: {fileID: 0}
-    - target: {fileID: 3513966773589861927, guid: 7a8fc911dd831e44aa68b185e46a4218, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8093220176816142763, guid: 7a8fc911dd831e44aa68b185e46a4218, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 2.88303
-      objectReference: {fileID: 0}
-    - target: {fileID: 8093220176816142763, guid: 7a8fc911dd831e44aa68b185e46a4218, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8093220176816142763, guid: 7a8fc911dd831e44aa68b185e46a4218, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.23232
-      objectReference: {fileID: 0}
-    - target: {fileID: 8093220176816142763, guid: 7a8fc911dd831e44aa68b185e46a4218, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8093220176816142763, guid: 7a8fc911dd831e44aa68b185e46a4218, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8093220176816142763, guid: 7a8fc911dd831e44aa68b185e46a4218, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8093220176816142763, guid: 7a8fc911dd831e44aa68b185e46a4218, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8093220176816142763, guid: 7a8fc911dd831e44aa68b185e46a4218, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8093220176816142763, guid: 7a8fc911dd831e44aa68b185e46a4218, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8093220176816142763, guid: 7a8fc911dd831e44aa68b185e46a4218, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 7a8fc911dd831e44aa68b185e46a4218, type: 3}
---- !u!114 &1818253137 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5015377425571659158, guid: 7a8fc911dd831e44aa68b185e46a4218, type: 3}
-  m_PrefabInstance: {fileID: 1818253136}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0cbaed7d4c8e3748801c4d041f6d66a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Potion
 --- !u!1001 &2124109198
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -811,6 +739,5 @@ SceneRoots:
   - {fileID: 1066640193}
   - {fileID: 330585546}
   - {fileID: 1628572124}
-  - {fileID: 1818253136}
   - {fileID: 2124109198}
   - {fileID: 1025311391}

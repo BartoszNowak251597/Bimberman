@@ -6,6 +6,21 @@ using TMPro;
 using System;
 
 public class BrewingContraptionScript : InteractiveItem {
+	[Serializable]
+	public struct Recipe
+	{
+		[Serializable]
+		public struct RecipeIngredient
+		{
+			public Ingredient.IngredientType ingredient;
+			public int count;
+		}
+
+		public RecipeIngredient[] ingredients;
+
+		public GameObject resultPrefab;
+	};
+
 	public Canvas uiCanvas;
 	public Transform cameraPos;
 	
@@ -14,6 +29,12 @@ public class BrewingContraptionScript : InteractiveItem {
 	private Potion moonshineBottle;
 
 	public TMP_Dropdown[] slotDropdowns;
+
+	public Recipe[] recipes;
+	private Recipe? workingRecipe;
+
+	public Button makeRecipeButton;
+	public PotionCollectible potionPlacement;
 
 	private void RefreshUI()
 	{
@@ -41,11 +62,103 @@ public class BrewingContraptionScript : InteractiveItem {
 				});
 			}
 		}
+
+		RefreshWorkingRecipe();
+	}
+
+	public void RefreshWorkingRecipe()
+	{
+		if (this.moonshineBottle == null)
+		{
+			makeRecipeButton.gameObject.SetActive(false);
+			
+			return;
+		}
+
+		Dictionary<Ingredient.IngredientType, int> ingredientCounts = new Dictionary<Ingredient.IngredientType, int>();
+
+		foreach (var slot in slotDropdowns)
+		{
+			string ingredientName = slot.options[slot.value].text;
+
+			var ingredient = Enum.Parse<Ingredient.IngredientType>(ingredientName);
+
+			if (ingredientCounts.ContainsKey(ingredient))
+			{
+				ingredientCounts[ingredient]++;
+			}
+			else
+			{
+				ingredientCounts[ingredient] = 1;
+			}
+		}
+
+		workingRecipe = null;
+
+		foreach (var recipe in recipes)
+		{
+			bool matches = true;
+
+			foreach (var part in recipe.ingredients)
+			{
+				if (!ingredientCounts.ContainsKey(part.ingredient) || ingredientCounts[part.ingredient] < part.count)
+				{
+					matches = false;
+					
+					break;
+				}
+			}
+
+			if (matches)
+			{
+				workingRecipe = recipe;
+
+				break;
+			}
+		}
+
+		makeRecipeButton.gameObject.SetActive(workingRecipe.HasValue);
 	}
 
 	public void OnDropdownSet(int index)
 	{
-		Debug.Log(index);
+		RefreshWorkingRecipe();
+	}
+
+	public void MakeRecipe()
+	{
+		if (workingRecipe.HasValue)
+		{
+			var bottleResult = Instantiate(workingRecipe.Value.resultPrefab, this.potionPlacement.transform);
+
+			bottleResult.transform.localPosition = Vector3.zero;
+			bottleResult.transform.localRotation = Quaternion.identity;
+
+			bottleResult.SetActive(true);
+
+			potionPlacement.potion = bottleResult.GetComponent<Potion>();
+
+			for (int index = 0; index < workingRecipe.Value.ingredients.Length; index++)
+			{
+				var ingredient = workingRecipe.Value.ingredients[index];
+
+				while (ingredient.count > 0)
+				{
+					PlayerController.playerInstance.inventory.ingredients.Remove(PlayerController.playerInstance.inventory.ingredients.Find( i => i.type == ingredient.ingredient ));
+
+					ingredient.count--;
+				}
+			}
+
+			foreach (var slot in slotDropdowns)
+			{
+				slot.SetValueWithoutNotify(0);
+			}
+
+			workingRecipe = null;
+
+			RefreshUI();
+		}
 	}
 
 	public override void Interact()
@@ -97,5 +210,10 @@ public class BrewingContraptionScript : InteractiveItem {
 		moonshineBottle = moonshine;
 
 		RefreshUI();
+	}
+
+	public override bool CanInteract()
+	{
+		return potionPlacement.potion == null;
 	}
 }

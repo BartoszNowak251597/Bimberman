@@ -5,7 +5,7 @@ public class Potion : MonoBehaviour
 	public enum PotionEffect
 	{
 		Moonshine,
-		Lifesteal
+		Wall
 	}
 
 	public PotionEffect[] effects;

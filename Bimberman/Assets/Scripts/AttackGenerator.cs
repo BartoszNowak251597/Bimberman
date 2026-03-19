@@ -14,7 +14,8 @@ public class AttackGenerator : MonoBehaviour
 	private delegate void AttackFunction(GameObject attackObject, int strength);
 
 	static Dictionary<Potion.PotionEffect, AttackFunction> attacks = new Dictionary<Potion.PotionEffect, AttackFunction>() {
-		{ Potion.PotionEffect.Moonshine, GenerateRegularAttack }
+		{ Potion.PotionEffect.Moonshine, GenerateRegularAttack },
+		{ Potion.PotionEffect.Wall, GenerateWallAttack }
 	};
 
 	private void Awake()
@@ -30,6 +31,19 @@ public class AttackGenerator : MonoBehaviour
 		effectObject.transform.position = attackObject.transform.position;
 		effect.range = strength;
 		effect.damage = 5 * strength;
+	}
+
+	private static void GenerateWallAttack(GameObject attackObject, int strength)
+	{
+		var effectObject = Instantiate(instance.wallEffectPrefab);
+		effectObject.transform.localScale = Vector3.one * (2 * strength);
+		effectObject.transform.position = attackObject.transform.position;
+
+		Vector3 vel = attackObject.GetComponent<Rigidbody>().linearVelocity;
+
+		vel.y = 0;
+
+		effectObject.transform.rotation = Quaternion.LookRotation(vel);
 	}
 
 	public static void GenerateAttack(Potion potion)

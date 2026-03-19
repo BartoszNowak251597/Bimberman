@@ -9,9 +9,9 @@ public class ThrowableInteraction : MonoBehaviour
             ||
             collision.gameObject.tag == "Enemy"
         ) {
-            Destroy(gameObject);
-
             AttackGenerator.GenerateAttack(GetComponent<Potion>());
+
+            Destroy(gameObject);
         }
     }
 }
