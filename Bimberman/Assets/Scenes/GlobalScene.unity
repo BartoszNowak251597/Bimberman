@@ -348,7 +348,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5d94f5126291074d89dc94af9ba606c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AttackGenerator
-  moonshineAttackPrefab: {fileID: 5604516967968833624, guid: b6805d59da434fc43a0050c5772a8438, type: 3}
+  explosionEffectPrefab: {fileID: 5604516967968833624, guid: b6805d59da434fc43a0050c5772a8438, type: 3}
+  wallEffectPrefab: {fileID: 0}
 --- !u!4 &1025311391
 Transform:
   m_ObjectHideFlags: 0
@@ -424,10 +425,6 @@ PrefabInstance:
       propertyPath: healthBar
       value: 
       objectReference: {fileID: 1689581002}
-    - target: {fileID: 6404828200693246055, guid: 1db5be717280b254192dc7994f83da94, type: 3}
-      propertyPath: maxHealth
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 6404828200693246055, guid: 1db5be717280b254192dc7994f83da94, type: 3}
       propertyPath: moveSpeed
       value: 8

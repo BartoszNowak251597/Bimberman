@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0cbaed7d4c8e3748801c4d041f6d66a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Potion
-  effects: 0000000000000000
+  effects: 00000000
 --- !u!65 &342287689828367550
 BoxCollider:
   m_ObjectHideFlags: 0

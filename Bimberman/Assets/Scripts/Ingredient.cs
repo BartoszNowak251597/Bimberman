@@ -8,7 +8,8 @@ public class Ingredient : Collectible
 		None,
 		Sugar,
 		Water,
-		SomeDeadBodyPart
+		Bones,
+		Roots
 	}
 
 	public IngredientType type;
