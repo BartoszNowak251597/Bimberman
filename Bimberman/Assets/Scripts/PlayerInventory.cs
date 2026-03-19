@@ -7,6 +7,7 @@ public class PlayerInventory : MonoBehaviour
     public List<Ingredient> ingredients = new List<Ingredient>();
     public List<Potion> potions = new List<Potion>();
     public List<CollectibleRecipe> recipes = new List<CollectibleRecipe>();
+    public Potion equippedPotion = null;
 
     public void CollectRecipe(CollectibleRecipe recipe)
     {
@@ -63,5 +64,10 @@ public class PlayerInventory : MonoBehaviour
         potion.transform.parent = null;
 
         SceneManager.MoveGameObjectToScene(potion.gameObject, this.gameObject.scene);
+
+        if (equippedPotion == null)
+        {
+            equippedPotion = potion;
+        }
     }
 }

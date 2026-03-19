@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8093220176816142763}
   - component: {fileID: 5015377425571659158}
+  - component: {fileID: 342287689828367550}
   m_Layer: 0
   m_Name: ClassicBimberPrefab
   m_TagString: Untagged
@@ -26,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 3513966773589861927}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -5.731219, y: 8.360181, z: -6.175549}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -45,7 +46,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0cbaed7d4c8e3748801c4d041f6d66a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Potion
-  type: 1
+  effects: 0000000000000000
+--- !u!65 &342287689828367550
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3513966773589861927}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.37315607, y: 1.17857, z: 0.3997014}
+  m_Center: {x: 0, y: 0.5892848, z: 0}
 --- !u!1001 &1153795412189785769
 PrefabInstance:
   m_ObjectHideFlags: 0

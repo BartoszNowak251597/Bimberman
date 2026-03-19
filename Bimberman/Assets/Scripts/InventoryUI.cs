@@ -147,12 +147,17 @@ public class InventoryUI : MonoBehaviour
 
         if (mousePos.magnitude < circleSize)
         {
-            float tan = ((Mathf.Atan2(mousePos.x, mousePos.y) + Mathf.PI) * bars.Count) / (Mathf.PI * 2);
+            int potionIndex = (int) (((Mathf.Atan2(mousePos.x, mousePos.y) + Mathf.PI) * bars.Count) / (Mathf.PI * 2));
 
-            circleRenderer.material.SetFloat("_Highlight", (int) tan);
+            circleRenderer.material.SetFloat("_Highlight", potionIndex);
 
             if (Input.GetMouseButtonDown(0))
             {
+                if (potionIndex < potions.Count && potions[potionIndex] != null)
+                {
+                    PlayerController.playerInstance.inventory.equippedPotion = potions[potionIndex];
+                }
+
                 HideUI();
             }
         }

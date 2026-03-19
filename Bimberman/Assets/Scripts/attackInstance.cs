@@ -4,19 +4,16 @@ using UnityEngine;
 
 public class attackInstance : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    float t = 0;
     void Start()
     {
         
     }
-    float t = 0;
-    // Update is called once per frame
     void Update()
     {
         t += 1;
         if (t>180)
         {
-            //Timer = new Timer(DestroySelf, null, 2000, Timeout.Infinite);
             Destroy(gameObject);
         }
     }
@@ -39,11 +36,8 @@ public class attackInstance : MonoBehaviour
 
             foreach (var hit in hits)
             {
-                //Debug.Log("Hit: " + hit.collider.gameObject.name);
                 if (hit.collider.gameObject.CompareTag("Enemy"))
                 {
-                    //Debug.Log("Enemy hit!");
-                    //Destroy(hit.collider.gameObject);
                     Enemy enemyComponent = hit.collider.gameObject.GetComponent<Enemy>();
                     if (enemyComponent != null)
                     {
@@ -53,17 +47,4 @@ public class attackInstance : MonoBehaviour
             }
         }
     }
-
-    //private void OnCollisionEnter(Collision collision)
-    //{
-    //    Debug.Log("Collision detected with: " + collision.gameObject.name);
-    //    //if (collision.collider.TryGetComponent<Enemy>(out var enemy))
-    //    if (collision.gameObject.CompareTag("Enemy"))
-    //    {
-    //        Debug.Log("Enemy hit!");
-    //        Destroy(collision.gameObject);
-    //    }
-
-    //}
-
 }

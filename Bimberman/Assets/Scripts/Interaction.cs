@@ -16,7 +16,6 @@ public class Interaction : MonoBehaviour
     public PlayerInventory playerInventory;
     public GameObject interactionPrompt;
 
-    public GameObject throwablePrefab;  
     public float throwSpeed = 10f;      
     public float throwCooldown = 1;
 
@@ -82,8 +81,18 @@ public class Interaction : MonoBehaviour
         projectile.transform.position = startPos;
         projectile.transform.rotation = Quaternion.LookRotation(velocity);
 
+        projectile.AddComponent<ThrowableInteraction>();
+
         Rigidbody rb = projectile.GetComponent<Rigidbody>();
+
+        if (rb == null)
+        {
+            rb = projectile.AddComponent<Rigidbody>();
+        }
+
         rb.linearVelocity = velocity;
+        
+        projectile.SetActive(true);
 
         lastThrowTime = Time.time;
     }
@@ -102,13 +111,13 @@ public class Interaction : MonoBehaviour
                     if (item != null) item.Interact();
                 }
             }
-            else if (Time.time > this.lastThrowTime + this.throwCooldown) {
+            else if (PlayerController.playerInstance.inventory.equippedPotion != null && Time.time > this.lastThrowTime + this.throwCooldown) {
                 Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
 
                 groundPlane.Raycast(ray, out float dist);
 
                 Vector3 targetPos = ray.GetPoint(dist);
-                GameObject projectile = Instantiate(throwablePrefab);
+                GameObject projectile = Instantiate(PlayerController.playerInstance.inventory.equippedPotion.gameObject);
 
                 ThrowProjectile(projectile, targetPos);
             }
