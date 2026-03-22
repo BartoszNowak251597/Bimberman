@@ -831,7 +831,7 @@ MonoBehaviour:
   outlineObject: {fileID: 5334363586694072541}
   stationCameraPoint: {fileID: 2430428978374942026}
   bimberDisplayObject: {fileID: 9037361278229811386}
-  brewStationUI: {fileID: 0}
+  brewStationUI: {fileID: 8056268971269302834, guid: 34de394fe991d4b4a8ffd9ab9125506b, type: 3}
   mixSlot: {fileID: 941251535993039207}
   sceneIngredients:
   - {fileID: 6598817166467073118}

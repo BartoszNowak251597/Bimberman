@@ -23,7 +23,9 @@ public class Interaction : MonoBehaviour
     private float lastThrowTime;
 
     public GameObject portableStationPrefab;   
-    private GameObject currentPortableStation; 
+    private GameObject currentPortableStation;
+
+    private bool isInStationView = false;
 
     public LayerMask groundLayer;              
 
@@ -93,6 +95,11 @@ public class Interaction : MonoBehaviour
         lastThrowTime = Time.time;
     }
 
+    public void SetStationViewActive(bool active)
+    {
+        isInStationView = active;
+    }
+
     private void Update()
     {
         if (Input.GetMouseButtonDown(0))
@@ -107,21 +114,20 @@ public class Interaction : MonoBehaviour
                     if (item != null) item.Interact();
                 }
             }
-            else if (Time.time > this.lastThrowTime + this.throwCooldown) {
+            else if (!isInStationView && Time.time > this.lastThrowTime + this.throwCooldown)
+            {
                 Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
-
                 groundPlane.Raycast(ray, out float dist);
-
                 Vector3 targetPos = ray.GetPoint(dist);
                 GameObject projectile = Instantiate(throwablePrefab);
-
                 ThrowProjectile(projectile, targetPos);
             }
-        }
+        
+    }
         if (Input.GetKeyDown(KeyCode.Q))
         {
             bool isInBase = GameObject.FindAnyObjectByType<BaseScript>() != null;
-            if (!isInBase)
+            if (!isInBase && !isInStationView)
             {
                 SpawnPortableStation();
             }
@@ -152,7 +158,7 @@ public class Interaction : MonoBehaviour
 
     private void OnInteractPerformed(InputAction.CallbackContext context)
     {
-        if (currentFocusedItem != null)
+        if (currentFocusedItem != null && currentFocusedItem.CanInteract())
         {
             currentFocusedItem.Interact();
         }

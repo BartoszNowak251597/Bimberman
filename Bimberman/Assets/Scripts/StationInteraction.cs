@@ -32,15 +32,20 @@ public class StationInteraction : InteractiveItem
     private int currentRecipeIndex;
     private BimberRecipe currentRecipe;
 
+    private Interaction playerInteraction;
+
     public bool IsBrewingActive => isBrewingActive;
 
     public override void Interact()
     {
+        if (inStationView) return;
+
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player == null) return;
 
         playerController = player.GetComponent<PlayerController>();
         playerInventory = player.GetComponent<PlayerInventory>();
+        playerInteraction = player.GetComponent<Interaction>();
 
         if (Camera.main != null)
             cameraController = Camera.main.GetComponent<CameraController>();
@@ -93,6 +98,9 @@ public class StationInteraction : InteractiveItem
                 brewStationUI.leaveButton.onClick.AddListener(ExitStationView);
             }
         }
+
+        if (playerInteraction != null)
+            playerInteraction.SetStationViewActive(true);
 
         RefreshUI();
         inStationView = true;
@@ -285,11 +293,19 @@ public class StationInteraction : InteractiveItem
 
     private void ExitStationView()
     {
+        inStationView = false;
         isBrewingActive = false;
         currentRecipe = null;
 
         HideAllSceneIngredients();
         mixSlot?.ResetSlot();
+        if (brewStationUI != null)
+        {
+            brewStationUI.Hide();
+            brewStationUI.gameObject.SetActive(false); 
+        }
+        if (bimberDisplayObject != null)
+            bimberDisplayObject.SetActive(false);
 
         if (playerController != null)
             playerController.SetMovementEnabled(true);
@@ -321,7 +337,9 @@ public class StationInteraction : InteractiveItem
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        inStationView = false;
+        if (playerInteraction != null)
+            playerInteraction.SetStationViewActive(false);
+
 
         if (isTemporary)
         {
