@@ -330,7 +330,7 @@ public class StationInteraction : InteractiveItem
             if (brewStationUI.leaveButton != null)
                 brewStationUI.leaveButton.onClick.RemoveListener(ExitStationView);
 
-            brewStationUI.gameObject.SetActive(true);
+            //brewStationUI.gameObject.SetActive(true);
             brewStationUI.Hide();
         }
 

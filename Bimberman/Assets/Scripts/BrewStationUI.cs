@@ -21,6 +21,11 @@ public class BrewStationUI : MonoBehaviour
     public Button distillButton;
     public Button leaveButton;
 
+    void Awake()
+    {
+        Hide();
+    }
+
     public void Show()
     {
         if (panel != null)
