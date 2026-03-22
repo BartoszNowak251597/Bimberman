@@ -22,6 +22,11 @@ public class Interaction : MonoBehaviour
 
     private float lastThrowTime;
 
+    public GameObject portableStationPrefab;   
+    private GameObject currentPortableStation; 
+
+    public LayerMask groundLayer;              
+
     void Awake()
     {
         if (inputActions == null)
@@ -113,35 +118,16 @@ public class Interaction : MonoBehaviour
                 ThrowProjectile(projectile, targetPos);
             }
         }
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            bool isInBase = GameObject.FindAnyObjectByType<BaseScript>() != null;
+            if (!isInBase)
+            {
+                SpawnPortableStation();
+            }
+        }
     }
-        // if (Input.GetMouseButtonDown(1))
-        // {
-        //     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        //     RaycastHit hit;
-
-        //     if (Physics.Raycast(ray, out hit))
-        //     {
-        //         if (hit.collider.CompareTag("Collectable"))
-        //         {
-        //             GameObject player = GameObject.FindGameObjectWithTag("Player");
-        //             if (player != null)
-        //             {
-        //                 Renderer renderer = player.GetComponent<Renderer>();
-        //                 if (renderer != null)
-        //                 {
-        //                     Color randomColor = hit.rigidbody.gameObject.GetComponent<Renderer>().material.color;
-        //                     renderer.material.color = randomColor;
-        //                 }
-        //                 CollectableType type = CollectableType.SomeDeadBodyPart;
-        //                 playerInventory.collectables.Add(type);
-
-        //             }
-        //             Destroy(hit.collider.gameObject);
-        //         }
-        //     }
-        // }
-    
-
+        
     private void LateUpdate()
     {
         UpdateInteractionPrompt();
@@ -211,5 +197,42 @@ public class Interaction : MonoBehaviour
     private void UpdateFocusedItem()
     {
         currentFocusedItem.SetFocused(false);
+    }
+
+    private void SpawnPortableStation()
+    {
+        Vector3 spawnPos = transform.position + transform.forward * 2f;
+        if (Physics.Raycast(spawnPos + Vector3.up * 5f, Vector3.down, out RaycastHit hit, 10f, groundLayer))
+        {
+            spawnPos.y = hit.point.y;
+        }
+        else
+        {
+            spawnPos.y = transform.position.y; 
+        }
+
+        currentPortableStation = Instantiate(portableStationPrefab, spawnPos, Quaternion.identity);
+        StationInteraction station = currentPortableStation.GetComponentInChildren<StationInteraction>();
+        if (station != null)
+        {
+            station.isTemporary = true;
+            station.OnStationExited += HandlePortableStationExited;
+            station.Interact(); 
+        }
+        else
+        {
+            Destroy(currentPortableStation);
+            currentPortableStation = null;
+            Debug.LogError("Portable station prefab nie zawiera komponentu StationInteraction!");
+        }
+    }
+
+    private void HandlePortableStationExited()
+    {
+        if (currentPortableStation != null)
+        {
+            Destroy(currentPortableStation);
+            currentPortableStation = null;
+        }
     }
 }

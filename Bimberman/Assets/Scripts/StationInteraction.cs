@@ -17,6 +17,10 @@ public class StationInteraction : InteractiveItem
     public MixSlot mixSlot;
     public List<DraggableIngredient> sceneIngredients = new List<DraggableIngredient>();
 
+    [Header("Tymczasowa stacja")]
+    public bool isTemporary = false;          
+    public System.Action OnStationExited;    
+
     private bool inStationView = false;
     private bool isBrewingActive = false;
 
@@ -318,6 +322,11 @@ public class StationInteraction : InteractiveItem
         Cursor.visible = true;
 
         inStationView = false;
+
+        if (isTemporary)
+        {
+            OnStationExited?.Invoke();
+        }
     }
 
 	public override bool CanInteract()

@@ -605,6 +605,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 8844941783687293676, guid: 1db5be717280b254192dc7994f83da94, type: 3}
+      propertyPath: groundLayer.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
+    - target: {fileID: 8844941783687293676, guid: 1db5be717280b254192dc7994f83da94, type: 3}
+      propertyPath: portableStationPrefab
+      value: 
+      objectReference: {fileID: 6701851474100201094, guid: b692022ac0b4f954b933715a5b9cdc75, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

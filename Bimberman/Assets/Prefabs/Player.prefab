@@ -148,6 +148,11 @@ MonoBehaviour:
   interactionPrompt: {fileID: 3224379897785769158}
   throwablePrefab: {fileID: 1928285255023996056, guid: 6f8e91e60bf06864090cdf07cc8f00a2, type: 3}
   throwSpeed: 10
+  throwCooldown: 1
+  portableStationPrefab: {fileID: 6701851474100201094, guid: b692022ac0b4f954b933715a5b9cdc75, type: 3}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!114 &6084737295130101396
 MonoBehaviour:
   m_ObjectHideFlags: 0
