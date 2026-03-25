@@ -22,6 +22,7 @@ public class BaseViewController : MonoBehaviour
     private bool isBusy;
     private bool isInUiView;
     private Coroutine activeCoroutine;
+    public PlayerInputActions inputActions;
 
     public void Initialize(Transform newPlayerOrigin, Transform[] newLookPoints, Vector3 newCameraLocalOffset, int startIndex = 0)
     {
@@ -41,6 +42,11 @@ public class BaseViewController : MonoBehaviour
         canControl = true;
         isBusy = false;
         isInUiView = false;
+
+        if (inputActions == null)
+            inputActions = new PlayerInputActions();
+
+        inputActions.Enable();
     }
 
     private void OnDisable()
@@ -54,6 +60,9 @@ public class BaseViewController : MonoBehaviour
             StopCoroutine(activeCoroutine);
             activeCoroutine = null;
         }
+
+        if (inputActions != null)
+            inputActions.Disable();
     }
 
     private void Update()
@@ -70,13 +79,23 @@ public class BaseViewController : MonoBehaviour
     {
         if (Keyboard.current == null) return;
 
-        if (Keyboard.current.qKey.wasPressedThisFrame)
+        int movement = 0;
+
+        if (inputActions.Base.Look.WasPressedThisFrame()) {
+            movement = (int) inputActions.Base.Look.ReadValue<float>();
+        }
+
+        if (movement == 0 && inputActions.Player.Move.WasPressedThisFrame()) {
+            movement = (int) inputActions.Player.Move.ReadValue<Vector2>().x;
+        }
+
+        if (movement > 0)
         {
             PreviousPoint();
             return;
         }
 
-        if (Keyboard.current.eKey.wasPressedThisFrame)
+        if (movement < 0)
         {
             NextPoint();
             return;
