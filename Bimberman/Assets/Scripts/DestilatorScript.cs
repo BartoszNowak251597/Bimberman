@@ -1,8 +1,10 @@
 using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.InputSystem;
 
 public class DestilatorScript : InteractiveItem {
 	public Canvas uiCanvas;
@@ -27,27 +29,39 @@ public class DestilatorScript : InteractiveItem {
 	{
 		var ingredients = PlayerController.playerInstance.inventory.ingredients;
 
-		addWaterButton.interactable = ingredients.Count( ingredient => ingredient.type == Ingredient.IngredientType.Water ) > 0;
+		addWaterButton.interactable = ingredients.Count(ingredient => ingredient.type == Ingredient.IngredientType.Water) > 0;
 
 		waterUnitsText.text = string.Format("Water Units: {0}", waterUnits.Count);
 
-		addSugarButton.interactable = ingredients.Count( ingredient => ingredient.type == Ingredient.IngredientType.Sugar ) > 0;
+		addSugarButton.interactable = ingredients.Count(ingredient => ingredient.type == Ingredient.IngredientType.Sugar) > 0;
 
 		sugarUnitsText.text = string.Format("Sugar Units: {0}", sugarUnits.Count);
 
-		makeMoonshineButton.gameObject.SetActive(waterUnits.Count > 0 && sugarUnits.Count > 0 && moonshinePlacement.potion == null);
+		makeMoonshineButton.gameObject.SetActive(
+			waterUnits.Count > 0 &&
+			sugarUnits.Count > 0 &&
+			moonshinePlacement.potion == null
+		);
 	}
 
 	public override void Interact() {
 		uiCanvas.gameObject.SetActive(true);
-
 		interactPrompt.gameObject.SetActive(false);
 
 		var player = PlayerController.playerInstance;
-
 		player.EnterStationMode();
 
-		player.playerCamera.GetComponent<CameraController>().EnterStationMode(cameraPos);
+		BaseViewController baseViewController = player.playerCamera.GetComponent<BaseViewController>();
+		if (baseViewController != null && baseViewController.enabled)
+		{
+			baseViewController.EnterUiView(cameraPos);
+		}
+		else
+		{
+			CameraController cameraController = player.playerCamera.GetComponent<CameraController>();
+			if (cameraController != null)
+				cameraController.EnterStationMode(cameraPos);
+		}
 
 		RefreshUI();
 	}
@@ -55,21 +69,40 @@ public class DestilatorScript : InteractiveItem {
 	public void Exit()
 	{
 		uiCanvas.gameObject.SetActive(false);
-
-		interactPrompt.gameObject.SetActive(true);
+		interactPrompt.gameObject.SetActive(false);
 
 		var player = PlayerController.playerInstance;
 
-		player.ExitStationMode();
+		BaseViewController baseViewController = player.playerCamera.GetComponent<BaseViewController>();
+		if (baseViewController != null && baseViewController.enabled)
+		{
+			baseViewController.ExitUiView();
+			StartCoroutine(FinishExitAfterCameraReturns(player, baseViewController));
+		}
+		else
+		{
+			CameraController cameraController = player.playerCamera.GetComponent<CameraController>();
+			if (cameraController != null)
+				cameraController.ExitStationMode();
 
-		player.playerCamera.GetComponent<CameraController>().ExitStationMode();
+			player.ExitStationMode();
+		}
+	}
+
+	private IEnumerator FinishExitAfterCameraReturns(PlayerController player, BaseViewController baseViewController)
+	{
+		while (baseViewController.IsBusy())
+			yield return null;
+
+		baseViewController.ForceBaseView();
+		player.ExitStationMode();
 	}
 
 	public void AddWater()
 	{
 		var ingredients = PlayerController.playerInstance.inventory.ingredients;
 
-		var waterBottle = ingredients.FirstOrDefault( i => i.type == Ingredient.IngredientType.Water );
+		var waterBottle = ingredients.FirstOrDefault(i => i.type == Ingredient.IngredientType.Water);
 
 		if (waterBottle != null)
 		{
@@ -86,13 +119,11 @@ public class DestilatorScript : InteractiveItem {
 	{
 		var ingredients = PlayerController.playerInstance.inventory.ingredients;
 
-		var sugarCube = ingredients.FirstOrDefault( i => i.type == Ingredient.IngredientType.Sugar );
+		var sugarCube = ingredients.FirstOrDefault(i => i.type == Ingredient.IngredientType.Sugar);
 
 		if (sugarCube != null)
 		{
 			Debug.Log("Does that vork?: " + ingredients.Remove(sugarCube));
-
-			ingredients.Remove(sugarCube);
 
 			this.sugarUnits.Push(sugarCube);
 			sugarCube.transform.parent = this.transform;
@@ -118,9 +149,23 @@ public class DestilatorScript : InteractiveItem {
 		RefreshUI();
 	}
 
+	public void CollectMoonshine()
+	{
+		if (moonshinePlacement == null || moonshinePlacement.potion == null)
+			return;
+
+		PlayerController.playerInstance.inventory.Collect(moonshinePlacement.potion);
+		moonshinePlacement.potion = null;
+
+		RefreshUI();
+	}
+
 	public void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.Escape))
+		if (uiCanvas == null || !uiCanvas.gameObject.activeSelf)
+			return;
+
+		if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
 		{
 			Exit();
 		}

@@ -6,6 +6,14 @@ public class PlayerController : MonoBehaviour
 {
     public static PlayerController playerInstance;
 
+    public enum PlayerMode
+    {
+        Normal,
+        StationaryPOV
+    }
+
+    [Header("General")]
+    public PlayerMode currentMode = PlayerMode.Normal;
     public float moveSpeed = 5f;
     public Camera playerCamera;
     public bool canMove = true;
@@ -17,7 +25,6 @@ public class PlayerController : MonoBehaviour
     private PlayerInputActions inputActions;
 
     private Vector2 moveInput;
-    private Vector2 mousePosition;
 
     public Slider healthBar;
     public int maxHealth = 10;
@@ -35,6 +42,7 @@ public class PlayerController : MonoBehaviour
         healthBar = GameObject.Find("Healthbar").GetComponent<Slider>();
         health = maxHealth;
         healthBar.maxValue = maxHealth;
+        healthBar.value = health;
     }
 
     private void OnEnable()
@@ -53,28 +61,38 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (!canMove)
-        {
-            moveInput = Vector2.zero;
-            return;
-        }
-
         if (inputActions == null)
             return;
 
         moveInput = inputActions.Player.Move.ReadValue<Vector2>();
-        mousePosition = inputActions.Player.Look.ReadValue<Vector2>();
 
-        RotateToMouse();
+        switch (currentMode)
+        {
+            case PlayerMode.Normal:
+                HandleNormalRotation();
+                break;
+
+            case PlayerMode.StationaryPOV:
+                break;
+        }
+
+        if (!canMove)
+        {
+            moveInput = Vector2.zero;
+        }
     }
 
     void FixedUpdate()
     {
-        Move();
+        if (currentMode == PlayerMode.Normal && canMove)
+        {
+            Move();
+        }
     }
 
     void Move()
     {
+        if (playerCamera == null) return;
 
         Vector3 cameraForward = playerCamera.transform.forward;
         Vector3 cameraRight = playerCamera.transform.right;
@@ -94,9 +112,16 @@ public class PlayerController : MonoBehaviour
         rb.MovePosition(newPosition);
     }
 
+    void HandleNormalRotation()
+    {
+        RotateToMouse();
+    }
+
     void RotateToMouse()
     {
         if (playerCamera == null) return;
+
+        Vector2 mousePosition = inputActions.Player.Look.ReadValue<Vector2>();
 
         Ray ray = playerCamera.ScreenPointToRay(mousePosition);
         Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
@@ -125,34 +150,61 @@ public class PlayerController : MonoBehaviour
         health -= damage;
         healthBar.value = health;
 
-        if(health <= 0)
+        if (health <= 0)
         {
             Die();
         }
-
     }
+
     public void Die()
     {
         Debug.Log("Player has died.");
-
-        this.gameObject.SetActive(false);
-       
+        gameObject.SetActive(false);
         loader.LoadLevel();
+    }
+
+    public void SetMode(PlayerMode mode)
+    {
+        currentMode = mode;
+
+        switch (mode)
+        {
+            case PlayerMode.Normal:
+                SetMovementEnabled(true);
+
+                if (interaction != null)
+                    interaction.enabled = true;
+                break;
+
+            case PlayerMode.StationaryPOV:
+                SetMovementEnabled(false);
+
+                if (interaction != null)
+                    interaction.enabled = true;
+                break;
+        }
     }
 
     public void EnterStationMode()
     {
         SetMovementEnabled(false);
 
-        interaction.interactionPrompt.SetActive(false);
-        interaction.enabled = false;
+        if (interaction != null)
+        {
+            interaction.enabled = false;
+
+            if (interaction.interactionPrompt != null)
+                interaction.interactionPrompt.SetActive(false);
+        }
     }
 
     public void ExitStationMode()
     {
-        SetMovementEnabled(true);
+        SetMovementEnabled(false);
 
-        interaction.enabled = true;
-        interaction.interactionPrompt.SetActive(true);
+        if (interaction != null)
+        {
+            interaction.enabled = true;
+        }
     }
 }
