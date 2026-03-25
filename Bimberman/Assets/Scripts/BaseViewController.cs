@@ -17,16 +17,10 @@ public class BaseViewController : MonoBehaviour
     [Header("UI Transition")]
     [SerializeField] private float moveDuration = 0.3f;
 
-    // [Header("Mouse Edge Switch")]
-    // [SerializeField] private bool useMouseEdges = true;
-    // [SerializeField] private float edgeSize = 40f;
-    // [SerializeField] private float edgeCooldown = 0.25f;
-
     private int currentIndex;
     private bool canControl;
     private bool isBusy;
     private bool isInUiView;
-    // private float edgeTimer;
     private Coroutine activeCoroutine;
 
     public void Initialize(Transform newPlayerOrigin, Transform[] newLookPoints, Vector3 newCameraLocalOffset, int startIndex = 0)
@@ -47,7 +41,6 @@ public class BaseViewController : MonoBehaviour
         canControl = true;
         isBusy = false;
         isInUiView = false;
-        // edgeTimer = 0f;
     }
 
     private void OnDisable()
@@ -71,9 +64,6 @@ public class BaseViewController : MonoBehaviour
         if (lookPoints == null || lookPoints.Length == 0) return;
 
         HandleKeyboardInput();
-
-        // if (useMouseEdges)
-        //     HandleMouseEdgeSwitch();
     }
 
     private void HandleKeyboardInput()
@@ -92,30 +82,6 @@ public class BaseViewController : MonoBehaviour
             return;
         }
     }
-
-    // private void HandleMouseEdgeSwitch()
-    // {
-    //     if (Mouse.current == null) return;
-    //
-    //     if (edgeTimer > 0f)
-    //     {
-    //         edgeTimer -= Time.deltaTime;
-    //         return;
-    //     }
-    //
-    //     Vector2 mousePos = Mouse.current.position.ReadValue();
-    //
-    //     if (mousePos.x <= edgeSize)
-    //     {
-    //         PreviousPoint();
-    //         edgeTimer = edgeCooldown;
-    //     }
-    //     else if (mousePos.x >= Screen.width - edgeSize)
-    //     {
-    //         NextPoint();
-    //         edgeTimer = edgeCooldown;
-    //     }
-    // }
 
     public bool IsBusy()
     {
