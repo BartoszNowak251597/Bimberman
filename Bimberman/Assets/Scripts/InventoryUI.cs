@@ -36,6 +36,8 @@ public class InventoryUI : MonoBehaviour
 
     public void OpenUI()
     {
+        Cursor.lockState = CursorLockMode.None;
+
         this.gameObject.SetActive(true);
 
         PlayerInventory inventory = PlayerController.playerInstance.inventory;
@@ -120,6 +122,10 @@ public class InventoryUI : MonoBehaviour
         }
 
         Time.timeScale = 1;
+
+        if (FindFirstObjectByType<DungeonScript>() != null) {
+            Cursor.lockState = CursorLockMode.Locked;
+        }
     }
 
     public void Update()

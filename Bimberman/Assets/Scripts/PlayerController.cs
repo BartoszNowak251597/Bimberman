@@ -29,8 +29,11 @@ public class PlayerController : MonoBehaviour
     public Slider healthBar;
     public int maxHealth = 10;
     private int health = 10;
+	public Vector3 targetPoint;
+    public GameObject reticle;
+    public InventoryUI inventoryUI;
 
-    void Awake()
+	void Awake()
     {
         rb = GetComponent<Rigidbody>();
 
@@ -43,6 +46,8 @@ public class PlayerController : MonoBehaviour
         health = maxHealth;
         healthBar.maxValue = maxHealth;
         healthBar.value = health;
+
+        this.targetPoint = this.transform.position;
     }
 
     private void OnEnable()
@@ -69,7 +74,9 @@ public class PlayerController : MonoBehaviour
         switch (currentMode)
         {
             case PlayerMode.Normal:
-                HandleNormalRotation();
+                if (!this.inventoryUI.isActiveAndEnabled) {
+                    HandleNormalRotation();
+                }
                 break;
 
             case PlayerMode.StationaryPOV:
@@ -121,22 +128,38 @@ public class PlayerController : MonoBehaviour
     {
         if (playerCamera == null) return;
 
-        Vector2 mousePosition = inputActions.Player.Look.ReadValue<Vector2>();
+        Vector3 cameraForward = playerCamera.transform.forward;
+        Vector3 cameraRight = playerCamera.transform.right;
 
-        Ray ray = playerCamera.ScreenPointToRay(mousePosition);
-        Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+        cameraForward.y = 0f;
+        cameraRight.y = 0f;
 
-        if (groundPlane.Raycast(ray, out float rayDistance))
+        cameraForward.Normalize();
+        cameraRight.Normalize();
+
+        Vector3 newTargetPoint = this.targetPoint + 0.02f * (
+            cameraForward * inputActions.Player.Cursor.ReadValue<Vector2>().y
+            +
+            cameraRight * inputActions.Player.Cursor.ReadValue<Vector2>().x
+        );
+
+        Ray ray = new Ray(newTargetPoint + Vector3.up, Vector3.down);
+
+        if (!Physics.Raycast(ray, 2, LayerMask.GetMask("WhatIsGround"))) {
+            return;
+        }
+
+        this.targetPoint = newTargetPoint;
+
+        this.reticle.transform.position = this.targetPoint;
+
+        Vector3 lookDirection = targetPoint - transform.position;
+        lookDirection.y = 0f;
+
+        if (lookDirection.sqrMagnitude > 0.001f)
         {
-            Vector3 targetPoint = ray.GetPoint(rayDistance);
-            Vector3 lookDirection = targetPoint - transform.position;
-            lookDirection.y = 0f;
-
-            if (lookDirection.sqrMagnitude > 0.001f)
-            {
-                Quaternion targetRotation = Quaternion.LookRotation(lookDirection);
-                transform.rotation = targetRotation;
-            }
+            Quaternion targetRotation = Quaternion.LookRotation(lookDirection);
+            transform.rotation = targetRotation;
         }
     }
 

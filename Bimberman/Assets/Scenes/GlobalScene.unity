@@ -119,6 +119,17 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!114 &48734557 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 340650432234179879, guid: 370038735f9ced445b2da71d8adca1b3, type: 3}
+  m_PrefabInstance: {fileID: 2124109198}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec5e8973fb952a34f853c2f22215ab27, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryUI
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -274,6 +285,7 @@ MonoBehaviour:
   height: 10
   distance: 10
   angle: 0
+  lookAtPos: {x: 0, y: 0, z: 0}
 --- !u!114 &330585549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -287,11 +299,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BasePov
   lookPoints: []
-  smoothRotation: 1
+  playerOrigin: {fileID: 0}
+  cameraLocalOffset: {x: 0, y: 1.6, z: 0}
   rotationDuration: 0.25
-  useMouseEdges: 1
-  edgeSize: 40
-  edgeCooldown: 0.3
+  moveDuration: 0.3
 --- !u!1 &930158688
 GameObject:
   m_ObjectHideFlags: 0
@@ -453,9 +464,29 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1466480267}
     - target: {fileID: 6404828200693246055, guid: 1db5be717280b254192dc7994f83da94, type: 3}
+      propertyPath: inventoryUI
+      value: 
+      objectReference: {fileID: 48734557}
+    - target: {fileID: 6404828200693246055, guid: 1db5be717280b254192dc7994f83da94, type: 3}
       propertyPath: playerCamera
       value: 
       objectReference: {fileID: 330585545}
+    - target: {fileID: 6455855880847842530, guid: 1db5be717280b254192dc7994f83da94, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455855880847842530, guid: 1db5be717280b254192dc7994f83da94, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455855880847842530, guid: 1db5be717280b254192dc7994f83da94, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6455855880847842530, guid: 1db5be717280b254192dc7994f83da94, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6789813031784029539, guid: 1db5be717280b254192dc7994f83da94, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -603,7 +634,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

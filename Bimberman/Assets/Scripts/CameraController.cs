@@ -11,6 +11,10 @@ public class CameraController : MonoBehaviour
     private bool stationMode = false;
     private Transform stationPoint;
 
+    public Vector3 lookAtPos;
+
+    public float cameraDrunk = 0.0f;
+
     void LateUpdate()
     {
         if (stationMode && stationPoint != null)
@@ -26,8 +30,16 @@ public class CameraController : MonoBehaviour
 
         Vector3 offset = rotation * new Vector3(0, 0, -distance);
 
-        transform.position = target.position + offset + Vector3.up * height;
-        transform.LookAt(target);
+        Vector3 targetPos = Vector3.Lerp(
+            PlayerController.playerInstance.transform.position,
+            PlayerController.playerInstance.targetPoint,
+            0.6f
+        );
+
+        this.lookAtPos = Vector3.Lerp(this.lookAtPos, targetPos, 0.02f);
+
+        transform.position = (this.lookAtPos * (1 - cameraDrunk)) + offset + Vector3.up * height;
+        transform.LookAt(this.lookAtPos);
     }
 
     public void EnterStationMode(Transform point)

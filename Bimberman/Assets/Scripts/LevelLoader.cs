@@ -46,6 +46,8 @@ public class LevelLoader : MonoBehaviour
             PlayerController.playerInstance.transform.position = newOrigin.position;
             PlayerController.playerInstance.GetComponent<Rigidbody>().MovePosition(newOrigin.position);
             PlayerController.playerInstance.transform.rotation = newOrigin.rotation;
+            PlayerController.playerInstance.targetPoint = PlayerController.playerInstance.transform.position;
+            Camera.main.GetComponent<CameraController>().lookAtPos = PlayerController.playerInstance.transform.position;
         }
 
         SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneToLoad));

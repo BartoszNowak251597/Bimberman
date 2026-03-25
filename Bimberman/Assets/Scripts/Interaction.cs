@@ -103,15 +103,18 @@ public class Interaction : MonoBehaviour
         {
             bool isInBase = GameObject.FindAnyObjectByType<BaseScript>() != null;
 
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
             if (isInBase) {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
                 if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity)) {
                     InteractiveItem item = hit.collider.GetComponent<InteractiveItem>();
                     if (item != null) item.Interact();
                 }
             }
             else if (PlayerController.playerInstance.inventory.equippedPotion != null && Time.time > this.lastThrowTime + this.throwCooldown) {
+                Ray ray = new Ray(Camera.main.transform.position, PlayerController.playerInstance.targetPoint - Camera.main.transform.position);
+
                 Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
 
                 groundPlane.Raycast(ray, out float dist);

@@ -10,7 +10,7 @@ public class DungeonScript : GameModeScript
 
     void Start()
     {
-
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()
