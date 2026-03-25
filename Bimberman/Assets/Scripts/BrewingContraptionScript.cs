@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -17,7 +18,6 @@ public class BrewingContraptionScript : InteractiveItem {
 		}
 
 		public RecipeIngredient[] ingredients;
-
 		public GameObject resultPrefab;
 	};
 
@@ -35,12 +35,24 @@ public class BrewingContraptionScript : InteractiveItem {
 
 	public Button makeRecipeButton;
 	public PotionCollectible potionPlacement;
+	
+	private void Update()
+	{
+		if (uiCanvas == null || !uiCanvas.gameObject.activeSelf)
+			return;
 
+		if (UnityEngine.InputSystem.Keyboard.current != null &&
+		    UnityEngine.InputSystem.Keyboard.current.escapeKey.wasPressedThisFrame)
+		{
+			Exit();
+		}
+	}
+	
 	private void RefreshUI()
 	{
 		var potions = PlayerController.playerInstance.inventory.potions;
 
-		bottlePlaceButton.interactable = potions.Count( p => p.effects.First() == Potion.PotionEffect.Moonshine ) > 0;
+		bottlePlaceButton.interactable = potions.Count(p => p.effects.First() == Potion.PotionEffect.Moonshine) > 0;
 		bottlePlaceButton.gameObject.SetActive(moonshineBottle == null);
 
 		var ingredients = PlayerController.playerInstance.inventory.ingredients;
@@ -157,22 +169,34 @@ public class BrewingContraptionScript : InteractiveItem {
 			}
 
 			workingRecipe = null;
-
 			RefreshUI();
 		}
+	}
+
+	public void CollectResultPotion()
+	{
+		if (potionPlacement == null || potionPlacement.potion == null)
+			return;
+
+		PlayerController.playerInstance.inventory.Collect(potionPlacement.potion);
+		potionPlacement.potion = null;
+
+		RefreshUI();
 	}
 
 	public override void Interact()
 	{
 		uiCanvas.gameObject.SetActive(true);
-
 		interactPrompt.gameObject.SetActive(false);
 
 		var player = PlayerController.playerInstance;
-
 		player.EnterStationMode();
 
-		player.playerCamera.GetComponent<CameraController>().EnterStationMode(cameraPos);
+		BaseViewController baseViewController = player.playerCamera.GetComponent<BaseViewController>();
+		if (baseViewController != null && baseViewController.enabled)
+			baseViewController.EnterUiView(cameraPos);
+		else
+			player.playerCamera.GetComponent<CameraController>().EnterStationMode(cameraPos);
 
 		RefreshUI();
 	}
@@ -180,21 +204,37 @@ public class BrewingContraptionScript : InteractiveItem {
 	public void Exit()
 	{
 		uiCanvas.gameObject.SetActive(false);
-
-		interactPrompt.gameObject.SetActive(true);
+		interactPrompt.gameObject.SetActive(false);
 
 		var player = PlayerController.playerInstance;
 
-		player.ExitStationMode();
+		BaseViewController baseViewController = player.playerCamera.GetComponent<BaseViewController>();
+		if (baseViewController != null && baseViewController.enabled)
+		{
+			baseViewController.ExitUiView();
+			StartCoroutine(FinishExitAfterCameraReturns(player, baseViewController));
+		}
+		else
+		{
+			player.playerCamera.GetComponent<CameraController>().ExitStationMode();
+			player.ExitStationMode();
+		}
+	}
 
-		player.playerCamera.GetComponent<CameraController>().ExitStationMode();
+	private IEnumerator FinishExitAfterCameraReturns(PlayerController player, BaseViewController baseViewController)
+	{
+		while (baseViewController.IsBusy())
+			yield return null;
+
+		baseViewController.ForceBaseView();
+		player.ExitStationMode();
 	}
 
 	public void PlaceMoonshine()
 	{
 		var potions = PlayerController.playerInstance.inventory.potions;
 
-		var moonshine = potions.FirstOrDefault( p => p.effects.First() == Potion.PotionEffect.Moonshine );
+		var moonshine = potions.FirstOrDefault(p => p.effects.First() == Potion.PotionEffect.Moonshine);
 
 		if (moonshine == null)
 		{

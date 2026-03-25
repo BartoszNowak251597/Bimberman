@@ -39,13 +39,13 @@ public class LevelLoader : MonoBehaviour
 
         await SceneManager.LoadSceneAsync(sceneToLoad, LoadSceneMode.Additive);
 
-        PlayerOrigin newOrigin = FindAnyObjectByType<PlayerOrigin>();
+        Transform newOrigin = GameObject.Find("PlayerOrigin")?.transform;
 
         if (newOrigin != null)
         {
-            PlayerController.playerInstance.transform.position = newOrigin.transform.position;
-            PlayerController.playerInstance.GetComponent<Rigidbody>().MovePosition(newOrigin.transform.position);
-            PlayerController.playerInstance.transform.rotation = newOrigin.transform.rotation;
+            PlayerController.playerInstance.transform.position = newOrigin.position;
+            PlayerController.playerInstance.GetComponent<Rigidbody>().MovePosition(newOrigin.position);
+            PlayerController.playerInstance.transform.rotation = newOrigin.rotation;
         }
 
         SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneToLoad));
