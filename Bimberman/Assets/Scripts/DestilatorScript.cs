@@ -16,7 +16,9 @@ public class DestilatorScript : InteractiveItem {
 	public TextMeshProUGUI sugarUnitsText;
 	public Button addSugarButton;
 
-	[HideInInspector]
+    public Light light;
+
+    [HideInInspector]
 	public Stack<Ingredient> waterUnits = new Stack<Ingredient>();
 	public Stack<Ingredient> sugarUnits = new Stack<Ingredient>();
 
@@ -25,7 +27,22 @@ public class DestilatorScript : InteractiveItem {
 	public GameObject moonshinePrefab;
 	public PotionCollectible moonshinePlacement;
 
-	public void RefreshUI()
+    private void Start()
+    {
+        light.enabled = false;
+    }
+
+    private void OnMouseEnter()
+    {
+        light.enabled = true;
+    }
+
+    private void OnMouseExit()
+    {
+        light.enabled = false;
+    }
+
+    public void RefreshUI()
 	{
 		var ingredients = PlayerController.playerInstance.inventory.ingredients;
 

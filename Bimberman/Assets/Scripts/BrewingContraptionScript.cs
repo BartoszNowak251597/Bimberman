@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 
+
 public class BrewingContraptionScript : InteractiveItem {
 	[Serializable]
 	public struct Recipe
@@ -35,8 +36,15 @@ public class BrewingContraptionScript : InteractiveItem {
 
 	public Button makeRecipeButton;
 	public PotionCollectible potionPlacement;
-	
-	private void Update()
+
+    public Light light;
+
+    private void Start()
+    {
+        light.enabled = false;
+    }
+
+    private void Update()
 	{
 		if (uiCanvas == null || !uiCanvas.gameObject.activeSelf)
 			return;
@@ -47,8 +55,17 @@ public class BrewingContraptionScript : InteractiveItem {
 			Exit();
 		}
 	}
-	
-	private void RefreshUI()
+
+    private void OnMouseEnter()
+    {
+        light.enabled = true;
+    }
+
+    private void OnMouseExit()
+    {
+        light.enabled = false;
+    }
+    private void RefreshUI()
 	{
 		var potions = PlayerController.playerInstance.inventory.potions;
 

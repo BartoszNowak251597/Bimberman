@@ -11,6 +11,8 @@ public class CollectibleGiver : InteractiveItem {
     private Coroutine messageCoroutine;
     private Vector3 startPosition;
 
+    public Light light;
+
     private void Start()
     {
         if (pickupText != null)
@@ -18,6 +20,8 @@ public class CollectibleGiver : InteractiveItem {
             startPosition = pickupText.rectTransform.localPosition;
             pickupText.gameObject.SetActive(false);
         }
+
+        light.enabled = false;
     }
 
     public override void Interact() {
@@ -37,6 +41,16 @@ public class CollectibleGiver : InteractiveItem {
 
         pickupText.gameObject.SetActive(false);
         messageCoroutine = StartCoroutine(ShowPickupMessage());
+    }
+
+    private void OnMouseEnter()
+    {
+        light.enabled = true;
+    }
+
+    private void OnMouseExit()
+    {
+        light.enabled = false;
     }
 
     private IEnumerator ShowPickupMessage()
