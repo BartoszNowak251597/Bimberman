@@ -454,6 +454,7 @@ MonoBehaviour:
   explosionEffectPrefab: {fileID: 5604516967968833624, guid: b6805d59da434fc43a0050c5772a8438, type: 3}
   bigExplosionEffectPrefab: {fileID: 5572401793450651095, guid: 8563521112c669a4f9b9d41afee5e6af, type: 3}
   wallEffectPrefab: {fileID: 481879377358493277, guid: 56d23cf723652624b933ca1ad7112606, type: 3}
+  glueEffectPrefab: {fileID: 7072035056967426632, guid: d9b14a3a86dc758448453c06fb7d0e9b, type: 3}
 --- !u!4 &1025311391
 Transform:
   m_ObjectHideFlags: 0

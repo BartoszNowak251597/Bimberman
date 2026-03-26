@@ -9,6 +9,7 @@ public class AttackGenerator : MonoBehaviour
 	public GameObject explosionEffectPrefab;
 	public GameObject bigExplosionEffectPrefab;
 	public GameObject wallEffectPrefab;
+	public GameObject glueEffectPrefab;
 
 	private static AttackGenerator instance;
 
@@ -18,6 +19,7 @@ public class AttackGenerator : MonoBehaviour
 		{ Potion.PotionEffect.Moonshine, GenerateRegularAttack },
 		{ Potion.PotionEffect.Wall, GenerateWallAttack },
 		{ Potion.PotionEffect.Boom, GenerateBoomAttack },
+		{ Potion.PotionEffect.Glue, GenerateGlueAttack },
 	};
 
 	private void Awake()
@@ -48,6 +50,19 @@ public class AttackGenerator : MonoBehaviour
 	private static void GenerateWallAttack(GameObject attackObject, int strength)
 	{
 		var effectObject = Instantiate(instance.wallEffectPrefab);
+		effectObject.transform.localScale = Vector3.one * (2 * strength);
+		effectObject.transform.position = attackObject.transform.position;
+
+		Vector3 vel = attackObject.GetComponent<Rigidbody>().linearVelocity;
+
+		vel.y = 0;
+
+		effectObject.transform.rotation = Quaternion.LookRotation(vel);
+	}
+
+	private static void GenerateGlueAttack(GameObject attackObject, int strength)
+	{
+		var effectObject = Instantiate(instance.glueEffectPrefab);
 		effectObject.transform.localScale = Vector3.one * (2 * strength);
 		effectObject.transform.position = attackObject.transform.position;
 

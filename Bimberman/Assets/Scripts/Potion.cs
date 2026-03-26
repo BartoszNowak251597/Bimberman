@@ -6,7 +6,8 @@ public class Potion : MonoBehaviour
 	{
 		Moonshine,
 		Wall,
-		Boom
+		Boom,
+		Glue
 	}
 
 	public PotionEffect[] effects;

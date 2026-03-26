@@ -29,6 +29,8 @@ public class Enemy : MonoBehaviour
     public List<DroppedItem> enemyDrop;
 
     public float health = 10;
+    public int m_Locked = 0;
+    public bool Locked => m_Locked > 0;
 
 
     private void Awake()
@@ -52,8 +54,8 @@ public class Enemy : MonoBehaviour
     {
         playerInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
         playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
-        if(!playerInSightRange && !playerInAttackRange) Patroling();
-        if (playerInSightRange && !playerInAttackRange) ChasePlayer();
+        if(!playerInSightRange && !playerInAttackRange && !Locked) Patroling();
+        if (playerInSightRange && !playerInAttackRange && !Locked) ChasePlayer();
         if (playerInAttackRange && playerInSightRange) AttackPlayer();
 
     }
@@ -94,7 +96,7 @@ public class Enemy : MonoBehaviour
     {
         float distance = Vector3.Distance(transform.position, PlayerController.playerInstance.transform.position);
 
-        if (distance < attackRange * 0.8f)
+        if (distance < attackRange * 0.8f && !Locked)
         {
             Vector3 directionAway = (transform.position - PlayerController.playerInstance.transform.position).normalized;
             Vector3 newPos = PlayerController.playerInstance.transform.position + directionAway * attackRange; 
