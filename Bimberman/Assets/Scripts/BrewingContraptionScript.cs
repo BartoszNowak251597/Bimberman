@@ -168,6 +168,9 @@ public class BrewingContraptionScript : InteractiveItem {
 				slot.SetValueWithoutNotify(0);
 			}
 
+			Destroy(moonshineBottle.gameObject);
+			moonshineBottle = null;
+
 			workingRecipe = null;
 			RefreshUI();
 		}

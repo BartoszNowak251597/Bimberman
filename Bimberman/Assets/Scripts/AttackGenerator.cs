@@ -7,6 +7,7 @@ using AttackEffects;
 public class AttackGenerator : MonoBehaviour
 {
 	public GameObject explosionEffectPrefab;
+	public GameObject bigExplosionEffectPrefab;
 	public GameObject wallEffectPrefab;
 
 	private static AttackGenerator instance;
@@ -15,7 +16,8 @@ public class AttackGenerator : MonoBehaviour
 
 	static Dictionary<Potion.PotionEffect, AttackFunction> attacks = new Dictionary<Potion.PotionEffect, AttackFunction>() {
 		{ Potion.PotionEffect.Moonshine, GenerateRegularAttack },
-		{ Potion.PotionEffect.Wall, GenerateWallAttack }
+		{ Potion.PotionEffect.Wall, GenerateWallAttack },
+		{ Potion.PotionEffect.Boom, GenerateBoomAttack },
 	};
 
 	private void Awake()
@@ -31,6 +33,16 @@ public class AttackGenerator : MonoBehaviour
 		effectObject.transform.position = attackObject.transform.position;
 		effect.range = strength;
 		effect.damage = 5 * strength;
+	}
+
+	private static void GenerateBoomAttack(GameObject attackObject, int strength)
+	{
+		var effectObject = Instantiate(instance.bigExplosionEffectPrefab);
+		effectObject.transform.localScale = Vector3.one * (6 * strength);
+		var effect = effectObject.GetComponent<ExplosionEffect>();
+		effectObject.transform.position = attackObject.transform.position;
+		effect.range = 3 * strength;
+		effect.damage = 10 * strength;
 	}
 
 	private static void GenerateWallAttack(GameObject attackObject, int strength)

@@ -17,6 +17,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/DieScene.unity
     guid: f0fc731c72b05f74e92cb18c54ab4341
+  - enabled: 1
+    path: Assets/Scenes/Base_POV.unity
+    guid: 750c3a55edf52434e946ee0223490fbf
+  - enabled: 1
+    path: Assets/Scenes/DungeonFloors/Floor 0.unity
+    guid: 524441fec9a1c2d478fd9ad3c2217485
+  - enabled: 1
+    path: Assets/Scenes/DungeonFloors/Floor 1.unity
+    guid: ed5397bed02a7434793c2db97749c5d6
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 0a2abd99938b7dc449251b3e5232dddf, type: 3}
   m_UseUCBPForAssetBundles: 0

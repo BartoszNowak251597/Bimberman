@@ -112,7 +112,13 @@ public class Interaction : MonoBehaviour
                     if (item != null) item.Interact();
                 }
             }
-            else if (PlayerController.playerInstance.inventory.equippedPotion != null && Time.time > this.lastThrowTime + this.throwCooldown) {
+            else if (
+                !PlayerController.playerInstance.inventoryUI.isActiveAndEnabled
+                &&
+                PlayerController.playerInstance.inventory.equippedPotion != null
+                &&
+                Time.time > this.lastThrowTime + this.throwCooldown
+            ) {
                 Ray ray = new Ray(Camera.main.transform.position, PlayerController.playerInstance.targetPoint - Camera.main.transform.position);
 
                 Plane groundPlane = new Plane(Vector3.up, Vector3.zero);

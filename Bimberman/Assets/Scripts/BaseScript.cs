@@ -11,6 +11,7 @@ public class BaseScript : GameModeScript
         {
             PlayerController.playerInstance.gameObject.SetActive(true);
         }
+        Cursor.lockState = CursorLockMode.None;
     }
 
     void Update()

@@ -28,11 +28,24 @@ namespace AttackEffects
 
 			foreach (var hit in hits)
 			{
-				Debug.Log(hit);
-
 				if (hit.gameObject.TryGetComponent<Enemy>(out var enemyComponent))
 				{
 					enemyComponent.TakeDamage(damage);
+				}
+				if (hit.gameObject.TryGetComponent<Rigidbody>(out var body))
+				{
+					float liftForce = 0.5f;
+					float multiplier = 4;
+
+					if (hit.gameObject.TryGetComponent<PlayerController>(out var _)) {
+						liftForce = 2;
+
+						if (damage <= 5) {
+							multiplier = 0.1f;
+							liftForce = 0.1f;
+						}
+					}
+					body.AddExplosionForce(multiplier * damage, transform.position, range, liftForce, ForceMode.Impulse);
 				}
 			}
 		}

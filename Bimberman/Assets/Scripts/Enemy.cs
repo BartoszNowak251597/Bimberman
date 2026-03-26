@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
@@ -7,6 +8,11 @@ using Random = UnityEngine.Random;
 
 public class Enemy : MonoBehaviour
 {
+    [Serializable]
+    public struct DroppedItem {
+        public float chance;
+        public GameObject item;
+    }
 
     public NavMeshAgent agent;
    //public Transform player;
@@ -20,7 +26,7 @@ public class Enemy : MonoBehaviour
     public bool playerInSightRange, playerInAttackRange;
     public GameObject enemyShoot;
 
-    public GameObject enemyDrop;
+    public List<DroppedItem> enemyDrop;
 
     public float health = 10;
 
@@ -118,7 +124,7 @@ public class Enemy : MonoBehaviour
         alreadyAttacked = false;
     }
 
-    public void TakeDamage(int damage)
+    public virtual void TakeDamage(int damage)
     {
         health -= damage;
         if (health <= 0) Invoke(nameof(DestroyEnemy), 0.5f);
@@ -128,13 +134,29 @@ public class Enemy : MonoBehaviour
         DropItem();
     }
 
+    private GameObject GetRandomDrop() {
+        float totalChance = enemyDrop.Sum( i => i.chance );
+
+        float choice = Random.Range(0, totalChance);
+
+        foreach (var drop in enemyDrop) {
+            if (drop.chance >= choice) {
+                return drop.item;
+            }
+
+            choice -= drop.chance;
+        }
+
+        return enemyDrop.Last().item;
+    }
+
     public void DropItem()
     {
         int count = Random.Range(3, 6); 
         for (int i = 0; i < count; i++)
         {
             
-            GameObject drop = Instantiate(enemyDrop, transform.position, Quaternion.identity);
+            GameObject drop = Instantiate(GetRandomDrop(), transform.position, Quaternion.identity);
 
             
             Renderer renderer = drop.GetComponent<Renderer>();
