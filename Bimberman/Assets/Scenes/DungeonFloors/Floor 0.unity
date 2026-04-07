@@ -250,6 +250,7 @@ MonoBehaviour:
   - chance: 1
     item: {fileID: 5759518347923865108, guid: 5a6741fcac541624ca31cc6547caa104, type: 3}
   health: 10
+  m_Locked: 0
 --- !u!1 &116861530 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -208595431880416365, guid: ca180a4e2daf27442b7952b38211669c, type: 3}
@@ -581,6 +582,7 @@ MonoBehaviour:
   - chance: 1
     item: {fileID: 5759518347923865108, guid: 5a6741fcac541624ca31cc6547caa104, type: 3}
   health: 10
+  m_Locked: 0
 --- !u!136 &431324028
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -735,6 +737,7 @@ MonoBehaviour:
   - chance: 1
     item: {fileID: 5759518347923865108, guid: 5a6741fcac541624ca31cc6547caa104, type: 3}
   health: 10
+  m_Locked: 0
 --- !u!64 &979137371
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -767,7 +770,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 620960756349619847, guid: 1c98b03294d772846b70e0abccb5487e, type: 3}
       propertyPath: sceneToLoad
-      value: Base_POV
+      value: Floor 1
       objectReference: {fileID: 0}
     - target: {fileID: 4755053625028695687, guid: 1c98b03294d772846b70e0abccb5487e, type: 3}
       propertyPath: m_Name

@@ -89,28 +89,47 @@ public class Enemy : MonoBehaviour
 
     private void ChasePlayer()
     {
-        agent.SetDestination(PlayerController.playerInstance.transform.position);
+        Vector3 playerPos = PlayerController.playerInstance.transform.position;
+
+        if (!IsPositionOnMyArea(playerPos))
+        {
+            walkPointSet = false;
+            Patroling();
+            return;
+        }
+
+        agent.SetDestination(playerPos);
     }
 
     private void AttackPlayer()
     {
-        float distance = Vector3.Distance(transform.position, PlayerController.playerInstance.transform.position);
+        Vector3 playerPos = PlayerController.playerInstance.transform.position;
+
+        if (!IsPositionOnMyArea(playerPos))
+        {
+            walkPointSet = false;
+            Patroling();
+            return;
+        }
+
+        float distance = Vector3.Distance(transform.position, playerPos);
 
         if (distance < attackRange * 0.8f && !Locked)
         {
-            Vector3 directionAway = (transform.position - PlayerController.playerInstance.transform.position).normalized;
-            Vector3 newPos = PlayerController.playerInstance.transform.position + directionAway * attackRange; 
+            Vector3 directionAway = (transform.position - playerPos).normalized;
+            Vector3 newPos = playerPos + directionAway * attackRange;
+
             transform.LookAt(PlayerController.playerInstance.transform);
             agent.SetDestination(newPos);
         }
-        else 
+        else
         {
-            agent.SetDestination(transform.position); 
+            agent.SetDestination(transform.position);
             transform.LookAt(PlayerController.playerInstance.transform);
 
             if (!alreadyAttacked)
             {
-                Vector3 direction = (PlayerController.playerInstance.transform.position + Vector3.up - transform.position).normalized;
+                Vector3 direction = (playerPos + Vector3.up - transform.position).normalized;
                 GameObject projectile = Instantiate(enemyShoot, transform.position + direction * 1f, Quaternion.LookRotation(direction));
                 Rigidbody rb = projectile.GetComponent<Rigidbody>();
                 rb.linearVelocity = direction * 50f;
@@ -176,5 +195,9 @@ public class Enemy : MonoBehaviour
                 rb.AddForce(randomForce, ForceMode.Impulse);
             }
         }
+    }
+    private bool IsPositionOnMyArea(Vector3 position)
+    {
+        return NavMesh.SamplePosition(position, out NavMeshHit hit, 1.5f, agent.areaMask);
     }
 }
