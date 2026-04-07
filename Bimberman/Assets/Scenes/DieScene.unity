@@ -553,7 +553,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38db6b8b0226c834ebc44d3f602bb209, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelLoader
-  sceneToLoad: Base
+  sceneToLoad: Base_POV
   preserveAfterLoad: 0
 --- !u!4 &803807523
 Transform:

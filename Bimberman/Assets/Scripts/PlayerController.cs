@@ -25,6 +25,8 @@ public class PlayerController : MonoBehaviour
     private PlayerInputActions inputActions;
 
     private Vector2 moveInput;
+    private Vector3 aimOffset;
+    private bool isDead = false;
 
     public Slider healthBar;
     public int maxHealth = 10;
@@ -47,7 +49,12 @@ public class PlayerController : MonoBehaviour
         healthBar.maxValue = maxHealth;
         healthBar.value = health;
 
-        this.targetPoint = this.transform.position;
+        aimOffset = transform.forward * 2f;
+        aimOffset.y = 0f;
+        targetPoint = transform.position + aimOffset;
+
+        if (reticle != null)
+            reticle.transform.position = targetPoint + Vector3.up * 0.05f;
     }
 
     private void OnEnable()
@@ -69,12 +76,16 @@ public class PlayerController : MonoBehaviour
         if (inputActions == null)
             return;
 
+        if (isDead)
+            return;
+
         moveInput = inputActions.Player.Move.ReadValue<Vector2>();
 
         switch (currentMode)
         {
             case PlayerMode.Normal:
-                if (!this.inventoryUI.isActiveAndEnabled) {
+                if (inventoryUI == null || !inventoryUI.isActiveAndEnabled)
+                {
                     HandleNormalRotation();
                 }
                 break;
@@ -91,6 +102,9 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (isDead)
+            return;
+
         if (currentMode == PlayerMode.Normal && canMove)
         {
             Move();
@@ -127,6 +141,7 @@ public class PlayerController : MonoBehaviour
     void RotateToMouse()
     {
         if (playerCamera == null) return;
+        if (inputActions == null) return;
 
         Vector3 cameraForward = playerCamera.transform.forward;
         Vector3 cameraRight = playerCamera.transform.right;
@@ -137,23 +152,23 @@ public class PlayerController : MonoBehaviour
         cameraForward.Normalize();
         cameraRight.Normalize();
 
-        Vector3 newTargetPoint = this.targetPoint + 0.02f * (
-            cameraForward * inputActions.Player.Cursor.ReadValue<Vector2>().y
-            +
-            cameraRight * inputActions.Player.Cursor.ReadValue<Vector2>().x
+        Vector2 cursorDelta = inputActions.Player.Cursor.ReadValue<Vector2>();
+
+        aimOffset += 0.02f * (
+            cameraForward * cursorDelta.y +
+            cameraRight * cursorDelta.x
         );
 
-        Ray ray = new Ray(newTargetPoint + Vector3.up, Vector3.down);
+        aimOffset.y = 0f;
 
-        if (!Physics.Raycast(ray, 2, LayerMask.GetMask("WhatIsGround"))) {
-            return;
+        targetPoint = transform.position + aimOffset;
+
+        if (reticle != null)
+        {
+            reticle.transform.position = targetPoint + Vector3.up * 0.05f;
         }
 
-        this.targetPoint = newTargetPoint;
-
-        this.reticle.transform.position = this.targetPoint;
-
-        Vector3 lookDirection = targetPoint - transform.position;
+        Vector3 lookDirection = aimOffset;
         lookDirection.y = 0f;
 
         if (lookDirection.sqrMagnitude > 0.001f)
@@ -170,6 +185,9 @@ public class PlayerController : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        if (isDead)
+            return;
+
         health -= damage;
         healthBar.value = health;
 
@@ -182,8 +200,57 @@ public class PlayerController : MonoBehaviour
     public void Die()
     {
         Debug.Log("Player has died.");
-        gameObject.SetActive(false);
+
+        isDead = true;
+        canMove = false;
+        moveInput = Vector2.zero;
+
+        if (interaction != null)
+            interaction.enabled = false;
+
+        if (inputActions != null)
+            inputActions.Disable();
+
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         loader.LoadLevel();
+    }
+
+    public void ResetAfterRespawn()
+    {
+        isDead = false;
+        canMove = true;
+        moveInput = Vector2.zero;
+
+        if (interaction != null)
+            interaction.enabled = true;
+
+        if (inputActions != null)
+            inputActions.Enable();
+
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
+        aimOffset = transform.forward * 2f;
+        aimOffset.y = 0f;
+        targetPoint = transform.position + aimOffset;
+
+        if (reticle != null)
+            reticle.transform.position = targetPoint + Vector3.up * 0.05f;
+
+        health = maxHealth;
+        if (healthBar != null)
+            healthBar.value = health;
     }
 
     public void SetMode(PlayerMode mode)

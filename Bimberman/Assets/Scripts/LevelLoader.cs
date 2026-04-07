@@ -27,15 +27,21 @@ public class LevelLoader : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
-
-        yield break;
     }
 
     public async Task LoadLevelAsync()
     {
-        PlayerController.playerInstance.GetComponent<Interaction>().ClearAvailable();
+        PlayerController player = PlayerController.playerInstance;
+        if (player == null) return;
 
-        await SceneManager.UnloadSceneAsync(currentLoadedScene);
+        Interaction interaction = player.GetComponent<Interaction>();
+        if (interaction != null)
+            interaction.ClearAvailable();
+
+        if (!string.IsNullOrEmpty(currentLoadedScene))
+        {
+            await SceneManager.UnloadSceneAsync(currentLoadedScene);
+        }
 
         await SceneManager.LoadSceneAsync(sceneToLoad, LoadSceneMode.Additive);
 
@@ -43,11 +49,30 @@ public class LevelLoader : MonoBehaviour
 
         if (newOrigin != null)
         {
-            PlayerController.playerInstance.transform.position = newOrigin.position;
-            PlayerController.playerInstance.GetComponent<Rigidbody>().MovePosition(newOrigin.position);
-            PlayerController.playerInstance.transform.rotation = newOrigin.rotation;
-            PlayerController.playerInstance.targetPoint = PlayerController.playerInstance.transform.position;
-            Camera.main.GetComponent<CameraController>().lookAtPos = PlayerController.playerInstance.transform.position;
+            Rigidbody rb = player.GetComponent<Rigidbody>();
+
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+
+            player.transform.position = newOrigin.position;
+            player.transform.rotation = newOrigin.rotation;
+
+            rb.position = newOrigin.position;
+            rb.rotation = newOrigin.rotation;
+
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+
+            player.ResetAfterRespawn();
+
+            CameraController cameraController = Camera.main != null
+                ? Camera.main.GetComponent<CameraController>()
+                : null;
+
+            if (cameraController != null)
+            {
+                cameraController.lookAtPos = player.transform.position;
+            }
         }
 
         SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneToLoad));
