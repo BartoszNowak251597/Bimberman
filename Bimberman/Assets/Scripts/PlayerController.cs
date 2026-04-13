@@ -1,233 +1,68 @@
 using UnityEngine;
-using UnityEngine.UI;
 
-[RequireComponent(typeof(Rigidbody))]
-public class PlayerController : MonoBehaviour
-{
-    public static PlayerController playerInstance;
+public class PlayerController : MonoBehaviour {
+	public float wobbliness;
+	public float speed = 100;
+	public float cursorMovement = 2;
 
-    public enum PlayerMode
-    {
-        Normal,
-        StationaryPOV
-    }
+	public Rigidbody rb;
+	public Vector3 targetOffset;
+	public GameObject targetCrosshair;
+	public GameObject visualBody;
 
-    [Header("General")]
-    public PlayerMode currentMode = PlayerMode.Normal;
-    public float moveSpeed = 5f;
-    public Camera playerCamera;
-    public bool canMove = true;
-    public PlayerInventory inventory;
-    public Interaction interaction;
-    public LevelLoader loader;
+	public void Awake() {
+		
+	}
 
-    private Rigidbody rb;
-    private PlayerInputActions inputActions;
+	public void FixedUpdate() {
+		if (Camera.main) {
+			Vector3 left = Vector3.Cross(Camera.main.transform.forward, Vector3.up).normalized;
 
-    private Vector2 moveInput;
+			Vector3 forward = Vector3.Cross(Vector3.up, left).normalized;
 
-    public Slider healthBar;
-    public int maxHealth = 10;
-    private int health = 10;
-	public Vector3 targetPoint;
-    public GameObject reticle;
-    public InventoryUI inventoryUI;
+			Vector3 movement = Vector3.zero;
 
-	void Awake()
-    {
-        rb = GetComponent<Rigidbody>();
+			if (Input.GetKey("w")) {
+				movement += forward * speed;
+			}
+			if (Input.GetKey("s")) {
+				movement -= forward * speed;
+			}
+			if (Input.GetKey("a")) {
+				movement += left * speed;
+			}
+			if (Input.GetKey("d")) {
+				movement -= left * speed;
+			}
 
-        if (inputActions == null)
-            inputActions = new PlayerInputActions();
+			rb.AddForce(movement, ForceMode.Force);
 
-        playerInstance = this;
+			Camera.main.GetComponent<CameraController>().target = this.transform.position;
 
-        healthBar = GameObject.Find("Healthbar").GetComponent<Slider>();
-        health = maxHealth;
-        healthBar.maxValue = maxHealth;
-        healthBar.value = health;
+			visualBody.GetComponent<ConfigurableJoint>().axis = Vector3.Cross(
+				targetOffset,
+				Vector3.up
+			).normalized;
 
-        this.targetPoint = this.transform.position;
-    }
+			visualBody.GetComponent<ConfigurableJoint>().targetRotation = Quaternion.Euler(
+				0,
+				-Quaternion.LookRotation(targetOffset, Vector3.right).eulerAngles.y,
+				0
+			);
+		}
+	}
 
-    private void OnEnable()
-    {
-        if (inputActions == null)
-            inputActions = new PlayerInputActions();
+	public void Update() {
+		if (Camera.main) {
+			Ray cameraRay = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        inputActions.Enable();
-    }
+			new Plane(Vector3.up, Vector3.zero).Raycast(cameraRay, out float dist);
 
-    void OnDisable()
-    {
-        if (inputActions != null)
-            inputActions.Disable();
-    }
+			Vector3 targetPos = cameraRay.GetPoint(dist);
 
-    void Update()
-    {
-        if (inputActions == null)
-            return;
+			targetOffset = targetPos - this.transform.position;
 
-        moveInput = inputActions.Player.Move.ReadValue<Vector2>();
-
-        switch (currentMode)
-        {
-            case PlayerMode.Normal:
-                if (!this.inventoryUI.isActiveAndEnabled) {
-                    HandleNormalRotation();
-                }
-                break;
-
-            case PlayerMode.StationaryPOV:
-                break;
-        }
-
-        if (!canMove)
-        {
-            moveInput = Vector2.zero;
-        }
-    }
-
-    void FixedUpdate()
-    {
-        if (currentMode == PlayerMode.Normal && canMove)
-        {
-            Move();
-        }
-    }
-
-    void Move()
-    {
-        if (playerCamera == null) return;
-
-        Vector3 cameraForward = playerCamera.transform.forward;
-        Vector3 cameraRight = playerCamera.transform.right;
-
-        cameraForward.y = 0f;
-        cameraRight.y = 0f;
-
-        cameraForward.Normalize();
-        cameraRight.Normalize();
-
-        Vector3 movement = cameraForward * moveInput.y + cameraRight * moveInput.x;
-
-        if (movement.sqrMagnitude > 1f)
-            movement.Normalize();
-
-        Vector3 newPosition = rb.position + moveSpeed * movement * Time.fixedDeltaTime * Time.timeScale;
-        rb.MovePosition(newPosition);
-    }
-
-    void HandleNormalRotation()
-    {
-        RotateToMouse();
-    }
-
-    void RotateToMouse()
-    {
-        if (playerCamera == null) return;
-
-        Vector3 cameraForward = playerCamera.transform.forward;
-        Vector3 cameraRight = playerCamera.transform.right;
-
-        cameraForward.y = 0f;
-        cameraRight.y = 0f;
-
-        cameraForward.Normalize();
-        cameraRight.Normalize();
-
-        Vector3 newTargetPoint = this.targetPoint + 0.02f * (
-            cameraForward * inputActions.Player.Cursor.ReadValue<Vector2>().y
-            +
-            cameraRight * inputActions.Player.Cursor.ReadValue<Vector2>().x
-        );
-
-        Ray ray = new Ray(newTargetPoint + Vector3.up, Vector3.down);
-
-        if (!Physics.Raycast(ray, 2, LayerMask.GetMask("WhatIsGround"))) {
-            return;
-        }
-
-        this.targetPoint = newTargetPoint;
-
-        this.reticle.transform.position = this.targetPoint;
-
-        Vector3 lookDirection = targetPoint - transform.position;
-        lookDirection.y = 0f;
-
-        if (lookDirection.sqrMagnitude > 0.001f)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(lookDirection);
-            transform.rotation = targetRotation;
-        }
-    }
-
-    public void SetMovementEnabled(bool enabled)
-    {
-        canMove = enabled;
-    }
-
-    public void TakeDamage(int damage)
-    {
-        health -= damage;
-        healthBar.value = health;
-
-        if (health <= 0)
-        {
-            Die();
-        }
-    }
-
-    public void Die()
-    {
-        Debug.Log("Player has died.");
-        gameObject.SetActive(false);
-        loader.LoadLevel();
-    }
-
-    public void SetMode(PlayerMode mode)
-    {
-        currentMode = mode;
-
-        switch (mode)
-        {
-            case PlayerMode.Normal:
-                SetMovementEnabled(true);
-
-                if (interaction != null)
-                    interaction.enabled = true;
-                break;
-
-            case PlayerMode.StationaryPOV:
-                SetMovementEnabled(false);
-
-                if (interaction != null)
-                    interaction.enabled = true;
-                break;
-        }
-    }
-
-    public void EnterStationMode()
-    {
-        SetMovementEnabled(false);
-
-        if (interaction != null)
-        {
-            interaction.enabled = false;
-
-            if (interaction.interactionPrompt != null)
-                interaction.interactionPrompt.SetActive(false);
-        }
-    }
-
-    public void ExitStationMode()
-    {
-        SetMovementEnabled(false);
-
-        if (interaction != null)
-        {
-            interaction.enabled = true;
-        }
-    }
+			targetCrosshair.transform.position = this.transform.position + targetOffset;
+		}
+	}
 }
