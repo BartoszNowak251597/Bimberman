@@ -1,0 +1,241 @@
+﻿using TMPro;
+using UnityEngine;
+
+namespace Crafting
+{
+    public class PlayerMouseInteractor : MonoBehaviour
+    {
+        public Camera cam;
+        public float interactDistance = 5f;
+        public LayerMask interactLayer;
+        public TextMeshProUGUI interactionText;
+
+        [Header("Dragging")]
+        public float dragHeight = 0.5f;
+        public float dragSmooth = 15f;
+
+        [Header("Cauldron Lift")]
+        public Transform cauldronCenter;
+        public float cauldronLiftRadius = 2f;
+        public float maxLiftHeight = 1.5f;
+        [Range(0f, 1f)] public float cauldronPullStrength = 0.35f;
+
+        [Header("Drop Into Cauldron")]
+        public Cauldron cauldron;
+        public float cauldronDropRadius = 0.9f;
+
+        private IInteractable currentInteractable;
+
+        private IngredientData heldIngredient;
+        private BottleData heldBottle;
+        private IngredientWorldItem heldWorldIngredient;
+
+        private Plane dragPlane;
+
+        private void Start()
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+
+            dragPlane = new Plane(Vector3.up, new Vector3(0f, dragHeight, 0f));
+        }
+
+        private void Update()
+        {
+            HandleHover();
+            UpdateDraggedItem();
+
+            if (Input.GetMouseButtonDown(0) && currentInteractable != null)
+            {
+                currentInteractable.OnClick(this);
+            }
+
+            if (Input.GetMouseButtonUp(0))
+            {
+                TryReleaseHeldIngredient();
+            }
+        }
+
+        private void HandleHover()
+        {
+            if (cam == null) return;
+
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            IInteractable newInteractable = null;
+
+            if (Physics.Raycast(ray, out RaycastHit hit, interactDistance, interactLayer))
+            {
+                newInteractable = hit.collider.GetComponentInParent<IInteractable>();
+            }
+
+            if (currentInteractable != newInteractable)
+            {
+                currentInteractable?.OnHoverExit();
+                currentInteractable = newInteractable;
+                currentInteractable?.OnHoverEnter();
+            }
+
+            if (interactionText != null)
+            {
+                interactionText.text = currentInteractable != null
+                    ? currentInteractable.GetInteractionText(this)
+                    : "";
+            }
+        }
+
+        private void UpdateDraggedItem()
+        {
+            if (heldWorldIngredient == null || cam == null)
+                return;
+
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+
+            if (dragPlane.Raycast(ray, out float enter))
+            {
+                Vector3 targetPos = ray.GetPoint(enter);
+                targetPos.y = dragHeight;
+
+                if (cauldronCenter != null)
+                {
+                    Vector2 itemPos2D = new Vector2(targetPos.x, targetPos.z);
+                    Vector2 cauldronPos2D = new Vector2(cauldronCenter.position.x, cauldronCenter.position.z);
+
+                    float distanceToCauldron = Vector2.Distance(itemPos2D, cauldronPos2D);
+
+                    if (distanceToCauldron < cauldronLiftRadius)
+                    {
+                        float t = 1f - (distanceToCauldron / cauldronLiftRadius);
+
+                        float liftedHeight = Mathf.Lerp(dragHeight, dragHeight + maxLiftHeight, t);
+                        targetPos.y = liftedHeight;
+
+                        targetPos.x = Mathf.Lerp(targetPos.x, cauldronCenter.position.x, t * cauldronPullStrength);
+                        targetPos.z = Mathf.Lerp(targetPos.z, cauldronCenter.position.z, t * cauldronPullStrength);
+                    }
+                }
+
+                heldWorldIngredient.transform.position = Vector3.Lerp(
+                    heldWorldIngredient.transform.position,
+                    targetPos,
+                    Time.deltaTime * dragSmooth
+                );
+            }
+        }
+
+        private void TryReleaseHeldIngredient()
+        {
+            if (heldWorldIngredient == null)
+                return;
+
+            if (CanDropIntoCauldron())
+            {
+                cauldron.AddHeldIngredientFromInteractor(this);
+                return;
+            }
+
+            DropHeldIngredient();
+        }
+
+        private bool CanDropIntoCauldron()
+        {
+            if (cauldron == null || cauldronCenter == null)
+                return false;
+
+            if (!HasIngredient())
+                return false;
+
+            Vector2 itemPos2D = new Vector2(
+                heldWorldIngredient.transform.position.x,
+                heldWorldIngredient.transform.position.z
+            );
+
+            Vector2 cauldronPos2D = new Vector2(
+                cauldronCenter.position.x,
+                cauldronCenter.position.z
+            );
+
+            float distance = Vector2.Distance(itemPos2D, cauldronPos2D);
+            return distance <= cauldronDropRadius;
+        }
+
+        public bool HasIngredient()
+        {
+            return heldIngredient != null;
+        }
+
+        public bool HasBottle()
+        {
+            return heldBottle != null;
+        }
+
+        public IngredientData GetHeldIngredient()
+        {
+            return heldIngredient;
+        }
+
+        public BottleData GetHeldBottle()
+        {
+            return heldBottle;
+        }
+
+        public IngredientWorldItem GetHeldWorldIngredient()
+        {
+            return heldWorldIngredient;
+        }
+
+        public void PickupWorldIngredient(IngredientWorldItem item)
+        {
+            if (item == null) return;
+
+            heldWorldIngredient = item;
+            heldIngredient = item.data;
+            heldBottle = null;
+
+            item.SetHeld(true);
+
+            Rigidbody rb = item.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.isKinematic = true;
+                rb.useGravity = false;
+            }
+        }
+
+        public void DropHeldIngredient()
+        {
+            if (heldWorldIngredient == null) return;
+
+            heldWorldIngredient.SetHeld(false);
+
+            Rigidbody rb = heldWorldIngredient.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.isKinematic = false;
+                rb.useGravity = true;
+            }
+
+            heldWorldIngredient = null;
+            heldIngredient = null;
+        }
+
+        public void HoldBottle(BottleData bottle)
+        {
+            heldBottle = bottle;
+            heldIngredient = null;
+            heldWorldIngredient = null;
+        }
+
+        public void ClearHeldReferencesOnly()
+        {
+            heldWorldIngredient = null;
+            heldIngredient = null;
+        }
+
+        public void ClearHands()
+        {
+            heldIngredient = null;
+            heldBottle = null;
+            heldWorldIngredient = null;
+        }
+    }
+}
