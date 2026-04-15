@@ -12,7 +12,7 @@ namespace Crafting
     {
         None,
         Burn,
-        Freeze,
+        Stone,
         Lighting
     }
 

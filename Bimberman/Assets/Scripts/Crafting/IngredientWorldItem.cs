@@ -33,7 +33,7 @@ namespace Crafting
             if (highlightRenderer == null) return;
             if (isHeld) return;
 
-            highlightRenderer.material.color = Color.yellow;
+            highlightRenderer.material.color = Color.white;
         }
 
         public void OnHoverExit()

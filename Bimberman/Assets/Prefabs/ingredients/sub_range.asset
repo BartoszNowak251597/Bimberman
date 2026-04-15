@@ -17,4 +17,4 @@ MonoBehaviour:
   mainEffectType: 0
   modifierType: 3
   value: 1
-  color: {r: 1, g: 0, b: 0.78736305, a: 1}
+  color: {r: 0, g: 0.19503069, b: 1, a: 1}
