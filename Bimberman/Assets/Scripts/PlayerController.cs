@@ -11,14 +11,28 @@ public class PlayerController : MonoBehaviour {
 	public GameObject visualBody;
 	public AimingAid aim;
 
-	public float throwStrengthAccumSpeed = 3;
-	public float startThrowStrength = 1;
-	public float endThrowStrength = 5;
+	public float throwStrengthAccumSpeed = 7;
+	public float minThrowStrength = 1;
+	public float maxThrowStrength = 5;
+	public float throwStrengthMultiplier = 10;
 	float throwStrengthAccum;
+	float throwStrengthCache;
+
+	public Transform throwingArm;
+	public Transform torso;
+	public Transform throwPoint;
+
+	public GameObject throwablePrefab;
+
+	private Quaternion baseArmRotation;
 
 	public void Awake()
 	{
 		this.aim.SetStretch(-1);
+
+		this.baseArmRotation = this.throwingArm.localRotation;
+
+		this.throwStrengthAccum = this.minThrowStrength;
 	}
 
 	public void FixedUpdate() {
@@ -71,27 +85,61 @@ public class PlayerController : MonoBehaviour {
 
 			targetOffset = targetPos - this.transform.position;
 
-			// targetCrosshair.transform.position = this.transform.position + targetOffset;
+			Camera.main.GetComponent<CameraController>().target = this.transform.position + targetOffset.normalized;
 
 			aim.PointAt(targetPos);
 
-			if (Input.GetMouseButton(0))
+			float throwInvLerpAmount = Mathf.InverseLerp(this.minThrowStrength, this.maxThrowStrength, this.throwStrengthAccum);
+
+			if (Input.GetMouseButton(0) && this.throwStrengthCache == 0)
 			{
-				Debug.Log("Miau");
 				this.throwStrengthAccum += this.throwStrengthAccumSpeed * Time.deltaTime;
 
-				if (this.throwStrengthAccum > this.endThrowStrength)
+				if (this.throwStrengthAccum > this.maxThrowStrength)
 				{
-					this.throwStrengthAccum = this.endThrowStrength;
+					this.throwStrengthAccum = this.maxThrowStrength;
 				}
 
-				this.aim.SetStretch(Mathf.InverseLerp(this.startThrowStrength, this.endThrowStrength, this.throwStrengthAccum));
+				this.throwingArm.localRotation = Quaternion.AngleAxis(-(160 + 60 * throwInvLerpAmount), this.transform.right) * baseArmRotation;
+
+				this.aim.SetStretch(throwInvLerpAmount);
+
+				this.torso.localRotation = Quaternion.AngleAxis(throwInvLerpAmount * -10, Vector3.right);
 			}
-			else if (Input.GetMouseButtonUp(0))
+			else if (this.throwStrengthAccum > this.minThrowStrength)
 			{
-				this.throwStrengthAccum = this.startThrowStrength;
+				if (this.throwStrengthCache == 0) {
+					this.throwStrengthCache = this.throwStrengthAccum;
+				}
+
+				this.throwStrengthAccum = Mathf.MoveTowards(this.throwStrengthAccum, this.minThrowStrength, Time.deltaTime * 50);
+
+				if (this.throwStrengthCache > 0 && throwInvLerpAmount < 0.6f) {
+					GameObject thrownBottle = GameObject.Instantiate(this.throwablePrefab, this.throwPoint.position, Random.rotation, null);
+
+					Vector3 throwDirection = targetOffset.normalized * this.throwStrengthCache;
+
+					throwDirection.y = 1;
+
+					thrownBottle.SetActive(true);
+
+					thrownBottle.GetComponent<Rigidbody>().AddForce(throwDirection * this.throwStrengthMultiplier, ForceMode.Impulse);
+
+					this.throwStrengthCache = -1;
+				}
+
+				this.throwingArm.localRotation = Quaternion.AngleAxis(-(220 * throwInvLerpAmount), this.transform.right) * baseArmRotation;
 
 				this.aim.SetStretch(-1);
+
+				this.torso.localRotation = Quaternion.AngleAxis(10 + throwInvLerpAmount * -20, Vector3.right);
+			}
+			else {
+				this.throwStrengthCache = 0;
+
+				this.throwingArm.localRotation = baseArmRotation;
+
+				this.torso.localRotation = Quaternion.identity;
 			}
 		}
 	}

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1551615338690528377}
   - component: {fileID: 8571096126838506562}
   - component: {fileID: 5890288646006740370}
-  - component: {fileID: -3287316123246815153}
+  - component: {fileID: -7450372462986499108}
   m_Layer: 0
   m_Name: attackInstance
   m_TagString: Untagged
@@ -91,7 +91,7 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &-3287316123246815153
+--- !u!114 &-7450372462986499108
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -100,8 +100,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5604516967968833624}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4aa699ce244e0304cb9df6f32561c44e, type: 3}
+  m_Script: {fileID: 11500000, guid: 6515eaacebde437488024cf8b61be678, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AttackEffects.ExplosionEffect
-  damage: 5
-  range: 1
+  m_EditorClassIdentifier: Assembly-CSharp::ExplosionEffect
+  lifetime: 0.1
