@@ -9,12 +9,21 @@ public class PlayerController : MonoBehaviour {
 	public Vector3 targetOffset;
 	public GameObject targetCrosshair;
 	public GameObject visualBody;
+	public AimingAid aim;
 
-	public void Awake() {
-		
+	public float throwStrengthAccumSpeed = 3;
+	public float startThrowStrength = 1;
+	public float endThrowStrength = 5;
+	float throwStrengthAccum;
+
+	public void Awake()
+	{
+		this.aim.SetStretch(-1);
 	}
 
 	public void FixedUpdate() {
+		return;
+
 		if (Camera.main) {
 			Vector3 left = Vector3.Cross(Camera.main.transform.forward, Vector3.up).normalized;
 
@@ -62,7 +71,28 @@ public class PlayerController : MonoBehaviour {
 
 			targetOffset = targetPos - this.transform.position;
 
-			targetCrosshair.transform.position = this.transform.position + targetOffset;
+			// targetCrosshair.transform.position = this.transform.position + targetOffset;
+
+			aim.PointAt(targetPos);
+
+			if (Input.GetMouseButton(0))
+			{
+				Debug.Log("Miau");
+				this.throwStrengthAccum += this.throwStrengthAccumSpeed * Time.deltaTime;
+
+				if (this.throwStrengthAccum > this.endThrowStrength)
+				{
+					this.throwStrengthAccum = this.endThrowStrength;
+				}
+
+				this.aim.SetStretch(Mathf.InverseLerp(this.startThrowStrength, this.endThrowStrength, this.throwStrengthAccum));
+			}
+			else if (Input.GetMouseButtonUp(0))
+			{
+				this.throwStrengthAccum = this.startThrowStrength;
+
+				this.aim.SetStretch(-1);
+			}
 		}
 	}
 }
