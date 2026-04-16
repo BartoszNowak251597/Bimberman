@@ -765,6 +765,7 @@ MonoBehaviour:
   height: 10
   angleY: 45
   angleX: 40
+  lerpAmount: 0
 --- !u!114 &1536918654
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -966,10 +967,10 @@ MonoBehaviour:
   targetCrosshair: {fileID: 0}
   visualBody: {fileID: 0}
   aim: {fileID: 110658504}
-  throwStrengthAccumSpeed: 7
+  throwSpeedTime: 0.6
   minThrowStrength: 1
   maxThrowStrength: 5
-  throwStrengthMultiplier: 2
+  throwStrengthMultiplier: 3
   throwingArm: {fileID: 999264568}
   torso: {fileID: 1971928010}
   throwPoint: {fileID: 851545581}

@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour {
 	public GameObject visualBody;
 	public AimingAid aim;
 
-	public float throwStrengthAccumSpeed = 7;
+	public float throwSpeedTime = 0.6f;
 	public float minThrowStrength = 1;
 	public float maxThrowStrength = 5;
 	public float throwStrengthMultiplier = 10;
@@ -32,7 +32,7 @@ public class PlayerController : MonoBehaviour {
 
 		this.baseArmRotation = this.throwingArm.localRotation;
 
-		this.throwStrengthAccum = this.minThrowStrength;
+		this.throwStrengthAccum = 0;
 	}
 
 	public void FixedUpdate() {
@@ -75,6 +75,10 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 
+	private float ThrowStrengthEasing(float strength) {
+		return strength * strength;
+	}
+
 	public void Update() {
 		if (Camera.main) {
 			Ray cameraRay = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -89,35 +93,33 @@ public class PlayerController : MonoBehaviour {
 
 			aim.PointAt(targetPos);
 
-			float throwInvLerpAmount = Mathf.InverseLerp(this.minThrowStrength, this.maxThrowStrength, this.throwStrengthAccum);
-
 			if (Input.GetMouseButton(0) && this.throwStrengthCache == 0)
 			{
-				this.throwStrengthAccum += this.throwStrengthAccumSpeed * Time.deltaTime;
+				this.throwStrengthAccum += Time.deltaTime / this.throwSpeedTime;
 
-				if (this.throwStrengthAccum > this.maxThrowStrength)
+				if (this.throwStrengthAccum > 1)
 				{
-					this.throwStrengthAccum = this.maxThrowStrength;
+					this.throwStrengthAccum = 1;
 				}
 
-				this.throwingArm.localRotation = Quaternion.AngleAxis(-(160 + 60 * throwInvLerpAmount), this.transform.right) * baseArmRotation;
+				this.throwingArm.localRotation = Quaternion.AngleAxis(-(160 + 60 * ThrowStrengthEasing(this.throwStrengthAccum)), this.transform.right) * baseArmRotation;
 
-				this.aim.SetStretch(throwInvLerpAmount);
+				this.aim.SetStretch(ThrowStrengthEasing(this.throwStrengthAccum));
 
-				this.torso.localRotation = Quaternion.AngleAxis(throwInvLerpAmount * -10, Vector3.right);
+				this.torso.localRotation = Quaternion.AngleAxis(ThrowStrengthEasing(this.throwStrengthAccum) * -10, Vector3.right);
 			}
-			else if (this.throwStrengthAccum > this.minThrowStrength)
+			else if (this.throwStrengthAccum > 0)
 			{
 				if (this.throwStrengthCache == 0) {
 					this.throwStrengthCache = this.throwStrengthAccum;
 				}
 
-				this.throwStrengthAccum = Mathf.MoveTowards(this.throwStrengthAccum, this.minThrowStrength, Time.deltaTime * 50);
+				this.throwStrengthAccum = Mathf.MoveTowards(this.throwStrengthAccum, 0, Time.deltaTime * 10);
 
-				if (this.throwStrengthCache > 0 && throwInvLerpAmount < 0.6f) {
+				if (this.throwStrengthCache > 0 && this.throwStrengthAccum < 0.7f) {
 					GameObject thrownBottle = GameObject.Instantiate(this.throwablePrefab, this.throwPoint.position, Random.rotation, null);
 
-					Vector3 throwDirection = targetOffset.normalized * this.throwStrengthCache;
+					Vector3 throwDirection = targetOffset.normalized * Mathf.Lerp(this.minThrowStrength, maxThrowStrength, ThrowStrengthEasing(this.throwStrengthCache));
 
 					throwDirection.y = 1;
 
@@ -128,11 +130,11 @@ public class PlayerController : MonoBehaviour {
 					this.throwStrengthCache = -1;
 				}
 
-				this.throwingArm.localRotation = Quaternion.AngleAxis(-(220 * throwInvLerpAmount), this.transform.right) * baseArmRotation;
+				this.throwingArm.localRotation = Quaternion.AngleAxis(-(220 * ThrowStrengthEasing(this.throwStrengthAccum)), this.transform.right) * baseArmRotation;
 
 				this.aim.SetStretch(-1);
 
-				this.torso.localRotation = Quaternion.AngleAxis(10 + throwInvLerpAmount * -20, Vector3.right);
+				this.torso.localRotation = Quaternion.AngleAxis(10 + ThrowStrengthEasing(this.throwStrengthAccum) * -20, Vector3.right);
 			}
 			else {
 				this.throwStrengthCache = 0;
