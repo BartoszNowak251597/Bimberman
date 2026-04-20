@@ -12,9 +12,9 @@ public class PlayerController : MonoBehaviour {
 	public AimingAid aim;
 
 	public float throwSpeedTime = 0.6f;
-	public float minThrowStrength = 1;
-	public float maxThrowStrength = 5;
-	public float throwStrengthMultiplier = 10;
+	public float minThrowDistance = 1;
+	public float maxThrowDistance = 5;
+	public float flightTime = 1;
 	float throwStrengthAccum;
 	float throwStrengthCache;
 
@@ -106,6 +106,9 @@ public class PlayerController : MonoBehaviour {
 
 				this.aim.SetStretch(ThrowStrengthEasing(this.throwStrengthAccum));
 
+				this.aim.crosshair.SetActive(true);
+				this.aim.SetCrosshairPosition(this.transform.position + targetOffset.normalized * Mathf.Lerp(minThrowDistance, maxThrowDistance, ThrowStrengthEasing(this.throwStrengthAccum)));
+
 				this.torso.localRotation = Quaternion.AngleAxis(ThrowStrengthEasing(this.throwStrengthAccum) * -10, Vector3.right);
 			}
 			else if (this.throwStrengthAccum > 0)
@@ -119,13 +122,18 @@ public class PlayerController : MonoBehaviour {
 				if (this.throwStrengthCache > 0 && this.throwStrengthAccum < 0.7f) {
 					GameObject thrownBottle = GameObject.Instantiate(this.throwablePrefab, this.throwPoint.position, Random.rotation, null);
 
-					Vector3 throwDirection = targetOffset.normalized * Mathf.Lerp(this.minThrowStrength, maxThrowStrength, ThrowStrengthEasing(this.throwStrengthCache));
+					float speedX = Mathf.Lerp(minThrowDistance, maxThrowDistance, ThrowStrengthEasing(this.throwStrengthCache)) / this.flightTime;
 
-					throwDirection.y = 1;
+					float speedY = ((Vector3.Dot(Physics.gravity, Vector3.down) / 2) * this.flightTime * this.flightTime - Vector3.Dot(this.throwPoint.position, Vector3.up)) / this.flightTime;
+
+					Vector3 throwDirection = targetOffset.normalized * speedX + Vector3.up * speedY;
+
+					Debug.Log(speedX + " " + speedY);
 
 					thrownBottle.SetActive(true);
 
-					thrownBottle.GetComponent<Rigidbody>().AddForce(throwDirection * this.throwStrengthMultiplier, ForceMode.Impulse);
+					// thrownBottle.GetComponent<Rigidbody>().AddForce(throwDirection, ForceMode.VelocityChange);
+					thrownBottle.GetComponent<Rigidbody>().linearVelocity = throwDirection;
 
 					this.throwStrengthCache = -1;
 				}
@@ -133,6 +141,8 @@ public class PlayerController : MonoBehaviour {
 				this.throwingArm.localRotation = Quaternion.AngleAxis(-(220 * ThrowStrengthEasing(this.throwStrengthAccum)), this.transform.right) * baseArmRotation;
 
 				this.aim.SetStretch(-1);
+
+				this.aim.crosshair.SetActive(false);
 
 				this.torso.localRotation = Quaternion.AngleAxis(10 + ThrowStrengthEasing(this.throwStrengthAccum) * -20, Vector3.right);
 			}

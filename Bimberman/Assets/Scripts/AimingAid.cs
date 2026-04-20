@@ -6,6 +6,7 @@ public class AimingAid : MonoBehaviour
 	public Vector3 upAxis;
 
 	public SkinnedMeshRenderer stretchPart;
+	public GameObject crosshair;
 
 	public void PointAt(Vector3 point)
 	{
@@ -23,5 +24,9 @@ public class AimingAid : MonoBehaviour
 			stretchPart.enabled = true;
 			stretchPart.SetBlendShapeWeight(0, amount * 100);
 		}
+	}
+
+	public void SetCrosshairPosition(Vector3 pos) {
+		this.crosshair.transform.position = pos;
 	}
 }
