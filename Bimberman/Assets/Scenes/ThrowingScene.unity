@@ -654,7 +654,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &959775667
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1309,8 +1309,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraController
   target: {x: 0, y: 0, z: 0}
-  height: 5
-  angleY: 0
+  height: 10
+  angleY: 45
   angleX: 45
   lerpAmount: 0
   outDebug: {x: 0, y: 0, z: 0}

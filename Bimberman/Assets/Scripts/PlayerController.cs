@@ -73,24 +73,39 @@ public class PlayerController : MonoBehaviour {
 			Vector3 forward = Vector3.Cross(Vector3.up, left).normalized;
 
 			Vector3 movement = Vector3.zero;
+			Vector3 keyboardMovement = Vector3.zero;
+			Vector3 gamepadMovement = Vector3.zero;
 
-			if (Input.GetKey("w")) {
-				movement += forward * speed;
+			if (Input.GetKey("w"))
+			{
+				keyboardMovement += forward;
 			}
 			if (Input.GetKey("s")) {
-				movement -= forward * speed;
+				keyboardMovement -= forward;
 			}
 			if (Input.GetKey("a")) {
-				movement += left * speed;
+				keyboardMovement += left;
 			}
-			if (Input.GetKey("d")) {
-				movement -= left * speed;
+			if (Input.GetKey("d"))
+			{
+				keyboardMovement -= left;
 			}
+
+			if (Vector3.Magnitude(keyboardMovement) > Mathf.Epsilon)
+			{
+				keyboardMovement = Vector3.Normalize(keyboardMovement);
+			}
+
+			gamepadMovement = -left * Input.GetAxis("Horizontal") + forward * Input.GetAxis("Vertical");
+
+			movement = (Vector3.Magnitude(gamepadMovement) > Vector3.Magnitude(keyboardMovement)) ? gamepadMovement : keyboardMovement;
+
+			movement *= this.speed;
 
 			float velocityLerpFactor = Vector3.Dot(this.desiredMovement, movement) / (this.speed * this.speed);
 			velocityLerpFactor *= velocityLerpFactor;
 
-			debugText.text = velocityLerpFactor.ToString();
+			// debugText.text = velocityLerpFactor.ToString();
 
 			float minVelocityLerpFactor = this.desiredMovement.sqrMagnitude < movement.sqrMagnitude ? 0.03f : 0.3f;
 			float maxVelocityLerpFactor = this.desiredMovement.sqrMagnitude < movement.sqrMagnitude ? 0.2f : 0.25f;
@@ -112,23 +127,45 @@ public class PlayerController : MonoBehaviour {
 
 	public void Update() {
 		if (Camera.main) {
+			Vector3 left = Vector3.Cross(Camera.main.transform.forward, Vector3.up).normalized;
+
+			Vector3 forward = Vector3.Cross(Vector3.up, left).normalized;
+
 			Ray cameraRay = Camera.main.ScreenPointToRay(Input.mousePosition);
 
 			new Plane(Vector3.up, Vector3.zero).Raycast(cameraRay, out float dist);
 
 			Vector3 targetPos = cameraRay.GetPoint(dist);
 
+			Vector3 gamepadLook = -(left * Input.GetAxis("Look Horizontal") + forward * Input.GetAxis("Look Vertical"));
+
+			if (Vector3.Magnitude(gamepadLook) > Mathf.Epsilon)
+			{
+				targetPos = gamepadLook + this.transform.position;
+			}
+
 			targetOffset = targetPos - this.transform.position;
 
-			// Camera.main.GetComponent<CameraController>().target = this.transform.position + targetOffset.normalized;
+			Camera.main.GetComponent<CameraController>().target = this.transform.position + targetOffset.normalized;
 
 			aim.PointAt(targetPos);
 
 			this.transform.rotation = Quaternion.LookRotation(targetOffset.normalized, Vector3.up);
 
-			if (Input.GetMouseButton(0) && this.throwStrengthCache == 0)
+			float throwOomph = 0;
+
+			if (Input.GetMouseButton(0))
 			{
-				this.throwStrengthAccum += Time.deltaTime / this.throwSpeedTime;
+				throwOomph = 1;
+			}
+			else if (Input.GetAxis("Throw Thing Gamepad") > 0)
+			{
+				throwOomph = Input.GetAxis("Throw Thing Gamepad");
+			}
+
+			if (throwOomph > 0 && this.throwStrengthCache == 0)
+			{
+				this.throwStrengthAccum += Time.deltaTime * throwOomph / this.throwSpeedTime;
 
 				if (this.throwStrengthAccum > 1)
 				{
@@ -148,13 +185,15 @@ public class PlayerController : MonoBehaviour {
 			}
 			else if (this.throwStrengthAccum > 0)
 			{
-				if (this.throwStrengthCache == 0) {
+				if (this.throwStrengthCache == 0)
+				{
 					this.throwStrengthCache = this.throwStrengthAccum;
 				}
 
 				this.throwStrengthAccum = Mathf.MoveTowards(this.throwStrengthAccum, 0, Time.deltaTime * 10);
 
-				if (this.throwStrengthCache > 0 && this.throwStrengthAccum < 0.7f) {
+				if (this.throwStrengthCache > 0 && this.throwStrengthAccum < 0.7f)
+				{
 					GameObject thrownBottle = GameObject.Instantiate(this.throwablePrefab, this.throwPoint.position, Random.rotation, null);
 
 					Vector3 hitPoint = targetOffset.normalized * Mathf.LerpUnclamped(minThrowDistance, maxThrowDistance, ThrowStrengthEasing(this.throwStrengthCache)) + GetStrengthFromVelocity();
@@ -186,7 +225,8 @@ public class PlayerController : MonoBehaviour {
 
 				this.torso.localRotation = Quaternion.AngleAxis(10 + ThrowStrengthEasing(this.throwStrengthAccum) * -20, Vector3.right);
 			}
-			else {
+			else
+			{
 				this.throwStrengthCache = 0;
 
 				this.throwingArm.localRotation = baseArmRotation;
