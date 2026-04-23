@@ -9,7 +9,15 @@ public class ThrowTarget : MonoBehaviour {
 		}
 	}
 
-	public void OnEnable() {
+	public void Update()
+	{
+		Vector3 targetPos = FindFirstObjectByType<PlayerController>().transform.position;
+
+		this.transform.position = Vector3.MoveTowards(this.transform.position, targetPos, Time.deltaTime);
+	}
+
+	public void OnEnable()
+	{
 		EventManager.Subscribe(OnPotionExplosion);
 	}
 

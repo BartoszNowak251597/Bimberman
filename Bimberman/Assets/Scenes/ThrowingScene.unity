@@ -672,8 +672,8 @@ MonoBehaviour:
   minDist: 3
   maxDist: 8
   maxTargets: 5
-  minTargetSpawnTime: 0.4
-  maxTargetSpawnTime: 3
+  minTargetSpawnTime: 0.1
+  maxTargetSpawnTime: 0.3
 --- !u!4 &959775668
 Transform:
   m_ObjectHideFlags: 0

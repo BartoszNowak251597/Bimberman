@@ -14,10 +14,30 @@ public class TargetPractice : MonoBehaviour {
 	private int readyTargets;
 	private float targetSpawnTime;
 
+	private bool readyToSpawnTargets = true;
+
+	private Vector3 spawnPosition;
+
 	private void OnTargetHit(TargetHitEvent e) {
+		if (this.readyToSpawnTargets)
+		{
+			return;
+		}
+
 		Destroy(e.target.gameObject);
 
 		readyTargets--;
+
+		if (readyTargets == 0)
+		{
+			readyToSpawnTargets = true;
+
+			spawnPosition = Random.onUnitSphere;
+			spawnPosition.y = 0;
+			spawnPosition = spawnPosition.normalized * Mathf.Lerp(minDist * 2, maxDist * 2, Random.value);
+
+			spawnPosition += FindFirstObjectByType<PlayerController>().transform.position;
+		}
 
 		targetSpawnTime = Mathf.Lerp(minTargetSpawnTime, maxTargetSpawnTime, Random.value);
 
@@ -27,20 +47,27 @@ public class TargetPractice : MonoBehaviour {
 	}
 
 	public void Update() {
-		if (readyTargets < maxTargets) {
+		if (readyToSpawnTargets) {
 			targetSpawnTime -= Time.deltaTime;
 
-			if (targetSpawnTime < 0) {
+			if (targetSpawnTime < 0)
+			{
 				GameObject newTarget = Instantiate(throwTargetPrefab);
 				Vector3 targetPos = Random.onUnitSphere;
 				targetPos.y = 0;
 				targetPos = targetPos.normalized * Mathf.Lerp(minDist, maxDist, Random.value);
+				targetPos += spawnPosition;
 
 				newTarget.transform.position = targetPos;
 				newTarget.SetActive(true);
 
 				this.readyTargets++;
 				this.targetSpawnTime = Mathf.Lerp(minTargetSpawnTime, maxTargetSpawnTime, Random.value);
+			}
+			
+			if (readyTargets == maxTargets)
+			{
+				this.readyToSpawnTargets = false;
 			}
 		}
 
