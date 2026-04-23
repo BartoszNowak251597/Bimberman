@@ -9,6 +9,8 @@ public class CameraController : MonoBehaviour {
 	[Range(0, 1)]
 	public float lerpAmount = 0.0f;
 
+	public Vector3 outDebug;
+
 	public void LateUpdate() {
 		Vector3 playerPos = FindFirstObjectByType<PlayerController>().transform.position;
 
@@ -20,6 +22,8 @@ public class CameraController : MonoBehaviour {
 		Vector3 targetRelativePos = target + dir * rayDist;
 
 		Vector3 pos = Vector3.Lerp(playerRelativePos, targetRelativePos, lerpAmount);
+
+		outDebug = (target - pos).normalized;
 
 		this.transform.position = pos;
 

@@ -332,6 +332,38 @@ MonoBehaviour:
   upAxis: {x: 0, y: 1, z: 0}
   stretchPart: {fileID: 96778460}
   crosshair: {fileID: 9747949}
+--- !u!1 &118085101
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 118085102}
+  m_Layer: 0
+  m_Name: visual_pivot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &118085102
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 118085101}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1935535512}
+  m_Father: {fileID: 1446437766}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &567846745
 GameObject:
   m_ObjectHideFlags: 0
@@ -450,7 +482,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1446437766}
+    m_TransformParent: {fileID: 118085102}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 81a5e8ece11b38ab895d5bad8544f476, type: 3}
       propertyPath: m_LocalScale.x
@@ -622,7 +654,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &959775667
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1090,6 +1122,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1446437766}
   - component: {fileID: 1446437765}
+  - component: {fileID: 1446437767}
   m_Layer: 0
   m_Name: Krasnolud
   m_TagString: Untagged
@@ -1109,13 +1142,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b38d578c63b3e74087d1fe8ae16977d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  wobbliness: 0
-  speed: 100
-  cursorMovement: 2
-  rb: {fileID: 0}
+  wobbliness: 1
+  speed: 3
+  velocityThrowBoost: 0.4
+  sidewaysWobbleFrequency: 3.4
+  rb: {fileID: 1446437767}
   targetOffset: {x: 0, y: 0, z: 0}
-  targetCrosshair: {fileID: 0}
-  visualBody: {fileID: 0}
   aim: {fileID: 110658504}
   throwSpeedTime: 1.3
   minThrowDistance: 2
@@ -1125,6 +1157,7 @@ MonoBehaviour:
   torso: {fileID: 1971928010}
   throwPoint: {fileID: 851545581}
   throwablePrefab: {fileID: 1211037656}
+  debugText: {fileID: 1194639617}
 --- !u!4 &1446437766
 Transform:
   m_ObjectHideFlags: 0
@@ -1138,10 +1171,37 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1935535512}
+  - {fileID: 118085102}
   - {fileID: 110658502}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &1446437767
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1446437764}
+  serializedVersion: 5
+  m_Mass: 0.2
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 0
+  m_ImplicitTensor: 0
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &1536918649
 GameObject:
   m_ObjectHideFlags: 0
@@ -1249,10 +1309,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraController
   target: {x: 0, y: 0, z: 0}
-  height: 10
-  angleY: 45
-  angleX: 40
+  height: 5
+  angleY: 0
+  angleX: 45
   lerpAmount: 0
+  outDebug: {x: 0, y: 0, z: 0}
 --- !u!114 &1536918654
 MonoBehaviour:
   m_ObjectHideFlags: 0
