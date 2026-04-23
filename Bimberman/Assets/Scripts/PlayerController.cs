@@ -31,12 +31,26 @@ public class PlayerController : MonoBehaviour {
 
 	private float wobblinessAccum = 0;
 
-	public void Awake() {
+	public void Awake()
+	{
 		this.aim.SetStretch(-1);
 
 		this.baseArmRotation = this.throwingArm.localRotation;
 
 		this.throwStrengthAccum = 0;
+	}
+	
+	private float GetWoblinnessStrength()
+	{
+		return (
+			Mathf.Sin(wobblinessAccum * sidewaysWobbleFrequency)
+			+
+			Mathf.Sin(wobblinessAccum * sidewaysWobbleFrequency * 2.3f)
+			+
+			Mathf.Sin(wobblinessAccum * sidewaysWobbleFrequency * 7.35f)
+			+
+			Mathf.Sin(wobblinessAccum * sidewaysWobbleFrequency * 17)
+		) / 4;
 	}
 
 	private Vector3 ApplyWobblyness() {
@@ -44,11 +58,11 @@ public class PlayerController : MonoBehaviour {
 			return Vector3.zero;
 		}
 
-		Vector3 left = Vector3.Cross(Camera.main.transform.forward, Vector3.up).normalized;
+		Vector3 left = Vector3.Cross(this.desiredMovement, Vector3.up).normalized;
 
 		Vector3 forward = Vector3.Cross(Vector3.up, left).normalized;
 
-		Vector3 deflection = left * Mathf.Sin(wobblinessAccum * sidewaysWobbleFrequency) + forward * Mathf.Sin(Time.time * 0);
+		Vector3 deflection = left * GetWoblinnessStrength() + forward * Mathf.Sin(Time.time * 0);
 
 		deflection *= wobbliness;
 		
@@ -57,9 +71,9 @@ public class PlayerController : MonoBehaviour {
 			3
 		);
 
-		wobblinessAccum += wobblinessRamp * Time.fixedDeltaTime * Random.Range(0.7f, 1.3f);
+		wobblinessAccum += wobblinessRamp * Time.fixedDeltaTime * Random.Range(0.7f, 3.3f);
 
-		this.transform.Find("visual_pivot").localRotation = Quaternion.AngleAxis(-Mathf.Sin(wobblinessAccum * sidewaysWobbleFrequency) * 10 * wobblinessRamp, Vector3.forward);
+		this.transform.Find("visual_pivot").localRotation = Quaternion.AngleAxis(-GetWoblinnessStrength() * 10 * wobblinessRamp, Vector3.forward);
 
 		deflection *= wobblinessRamp;
 
