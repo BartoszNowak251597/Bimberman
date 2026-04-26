@@ -13,6 +13,9 @@ namespace Crafting
         [SerializeField] private float maxTemperature = 120f;
         [SerializeField] private float temperaturePerBlow = 5f;
 
+        [Header("Bellow")]
+        [SerializeField] private float blowCooldown = 1f;
+
         [Header("Target")]
         [SerializeField] private float minCorrectTemperature = 70f;
         [SerializeField] private float maxCorrectTemperature = 80f;
@@ -24,11 +27,10 @@ namespace Crafting
 
         [Header("Timer")]
         [SerializeField] private float requiredCorrectHeatTime = 5f;
-        [SerializeField] private float correctHeatTimer = 0f;
+        private float _correctHeatTimer = 0f;
 
         [Header("Penalty")]
         [SerializeField] private float overheatPenaltyPerSecond = 12f;
-        [SerializeField] private float minimumQualityPercent = 0f;
 
         [Header("UI")]
         [SerializeField] private TMP_Text bellowText;
@@ -56,7 +58,7 @@ namespace Crafting
         private void Awake()
         {
             currentData = null;
-            correctHeatTimer = 0f;
+            _correctHeatTimer = 0f;
             ResetLampLight();
         }
 
@@ -64,7 +66,7 @@ namespace Crafting
         {
             if (currentData == null)
             {
-                correctHeatTimer = 0f;
+                _correctHeatTimer = 0f;
                 UpdateVisuals();
                 return;
             }
@@ -86,7 +88,7 @@ namespace Crafting
         {
             currentData = data;
 
-            correctHeatTimer = 0f;
+            _correctHeatTimer = 0f;
             timeSinceLastBlow = 999f;
             coolingTimer = 0f;
 
@@ -106,9 +108,16 @@ namespace Crafting
                 && currentData.usedIngredients.Count > 0;
         }
 
+        public bool CanBlow()
+        {
+            return HasMixture()
+                && currentData.stage != BrewStage.Finished
+                && timeSinceLastBlow >= blowCooldown;
+        }
+
         public void Blow()
         {
-            if (!HasMixture())
+            if (!CanBlow())
                 return;
 
             currentData.currentTemperature += temperaturePerBlow;
@@ -180,11 +189,11 @@ namespace Crafting
 
             if (currentData.stage == BrewStage.HeatedCorrectly)
             {
-                correctHeatTimer += Time.deltaTime;
+                _correctHeatTimer += Time.deltaTime;
 
-                if (correctHeatTimer >= requiredCorrectHeatTime)
+                if (_correctHeatTimer >= requiredCorrectHeatTime)
                 {
-                    correctHeatTimer = requiredCorrectHeatTime;
+                    _correctHeatTimer = requiredCorrectHeatTime;
                     currentData.stage = BrewStage.Finished;
 
                     Debug.Log($"Heating finished. Quality: {currentData.qualityPercent:0}%");
@@ -192,8 +201,8 @@ namespace Crafting
             }
             else if (currentData.stage == BrewStage.Heating)
             {
-                correctHeatTimer -= Time.deltaTime * 0.5f;
-                correctHeatTimer = Mathf.Max(0f, correctHeatTimer);
+                _correctHeatTimer -= Time.deltaTime * 0.5f;
+                _correctHeatTimer = Mathf.Max(0f, _correctHeatTimer);
             }
         }
 
@@ -206,21 +215,29 @@ namespace Crafting
                 return;
 
             currentData.qualityPercent -= overheatPenaltyPerSecond * Time.deltaTime;
-
-            currentData.qualityPercent = Mathf.Clamp(
-                currentData.qualityPercent,
-                minimumQualityPercent,
-                100f
-            );
+            currentData.qualityPercent = Mathf.Clamp(currentData.qualityPercent, 0f, 100f);
         }
 
         private void UpdateVisuals()
         {
             if (bellowText != null)
             {
-                bellowText.text = currentData != null
-                    ? $"{currentData.currentTemperature:0}°C"
-                    : "";
+                if (currentData == null)
+                {
+                    bellowText.text = "";
+                }
+                else if (currentData.stage == BrewStage.Finished)
+                {
+                    bellowText.text = "Finished";
+                }
+                else if (CanBlow())
+                {
+                    bellowText.text = "Press to blow";
+                }
+                else
+                {
+                    bellowText.text = "Wait";
+                }
             }
 
             if (currentTemperatureText != null)
@@ -242,7 +259,7 @@ namespace Crafting
             if (timerText != null)
             {
                 timerText.text = currentData != null
-                    ? $"Time: {correctHeatTimer:0.0}/{requiredCorrectHeatTime:0.0}s"
+                    ? $"Time: {_correctHeatTimer:0.0}/{requiredCorrectHeatTime:0.0}s"
                     : "";
             }
 
