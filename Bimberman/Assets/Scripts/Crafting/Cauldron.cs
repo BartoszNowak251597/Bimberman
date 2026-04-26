@@ -16,6 +16,10 @@ namespace Crafting
 
         public void OnHoverExit() { }
 
+        public void OnPressStart(PlayerMouseInteractor interactor) { }
+
+        public void OnPressEnd(PlayerMouseInteractor interactor) { }
+
         public void OnClick(PlayerMouseInteractor interactor)
         {
             if (interactor == null) return;
@@ -94,6 +98,11 @@ namespace Crafting
             return $"Kocioł ({ingredients.Count}/{maxIngredients})";
         }
 
+        public bool HasMixture()
+        {
+            return ingredients.Count > 0;
+        }
+
         public BottleData PourToBottle()
         {
             if (ingredients.Count == 0)
@@ -102,7 +111,10 @@ namespace Crafting
             BottleData bottle = new BottleData
             {
                 usedIngredients = new List<IngredientData>(ingredients),
-                liquidColor = CalculateColor()
+                liquidColor = CalculateColor(),
+                stage = BrewStage.RawMixture,
+                currentTemperature = 20f,
+                qualityPercent = 100f
             };
 
             ingredients.Clear();

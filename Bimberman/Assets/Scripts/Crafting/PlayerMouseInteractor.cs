@@ -25,6 +25,7 @@ namespace Crafting
         public float cauldronDropRadius = 0.9f;
 
         private IInteractable currentInteractable;
+        private IInteractable pressedInteractable;
 
         private IngredientData heldIngredient;
         private BottleData heldBottle;
@@ -47,11 +48,20 @@ namespace Crafting
 
             if (Input.GetMouseButtonDown(0) && currentInteractable != null)
             {
-                currentInteractable.OnClick(this);
+                pressedInteractable = currentInteractable;
+
+                pressedInteractable.OnClick(this);
+                pressedInteractable.OnPressStart(this);
             }
 
             if (Input.GetMouseButtonUp(0))
             {
+                if (pressedInteractable != null)
+                {
+                    pressedInteractable.OnPressEnd(this);
+                    pressedInteractable = null;
+                }
+
                 TryReleaseHeldIngredient();
             }
         }

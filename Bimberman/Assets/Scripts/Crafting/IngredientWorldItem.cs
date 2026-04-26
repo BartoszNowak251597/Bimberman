@@ -45,6 +45,10 @@ namespace Crafting
             highlightRenderer.material.color = originalColor;
         }
 
+        public void OnPressStart(PlayerMouseInteractor interactor) { }
+
+        public void OnPressEnd(PlayerMouseInteractor interactor) { }
+
         public void OnClick(PlayerMouseInteractor interactor)
         {
             if (isHeld) return;

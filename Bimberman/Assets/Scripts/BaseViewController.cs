@@ -69,10 +69,26 @@ public class BaseViewController : MonoBehaviour
     {
         if (!canControl) return;
         if (isBusy) return;
-        if (isInUiView) return;
+
+        if (isInUiView)
+        {
+            HandleUiViewInput();
+            return;
+        }
+
         if (lookPoints == null || lookPoints.Length == 0) return;
 
         HandleKeyboardInput();
+    }
+
+    private void HandleUiViewInput()
+    {
+        if (Keyboard.current == null) return;
+
+        if (Keyboard.current.escapeKey.wasPressedThisFrame)
+        {
+            ExitUiView();
+        }
     }
 
     private void HandleKeyboardInput()
@@ -81,12 +97,14 @@ public class BaseViewController : MonoBehaviour
 
         int movement = 0;
 
-        if (inputActions.Base.Look.WasPressedThisFrame()) {
-            movement = (int) inputActions.Base.Look.ReadValue<float>();
+        if (inputActions.Base.Look.WasPressedThisFrame())
+        {
+            movement = (int)inputActions.Base.Look.ReadValue<float>();
         }
 
-        if (movement == 0 && inputActions.Player.Move.WasPressedThisFrame()) {
-            movement = (int) inputActions.Player.Move.ReadValue<Vector2>().x;
+        if (movement == 0 && inputActions.Player.Move.WasPressedThisFrame())
+        {
+            movement = (int)inputActions.Player.Move.ReadValue<Vector2>().x;
         }
 
         if (movement > 0)
@@ -105,6 +123,11 @@ public class BaseViewController : MonoBehaviour
     public bool IsBusy()
     {
         return isBusy;
+    }
+
+    public bool IsInUiView()
+    {
+        return isInUiView;
     }
 
     public Transform GetCurrentLookPoint()
