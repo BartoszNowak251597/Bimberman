@@ -35,6 +35,7 @@ public class PlayerController : MonoBehaviour {
 	public float legMovementSpeed = 1;
 	public Transform leftLeg;
 	public Transform rightLeg;
+	public Vector3 gamepadAim;
 
 	private float wobblinessAccum = 0;
 	public bool gamepadControl = true;
@@ -173,9 +174,11 @@ public class PlayerController : MonoBehaviour {
 			{
 				Vector3 gamepadLook = -(left * Input.GetAxis("Look Horizontal") + forward * Input.GetAxis("Look Vertical"));
 
-				if (Vector3.Magnitude(gamepadLook) > Mathf.Epsilon)
+				gamepadAim = Vector3.MoveTowards(gamepadAim, gamepadLook, Time.deltaTime * 3);
+
+				if (Vector3.Magnitude(gamepadAim) > Mathf.Epsilon)
 				{
-					targetPos = gamepadLook + this.transform.position;
+					targetPos = gamepadAim + this.transform.position;
 				}
 				else
 				{
