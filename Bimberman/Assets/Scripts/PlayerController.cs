@@ -2,9 +2,11 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 	public float wobbliness;
+	public float throwWobbliness;
 	public float speed = 100;
 	public float velocityThrowBoost = 1;
 	public float sidewaysWobbleFrequency;
+	public float throwWobblinessFrequency;
 
 	public Rigidbody rb;
 
@@ -29,7 +31,13 @@ public class PlayerController : MonoBehaviour {
 
 	public TMPro.TMP_Text debugText;
 
+	public float legMovement;
+	public float legMovementSpeed = 1;
+	public Transform leftLeg;
+	public Transform rightLeg;
+
 	private float wobblinessAccum = 0;
+	public bool gamepadControl = true;
 
 	public void Awake()
 	{
@@ -40,17 +48,17 @@ public class PlayerController : MonoBehaviour {
 		this.throwStrengthAccum = 0;
 	}
 	
-	private float GetWoblinnessStrength()
+	public float GetWoblinnessStrength()
 	{
 		return (
 			Mathf.Sin(wobblinessAccum * sidewaysWobbleFrequency)
 			+
 			Mathf.Sin(wobblinessAccum * sidewaysWobbleFrequency * 2.3f)
-			+
-			Mathf.Sin(wobblinessAccum * sidewaysWobbleFrequency * 7.35f)
-			+
-			Mathf.Sin(wobblinessAccum * sidewaysWobbleFrequency * 17)
-		) / 4;
+			// +
+			// Mathf.Sin(wobblinessAccum * sidewaysWobbleFrequency * 7.35f)
+			// +
+			// Mathf.Sin(wobblinessAccum * sidewaysWobbleFrequency * 17)
+		) / 2;
 	}
 
 	private Vector3 ApplyWobblyness() {
@@ -71,13 +79,13 @@ public class PlayerController : MonoBehaviour {
 			3
 		);
 
-		wobblinessAccum += wobblinessRamp * Time.fixedDeltaTime * Random.Range(0.7f, 3.3f);
+		wobblinessAccum += wobblinessRamp * Time.fixedDeltaTime * Random.Range(0.7f, 1.3f);
 
 		this.transform.Find("visual_pivot").localRotation = Quaternion.AngleAxis(-GetWoblinnessStrength() * 10 * wobblinessRamp, Vector3.forward);
 
 		deflection *= wobblinessRamp;
 
-		return this.desiredMovement + deflection;
+		return Vector3.Normalize(this.desiredMovement + deflection) * speed;
 	}
 
 	public void FixedUpdate() {
@@ -131,7 +139,13 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 
-	private Vector3 GetStrengthFromVelocity() {
+	public Vector3 GetThrowWobble()
+	{
+		return new Vector3(Mathf.Sin(Time.time * throwWobblinessFrequency), 0, Mathf.Cos(Time.time * (throwWobblinessFrequency + 0.71f))) * (0.1f + this.throwStrengthAccum) * throwWobbliness;
+	}
+
+	private Vector3 GetStrengthFromVelocity()
+	{
 		return this.rb.linearVelocity * velocityThrowBoost;
 	}
 
@@ -145,17 +159,28 @@ public class PlayerController : MonoBehaviour {
 
 			Vector3 forward = Vector3.Cross(Vector3.up, left).normalized;
 
-			Ray cameraRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+			Vector3 targetPos;
 
-			new Plane(Vector3.up, Vector3.zero).Raycast(cameraRay, out float dist);
-
-			Vector3 targetPos = cameraRay.GetPoint(dist);
-
-			Vector3 gamepadLook = -(left * Input.GetAxis("Look Horizontal") + forward * Input.GetAxis("Look Vertical"));
-
-			if (Vector3.Magnitude(gamepadLook) > Mathf.Epsilon)
+			if (!gamepadControl)
 			{
-				targetPos = gamepadLook + this.transform.position;
+				Ray cameraRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+				new Plane(Vector3.up, Vector3.zero).Raycast(cameraRay, out float dist);
+
+				targetPos = cameraRay.GetPoint(dist);
+			}
+			else
+			{
+				Vector3 gamepadLook = -(left * Input.GetAxis("Look Horizontal") + forward * Input.GetAxis("Look Vertical"));
+
+				if (Vector3.Magnitude(gamepadLook) > Mathf.Epsilon)
+				{
+					targetPos = gamepadLook + this.transform.position;
+				}
+				else
+				{
+					targetPos = targetOffset + this.transform.position;
+				}
 			}
 
 			targetOffset = targetPos - this.transform.position;
@@ -192,6 +217,8 @@ public class PlayerController : MonoBehaviour {
 
 				Vector3 hitPoint = targetOffset.normalized * Mathf.LerpUnclamped(minThrowDistance, maxThrowDistance, ThrowStrengthEasing(this.throwStrengthAccum)) + GetStrengthFromVelocity();
 
+				hitPoint += GetThrowWobble();
+
 				this.aim.crosshair.SetActive(true);
 				this.aim.SetCrosshairPosition(this.transform.position + hitPoint);
 
@@ -212,6 +239,8 @@ public class PlayerController : MonoBehaviour {
 
 					Vector3 hitPoint = targetOffset.normalized * Mathf.LerpUnclamped(minThrowDistance, maxThrowDistance, ThrowStrengthEasing(this.throwStrengthCache)) + GetStrengthFromVelocity();
 
+					hitPoint += GetThrowWobble();
+
 					float speedX = hitPoint.magnitude / this.flightTime;
 
 					float speedY = ((Vector3.Dot(Physics.gravity, Vector3.down) / 2) * this.flightTime * this.flightTime - Vector3.Dot(this.throwPoint.position, Vector3.up)) / this.flightTime;
@@ -220,8 +249,6 @@ public class PlayerController : MonoBehaviour {
 					throwDirection.y = 0;
 
 					Vector3 throwForce = throwDirection.normalized * speedX + Vector3.up * speedY;
-
-					Debug.Log(hitPoint.magnitude);
 
 					thrownBottle.SetActive(true);
 
@@ -247,6 +274,30 @@ public class PlayerController : MonoBehaviour {
 
 				this.torso.localRotation = Quaternion.identity;
 			}
+
+			this.torso.rotation *= Quaternion.AngleAxis(Vector3.Dot(GetThrowWobble(), this.transform.right) * 20, this.transform.up);
+
+			legMovement += Vector3.Magnitude(this.rb.linearVelocity) * Time.deltaTime * legMovementSpeed;
+
+			if (Vector3.Magnitude(this.rb.linearVelocity) < Mathf.Epsilon)
+			{
+				if (legMovement < Mathf.PI)
+				{
+					legMovement = Mathf.MoveTowards(legMovement, 0, Time.deltaTime * Mathf.PI);
+				}
+				else
+				{
+					legMovement = Mathf.MoveTowards(legMovement, Mathf.PI * 2, Time.deltaTime * Mathf.PI);
+				}
+			}
+
+			if (legMovement > Mathf.PI * 2)
+			{
+				legMovement = legMovement - Mathf.PI * 2;
+			}
+
+			leftLeg.localEulerAngles = new Vector3(Mathf.Sin(legMovement) * 50, 0, 0);
+			rightLeg.localEulerAngles = new Vector3(-Mathf.Sin(legMovement) * 50, 0, 0);
 		}
 	}
 }

@@ -12,7 +12,9 @@ public class CameraController : MonoBehaviour {
 	public Vector3 outDebug;
 
 	public void LateUpdate() {
-		Vector3 playerPos = FindFirstObjectByType<PlayerController>().transform.position;
+		PlayerController player = FindFirstObjectByType<PlayerController>();
+
+		Vector3 playerPos = player.transform.position;
 
 		Vector3 dir = Quaternion.AngleAxis(angleY, Vector3.up) * (Quaternion.AngleAxis(-angleX, Vector3.right) * Vector3.forward);
 
@@ -22,11 +24,14 @@ public class CameraController : MonoBehaviour {
 		Vector3 targetRelativePos = target + dir * rayDist;
 
 		Vector3 pos = Vector3.Lerp(playerRelativePos, targetRelativePos, lerpAmount);
+		Vector3 bep = Vector3.Lerp(playerPos, target, lerpAmount);
 
 		outDebug = (target - pos).normalized;
 
 		this.transform.position = pos;
 
-		this.transform.rotation = Quaternion.LookRotation((target - pos).normalized, Vector3.up);
+		float wobble = Mathf.Sin(Time.time) + player.GetWoblinnessStrength() * 0.4f;
+
+		this.transform.rotation = Quaternion.LookRotation((bep - pos).normalized, Quaternion.AngleAxis(wobble * player.wobbliness, Vector3.forward) * Vector3.up);
 	}
 }
