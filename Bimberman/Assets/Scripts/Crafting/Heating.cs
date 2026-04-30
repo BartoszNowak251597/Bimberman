@@ -100,6 +100,11 @@ namespace Crafting
 
             UpdateVisuals();
         }
+        
+        public BottleData GetMixture()
+        {
+            return currentData;
+        }
 
         public bool HasMixture()
         {
@@ -195,6 +200,7 @@ namespace Crafting
                 {
                     _correctHeatTimer = requiredCorrectHeatTime;
                     currentData.stage = BrewStage.Finished;
+                    currentData.CalculateBottleYield();
 
                     Debug.Log($"Heating finished. Quality: {currentData.qualityPercent:0}%");
                 }
