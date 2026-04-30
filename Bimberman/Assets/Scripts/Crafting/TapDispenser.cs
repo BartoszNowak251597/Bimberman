@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 namespace Crafting
 {
@@ -9,10 +10,14 @@ namespace Crafting
 
         [Header("Points")]
         public Transform bottleSnapPoint;
-        public Transform bottlePlaceZone;
+
+        [Header("Pouring")]
+        public float pourDuration = 1.5f;
 
         [Header("Visual")]
         public GameObject pouringStream;
+
+        private bool isPouring = false;
 
         public void OnHoverEnter()
         {
@@ -37,8 +42,56 @@ namespace Crafting
 
         public string GetInteractionText(PlayerMouseInteractor interactor)
         {
+            if (isPouring)
+                return "Rozlewanie...";
+
             BottleData mixture = heating.GetMixture();
-            return "Alkohol" + mixture;
+
+            if (mixture == null)
+                return "Brak alkoholu";
+
+            return "Alkohol: " + mixture.stage;
+        }
+
+        public bool TryPourTest(FillableBottle bottle)
+        {
+            if (isPouring)
+                return false;
+
+            if (bottle == null)
+                return false;
+
+            StartCoroutine(PourTestRoutine(bottle));
+            return true;
+        }
+
+        private IEnumerator PourTestRoutine(FillableBottle bottle)
+        {
+            isPouring = true;
+
+            PlaceBottle(bottle);
+
+            if (pouringStream != null)
+                pouringStream.SetActive(true);
+
+            yield return new WaitForSeconds(pourDuration);
+
+            if (pouringStream != null)
+                pouringStream.SetActive(false);
+
+            isPouring = false;
+        }
+
+        private void PlaceBottle(FillableBottle bottle)
+        {
+            if (bottle == null)
+                return;
+
+            if (bottleSnapPoint == null)
+                return;
+
+            bottle.transform.position = bottleSnapPoint.position;
+            bottle.transform.rotation = bottleSnapPoint.rotation;
         }
     }
 }
