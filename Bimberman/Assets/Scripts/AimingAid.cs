@@ -10,6 +10,7 @@ public class AimingAid : MonoBehaviour
 
 	public void PointAt(Vector3 point)
 	{
+		point.y = this.transform.position.y;
 		this.transform.rotation = Quaternion.LookRotation(point - this.transform.position, Vector3.up) * Quaternion.LookRotation(forwardAxis, upAxis);
 	}
 

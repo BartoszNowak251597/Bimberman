@@ -31,6 +31,7 @@ public class CameraController : MonoBehaviour {
 		this.transform.position = pos;
 
 		float wobble = Mathf.Sin(Time.time) + player.GetWoblinnessStrength() * 0.4f;
+		wobble = 0;
 
 		this.transform.rotation = Quaternion.LookRotation((bep - pos).normalized, Quaternion.AngleAxis(wobble * player.wobbliness, Vector3.forward) * Vector3.up);
 	}

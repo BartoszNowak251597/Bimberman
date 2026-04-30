@@ -33,6 +33,7 @@ public class PlayerController : MonoBehaviour {
 
 	public float legMovement;
 	public float legMovementSpeed = 1;
+	public float woblinessBodyDeflection = 15f;
 	public Transform leftLeg;
 	public Transform rightLeg;
 	public Vector3 gamepadAim;
@@ -62,31 +63,26 @@ public class PlayerController : MonoBehaviour {
 		) / 2;
 	}
 
-	private Vector3 ApplyWobblyness() {
-		if (this.desiredMovement.sqrMagnitude < 0.1f) {
-			return Vector3.zero;
-		}
-
-		Vector3 left = Vector3.Cross(this.desiredMovement, Vector3.up).normalized;
-
-		Vector3 forward = Vector3.Cross(Vector3.up, left).normalized;
-
-		Vector3 deflection = left * GetWoblinnessStrength() + forward * Mathf.Sin(Time.time * 0);
-
-		deflection *= wobbliness;
-		
+	private void ApplyWobblyness() {
 		float wobblinessRamp = Mathf.Pow(
 			Mathf.Clamp01(this.desiredMovement.magnitude / this.speed),
 			3
 		);
 
+		wobblinessRamp /= 3;
+
+		wobblinessRamp += 0.4f;
+
 		wobblinessAccum += wobblinessRamp * Time.fixedDeltaTime * Random.Range(0.7f, 1.3f);
 
-		this.transform.Find("visual_pivot").localRotation = Quaternion.AngleAxis(-GetWoblinnessStrength() * 10 * wobblinessRamp, Vector3.forward);
+		this.transform.Find("visual_pivot").localRotation = Quaternion.AngleAxis(-GetWoblinnessStrength() * woblinessBodyDeflection * wobblinessRamp, Vector3.forward);
+	}
 
-		deflection *= wobblinessRamp;
+	private float LinearDampingFunc() {
+		float top = Mathf.Pow(Mathf.Sin(Mathf.Cos(Time.time) * 1.42f), 100);
+		float bottom = Mathf.Pow(Mathf.Cos(Time.time * 0.27f), 2) + 0.1f;
 
-		return Vector3.Normalize(this.desiredMovement + deflection) * speed;
+		return (top / bottom);
 	}
 
 	public void FixedUpdate() {
@@ -130,13 +126,18 @@ public class PlayerController : MonoBehaviour {
 
 			// debugText.text = velocityLerpFactor.ToString();
 
-			float minVelocityLerpFactor = this.desiredMovement.sqrMagnitude < movement.sqrMagnitude ? 0.03f : 0.3f;
+			float minVelocityLerpFactor = this.desiredMovement.sqrMagnitude < movement.sqrMagnitude ? 0.03f : 0.1f;
 			float maxVelocityLerpFactor = this.desiredMovement.sqrMagnitude < movement.sqrMagnitude ? 0.2f : 0.25f;
 
 			this.desiredMovement = Vector3.Lerp(this.desiredMovement, movement, Mathf.Lerp(minVelocityLerpFactor, maxVelocityLerpFactor, velocityLerpFactor));
 
-			// rb.AddForce(movement * speed, ForceMode.Force);
-			rb.linearVelocity = ApplyWobblyness();
+			movement += left * GetWoblinnessStrength() * this.wobbliness * (movement.magnitude / speed);
+
+			rb.AddForce(movement * speed, ForceMode.Force);
+
+			ApplyWobblyness();
+
+			rb.linearDamping = 3 + Mathf.Clamp01(LinearDampingFunc()) * 4;
 		}
 	}
 
@@ -192,7 +193,9 @@ public class PlayerController : MonoBehaviour {
 
 			aim.PointAt(targetPos);
 
-			this.transform.rotation = Quaternion.LookRotation(targetOffset.normalized, Vector3.up);
+			if (targetOffset.sqrMagnitude > Mathf.Epsilon) {
+				this.transform.rotation = Quaternion.LookRotation(targetOffset.normalized, Vector3.up);
+			}
 
 			float throwOomph = 0;
 
@@ -223,7 +226,7 @@ public class PlayerController : MonoBehaviour {
 				hitPoint += GetThrowWobble();
 
 				this.aim.crosshair.SetActive(true);
-				this.aim.SetCrosshairPosition(this.transform.position + hitPoint);
+				this.aim.SetCrosshairPosition(this.transform.position + hitPoint + Vector3.up * 0.001f);
 
 				this.torso.localRotation = Quaternion.AngleAxis(ThrowStrengthEasing(this.throwStrengthAccum) * -10, Vector3.right);
 			}

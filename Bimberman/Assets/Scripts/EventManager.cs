@@ -45,5 +45,5 @@ public struct PotionExplodeEvent {
 }
 
 public struct TargetHitEvent {
-	public ThrowTarget target;
+	public Skeleton target;
 }

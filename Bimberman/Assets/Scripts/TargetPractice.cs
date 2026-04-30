@@ -24,8 +24,6 @@ public class TargetPractice : MonoBehaviour {
 			return;
 		}
 
-		Destroy(e.target.gameObject);
-
 		readyTargets--;
 
 		if (readyTargets == 0)

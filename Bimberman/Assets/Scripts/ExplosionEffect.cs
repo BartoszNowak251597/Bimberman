@@ -2,8 +2,10 @@ using UnityEngine;
 
 public class ExplosionEffect : MonoBehaviour
 {
-    public float lifetime = 0.1f;
     public float radius = 1;
+    public float speed = 5;
+    public MeshRenderer explosionRenderer;
+    private float lifetime;
 
     public void Awake() {
         EventManager.Emit(new PotionExplodeEvent() {
@@ -13,10 +15,16 @@ public class ExplosionEffect : MonoBehaviour
     }
 
     public void Update() {
-        lifetime -= Time.deltaTime;
+        float factor = lifetime / radius;
 
-		if (lifetime < 0) {
-			Destroy(this.gameObject);
-		}
+        factor = Mathf.Sin(factor * Mathf.PI / 2);
+
+        explosionRenderer.material.SetFloat("_ExplosionTime", factor * radius);
+
+        lifetime += Time.deltaTime * speed;
+
+        if (lifetime > radius) {
+            Destroy(this.gameObject);
+        }
     }
 }

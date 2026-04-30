@@ -17,7 +17,7 @@ public class DebugThrowable : MonoBehaviour
     }
 
     void OnTriggerEnter(Collider trigger) {
-        Instantiate(effect, this.transform.position, Quaternion.identity, null);
+        Instantiate(effect, this.transform.position, Quaternion.identity, null).SetActive(true);
 
         Destroy(this.gameObject);
 
