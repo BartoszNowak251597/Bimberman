@@ -96,6 +96,8 @@ namespace Crafting
             {
                 currentData.stage = BrewStage.Heating;
                 currentData.qualityPercent = 100f;
+                currentData.bottlesToFill = 0;
+                currentData.bottlesFilled = 0;
             }
 
             UpdateVisuals();
@@ -272,7 +274,7 @@ namespace Crafting
             if (qualityText != null)
             {
                 qualityText.text = currentData != null
-                    ? $"Quality: {currentData.qualityPercent:0}%"
+                    ? $"Quality: {currentData.qualityPercent:0}%\nBottles: {currentData.bottlesFilled}/{currentData.bottlesToFill}"
                     : "";
             }
 

@@ -37,7 +37,6 @@ namespace Crafting
 
         public void OnClick(PlayerMouseInteractor interactor)
         {
-            Debug.Log("Klik");
         }
 
         public string GetInteractionText(PlayerMouseInteractor interactor)
@@ -45,15 +44,27 @@ namespace Crafting
             if (isPouring)
                 return "Rozlewanie...";
 
+            if (heating == null)
+                return "Brak Heating";
+
             BottleData mixture = heating.GetMixture();
 
             if (mixture == null)
                 return "Brak alkoholu";
 
-            return "Alkohol: " + mixture.stage;
+            if (mixture.stage != BrewStage.Finished)
+                return "Alkohol nie jest gotowy";
+
+            if (mixture.bottlesToFill <= 0)
+                mixture.CalculateBottleYield();
+
+            if (mixture.bottlesFilled >= mixture.bottlesToFill)
+                return "Partia rozlana";
+
+            return $"Postaw butelkę: {mixture.bottlesFilled}/{mixture.bottlesToFill}";
         }
 
-        public bool TryPourTest(FillableBottle bottle)
+        public bool TryFillPlacedBottle(FillableBottle bottle)
         {
             if (isPouring)
                 return false;
@@ -64,17 +75,40 @@ namespace Crafting
             if (bottle.isFilled)
                 return false;
 
-            StartCoroutine(PourTestRoutine(bottle));
+            if (heating == null)
+                return false;
+
+            BottleData alcohol = heating.GetMixture();
+
+            if (alcohol == null)
+                return false;
+
+            if (alcohol.stage != BrewStage.Finished)
+            {
+                Debug.Log("Alkohol nie jest jeszcze gotowy.");
+                return false;
+            }
+
+            if (alcohol.bottlesToFill <= 0)
+                alcohol.CalculateBottleYield();
+
+            if (alcohol.bottlesFilled >= alcohol.bottlesToFill)
+            {
+                Debug.Log("Cała partia została już rozlana.");
+                return false;
+            }
+
+            StartCoroutine(FillRoutine(bottle, alcohol));
             return true;
         }
 
-        private IEnumerator PourTestRoutine(FillableBottle bottle)
+        private IEnumerator FillRoutine(FillableBottle bottle, BottleData alcohol)
         {
             isPouring = true;
 
             PlaceBottle(bottle);
-
             bottle.SetHeld(true);
+
             if (pouringStream != null)
                 pouringStream.SetActive(true);
 
@@ -83,8 +117,17 @@ namespace Crafting
             if (pouringStream != null)
                 pouringStream.SetActive(false);
 
-            bottle.Fill(null);
+            alcohol.bottlesFilled++;
+
+            BottleData filledData = alcohol.CreateCopyForFilledBottle();
+
+            bottle.Fill(filledData);
             bottle.SetHeld(false);
+
+            Debug.Log($"Napełniono butelkę {alcohol.bottlesFilled}/{alcohol.bottlesToFill}.");
+
+            if (alcohol.bottlesFilled >= alcohol.bottlesToFill)
+                Debug.Log("Cała partia alkoholu została rozlana.");
 
             isPouring = false;
         }

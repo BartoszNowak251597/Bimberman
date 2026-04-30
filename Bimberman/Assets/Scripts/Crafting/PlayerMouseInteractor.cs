@@ -191,7 +191,7 @@ namespace Crafting
 
                     ClearHeldBottleReferencesOnly();
 
-                    bool startedPouring = tapDispenser.TryPourTest(bottle);
+                    bool startedPouring = tapDispenser.TryFillPlacedBottle(bottle);
 
                     if (startedPouring)
                         return;

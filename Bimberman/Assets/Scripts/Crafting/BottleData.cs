@@ -58,13 +58,9 @@ namespace Crafting
             {
                 bottlesToFill = 2;
             }
-            else if (qualityPercent >= 30f)
-            {
-                bottlesToFill = 1;
-            }
             else
             {
-                bottlesToFill = 0;
+                bottlesToFill = 1;
             }
 
             bottlesFilled = 0;
@@ -96,7 +92,9 @@ namespace Crafting
         {
             return new BottleData
             {
-                usedIngredients = new List<IngredientData>(usedIngredients),
+                usedIngredients = usedIngredients != null
+                    ? new List<IngredientData>(usedIngredients)
+                    : new List<IngredientData>(),
 
                 liquidColor = liquidColor,
 
