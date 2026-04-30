@@ -30,6 +30,7 @@ namespace Crafting
         private IngredientData heldIngredient;
         private BottleData heldBottle;
         private IngredientWorldItem heldWorldIngredient;
+        private FillableBottle heldFillableBottle;
 
         private Plane dragPlane;
 
@@ -62,13 +63,14 @@ namespace Crafting
                     pressedInteractable = null;
                 }
 
-                TryReleaseHeldIngredient();
+                TryReleaseHeldItem();
             }
         }
 
         private void HandleHover()
         {
-            if (cam == null) return;
+            if (cam == null)
+                return;
 
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             IInteractable newInteractable = null;
@@ -95,7 +97,9 @@ namespace Crafting
 
         private void UpdateDraggedItem()
         {
-            if (heldWorldIngredient == null || cam == null)
+            Transform draggedTransform = GetDraggedTransform();
+
+            if (draggedTransform == null || cam == null)
                 return;
 
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
@@ -105,10 +109,13 @@ namespace Crafting
                 Vector3 targetPos = ray.GetPoint(enter);
                 targetPos.y = dragHeight;
 
-                if (cauldronCenter != null)
+                if (cauldronCenter != null && heldWorldIngredient != null)
                 {
                     Vector2 itemPos2D = new Vector2(targetPos.x, targetPos.z);
-                    Vector2 cauldronPos2D = new Vector2(cauldronCenter.position.x, cauldronCenter.position.z);
+                    Vector2 cauldronPos2D = new Vector2(
+                        cauldronCenter.position.x,
+                        cauldronCenter.position.z
+                    );
 
                     float distanceToCauldron = Vector2.Distance(itemPos2D, cauldronPos2D);
 
@@ -116,34 +123,65 @@ namespace Crafting
                     {
                         float t = 1f - (distanceToCauldron / cauldronLiftRadius);
 
-                        float liftedHeight = Mathf.Lerp(dragHeight, dragHeight + maxLiftHeight, t);
+                        float liftedHeight = Mathf.Lerp(
+                            dragHeight,
+                            dragHeight + maxLiftHeight,
+                            t
+                        );
+
                         targetPos.y = liftedHeight;
 
-                        targetPos.x = Mathf.Lerp(targetPos.x, cauldronCenter.position.x, t * cauldronPullStrength);
-                        targetPos.z = Mathf.Lerp(targetPos.z, cauldronCenter.position.z, t * cauldronPullStrength);
+                        targetPos.x = Mathf.Lerp(
+                            targetPos.x,
+                            cauldronCenter.position.x,
+                            t * cauldronPullStrength
+                        );
+
+                        targetPos.z = Mathf.Lerp(
+                            targetPos.z,
+                            cauldronCenter.position.z,
+                            t * cauldronPullStrength
+                        );
                     }
                 }
 
-                heldWorldIngredient.transform.position = Vector3.Lerp(
-                    heldWorldIngredient.transform.position,
+                draggedTransform.position = Vector3.Lerp(
+                    draggedTransform.position,
                     targetPos,
                     Time.deltaTime * dragSmooth
                 );
             }
         }
 
-        private void TryReleaseHeldIngredient()
+        private Transform GetDraggedTransform()
         {
-            if (heldWorldIngredient == null)
-                return;
+            if (heldWorldIngredient != null)
+                return heldWorldIngredient.transform;
 
-            if (CanDropIntoCauldron())
+            if (heldFillableBottle != null)
+                return heldFillableBottle.transform;
+
+            return null;
+        }
+
+        private void TryReleaseHeldItem()
+        {
+            if (heldWorldIngredient != null)
             {
-                cauldron.AddHeldIngredientFromInteractor(this);
+                if (CanDropIntoCauldron())
+                {
+                    cauldron.AddHeldIngredientFromInteractor(this);
+                    return;
+                }
+
+                DropHeldIngredient();
                 return;
             }
 
-            DropHeldIngredient();
+            if (heldFillableBottle != null)
+            {
+                DropHeldFillableBottle();
+            }
         }
 
         private bool CanDropIntoCauldron()
@@ -165,6 +203,7 @@ namespace Crafting
             );
 
             float distance = Vector2.Distance(itemPos2D, cauldronPos2D);
+
             return distance <= cauldronDropRadius;
         }
 
@@ -175,7 +214,12 @@ namespace Crafting
 
         public bool HasBottle()
         {
-            return heldBottle != null;
+            return heldBottle != null || heldFillableBottle != null;
+        }
+
+        public bool HasFillableBottle()
+        {
+            return heldFillableBottle != null;
         }
 
         public IngredientData GetHeldIngredient()
@@ -193,17 +237,26 @@ namespace Crafting
             return heldWorldIngredient;
         }
 
+        public FillableBottle GetHeldFillableBottle()
+        {
+            return heldFillableBottle;
+        }
+
         public void PickupWorldIngredient(IngredientWorldItem item)
         {
-            if (item == null) return;
+            if (item == null)
+                return;
 
             heldWorldIngredient = item;
             heldIngredient = item.data;
+
             heldBottle = null;
+            heldFillableBottle = null;
 
             item.SetHeld(true);
 
             Rigidbody rb = item.GetComponent<Rigidbody>();
+
             if (rb != null)
             {
                 rb.isKinematic = true;
@@ -213,11 +266,13 @@ namespace Crafting
 
         public void DropHeldIngredient()
         {
-            if (heldWorldIngredient == null) return;
+            if (heldWorldIngredient == null)
+                return;
 
             heldWorldIngredient.SetHeld(false);
 
             Rigidbody rb = heldWorldIngredient.GetComponent<Rigidbody>();
+
             if (rb != null)
             {
                 rb.isKinematic = false;
@@ -228,11 +283,44 @@ namespace Crafting
             heldIngredient = null;
         }
 
+        public void PickupFillableBottle(FillableBottle bottle)
+        {
+            if (bottle == null)
+                return;
+
+            heldFillableBottle = bottle;
+            heldBottle = bottle.data;
+
+            heldIngredient = null;
+            heldWorldIngredient = null;
+
+            bottle.SetHeld(true);
+        }
+
+        public void DropHeldFillableBottle()
+        {
+            if (heldFillableBottle == null)
+                return;
+
+            heldFillableBottle.SetHeld(false);
+
+            heldFillableBottle = null;
+            heldBottle = null;
+        }
+
+        public void ClearHeldBottleReferencesOnly()
+        {
+            heldFillableBottle = null;
+            heldBottle = null;
+        }
+
         public void HoldBottle(BottleData bottle)
         {
             heldBottle = bottle;
+
             heldIngredient = null;
             heldWorldIngredient = null;
+            heldFillableBottle = null;
         }
 
         public void ClearHeldReferencesOnly()
@@ -246,6 +334,7 @@ namespace Crafting
             heldIngredient = null;
             heldBottle = null;
             heldWorldIngredient = null;
+            heldFillableBottle = null;
         }
     }
 }
