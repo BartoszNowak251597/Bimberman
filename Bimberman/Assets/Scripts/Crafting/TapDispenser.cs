@@ -61,6 +61,9 @@ namespace Crafting
             if (bottle == null)
                 return false;
 
+            if (bottle.isFilled)
+                return false;
+
             StartCoroutine(PourTestRoutine(bottle));
             return true;
         }
@@ -71,6 +74,7 @@ namespace Crafting
 
             PlaceBottle(bottle);
 
+            bottle.SetHeld(true);
             if (pouringStream != null)
                 pouringStream.SetActive(true);
 
@@ -78,6 +82,9 @@ namespace Crafting
 
             if (pouringStream != null)
                 pouringStream.SetActive(false);
+
+            bottle.Fill(null);
+            bottle.SetHeld(false);
 
             isPouring = false;
         }
