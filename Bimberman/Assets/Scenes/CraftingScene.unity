@@ -130,6 +130,7 @@ GameObject:
   - component: {fileID: 27462430}
   - component: {fileID: 27462434}
   - component: {fileID: 27462433}
+  - component: {fileID: 27462435}
   - component: {fileID: 27462432}
   - component: {fileID: 27462431}
   m_Layer: 9
@@ -152,9 +153,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1655361683}
-  - {fileID: 50009042}
   - {fileID: 881729760}
+  - {fileID: 1705408982}
   m_Father: {fileID: 1229754612}
   m_LocalEulerAnglesHint: {x: 0, y: -45, z: 0}
 --- !u!114 &27462431
@@ -170,8 +170,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Crafting.TapDispenser
   heating: {fileID: 1855198568}
-  bottleSnapPoint: {fileID: 1655361683}
-  pourDuration: 1.5
+  bottleTrigger: {fileID: 1705408983}
+  fillPerSecond: 1.5
   pouringStream: {fileID: 881729759}
 --- !u!65 &27462432
 BoxCollider:
@@ -192,8 +192,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.11056159, y: 0.12048793, z: 0.11043215}
-  m_Center: {x: -0.00029802322, y: 0.6451855, z: -3.3190646}
+  m_Size: {x: 0.16365808, y: 0.15785229, z: 0.14326572}
+  m_Center: {x: 0.0013859008, y: 0.6638662, z: -3.3354678}
 --- !u!23 &27462433
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -251,59 +251,33 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 27462429}
   m_Mesh: {fileID: -7994650926060863905, guid: 2c9c20325f095304784823e8a26b6a2c, type: 3}
---- !u!1 &50009041
-GameObject:
+--- !u!54 &27462435
+Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 50009042}
-  - component: {fileID: 50009043}
-  m_Layer: 9
-  m_Name: BottlePlaceZone
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &50009042
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 50009041}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: -0.163, z: -3.324}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 27462430}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &50009043
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 50009041}
-  m_Material: {fileID: 0}
+  m_GameObject: {fileID: 27462429}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.46396536, y: 0.6697294, z: 0.66801554}
-  m_Center: {x: 0.006780187, y: 0.16513512, z: -0.1659919}
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &86558502
 GameObject:
   m_ObjectHideFlags: 0
@@ -2321,9 +2295,6 @@ MonoBehaviour:
   cauldronPullStrength: 0.35
   cauldron: {fileID: 1938350130}
   cauldronDropRadius: 0.9
-  tapDispenser: {fileID: 27462431}
-  tapCenter: {fileID: 50009042}
-  tapDropRadius: 1.2
 --- !u!1 &717996257
 GameObject:
   m_ObjectHideFlags: 0
@@ -5353,37 +5324,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7907798932587669350, guid: 82f9ae1eceea24d409578c93cc26dc63, type: 3}
   m_PrefabInstance: {fileID: 5073369296258792302}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1655361682
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1655361683}
-  m_Layer: 9
-  m_Name: BottleSnapPoint
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1655361683
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1655361682}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.208, z: -3.329}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 27462430}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1664160560
 GameObject:
   m_ObjectHideFlags: 0
@@ -5565,6 +5505,59 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &1705408981
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1705408982}
+  - component: {fileID: 1705408983}
+  m_Layer: 0
+  m_Name: BottleFillZone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1705408982
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1705408981}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -3.341}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 27462430}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1705408983
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1705408981}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.6937989, y: 0.7616974, z: 0.7630975}
+  m_Center: {x: 0.030676724, y: 0.11915088, z: -0.11844959}
 --- !u!1001 &1746854825
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5793,59 +5786,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1af0577e8b97bf54d96645bc0f5c87cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Crafting.IngredientWorldItem
---- !u!1 &1788512126
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1788512127}
-  - component: {fileID: 1788512128}
-  m_Layer: 0
-  m_Name: TapFillZone
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1788512127
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1788512126}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.109, y: 1.23, z: -0.029}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1960854134}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &1788512128
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1788512126}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1.1185931, y: 1.3197814, z: 0.2500104}
-  m_Center: {x: 0.3075613, y: 0.15989028, z: 0.031279363}
 --- !u!1 &1813272156
 GameObject:
   m_ObjectHideFlags: 0
@@ -7091,7 +7031,6 @@ Transform:
   m_Children:
   - {fileID: 2106022257}
   - {fileID: 271267876}
-  - {fileID: 1788512127}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 45, z: 0}
 --- !u!65 &1960854135
@@ -7127,7 +7066,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b772dbe2692f90b449bf41005f50479b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  speed: 1.5
+  speed: 0.3
   moveTarget: {fileID: 271267876}
   isRunning: 0
 --- !u!65 &1960854137
@@ -7432,7 +7371,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 17.708858, y: -1.88}
+  m_AnchoredPosition: {x: 17.708858, y: -0.644}
   m_SizeDelta: {x: 20, y: 5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2050921749 stripped

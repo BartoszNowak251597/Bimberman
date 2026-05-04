@@ -24,11 +24,6 @@ namespace Crafting
         public Cauldron cauldron;
         public float cauldronDropRadius = 0.9f;
 
-        [Header("Drop Under Tap")]
-        public TapDispenser tapDispenser;
-        public Transform tapCenter;
-        public float tapDropRadius = 1.2f;
-
         private IInteractable currentInteractable;
         private IInteractable pressedInteractable;
 
@@ -185,20 +180,6 @@ namespace Crafting
 
             if (heldFillableBottle != null)
             {
-                if (CanDropUnderTap())
-                {
-                    FillableBottle bottle = heldFillableBottle;
-
-                    ClearHeldBottleReferencesOnly();
-
-                    bool startedPouring = tapDispenser.TryFillPlacedBottle(bottle);
-
-                    if (startedPouring)
-                        return;
-
-                    PickupFillableBottle(bottle);
-                }
-
                 DropHeldFillableBottle();
             }
         }
@@ -224,31 +205,6 @@ namespace Crafting
             float distance = Vector2.Distance(itemPos2D, cauldronPos2D);
 
             return distance <= cauldronDropRadius;
-        }
-
-        private bool CanDropUnderTap()
-        {
-            if (tapDispenser == null)
-                return false;
-
-            if (heldFillableBottle == null)
-                return false;
-
-            Transform center = tapCenter != null ? tapCenter : tapDispenser.transform;
-
-            Vector2 bottlePos2D = new Vector2(
-                heldFillableBottle.transform.position.x,
-                heldFillableBottle.transform.position.z
-            );
-
-            Vector2 tapPos2D = new Vector2(
-                center.position.x,
-                center.position.z
-            );
-
-            float distance = Vector2.Distance(bottlePos2D, tapPos2D);
-
-            return distance <= tapDropRadius;
         }
 
         public bool HasIngredient()

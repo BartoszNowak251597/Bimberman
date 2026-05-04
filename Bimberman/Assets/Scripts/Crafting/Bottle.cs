@@ -17,51 +17,45 @@ namespace Crafting
 
         private BottleData currentData;
 
-        public void OnHoverEnter() { }
+        public void OnHoverEnter()
+        {
+        }
 
-        public void OnHoverExit() { }
+        public void OnHoverExit()
+        {
+        }
 
-        public void OnPressStart(PlayerMouseInteractor interactor) { }
+        public void OnPressStart(PlayerMouseInteractor interactor)
+        {
+        }
 
-        public void OnPressEnd(PlayerMouseInteractor interactor) { }
+        public void OnPressEnd(PlayerMouseInteractor interactor)
+        {
+        }
 
         public void OnClick(PlayerMouseInteractor interactor)
         {
             if (cauldron == null)
-            {
-                Debug.LogWarning("Bottle: Missing Cauldron reference.");
                 return;
-            }
 
             if (heating == null)
-            {
-                Debug.LogWarning("Bottle: Missing Heating reference.");
                 return;
-            }
 
             if (!cauldron.HasMixture())
-            {
-                Debug.Log("Add ingredients to the cauldron first.");
                 return;
-            }
 
             if (heating.HasMixture())
-            {
-                Debug.Log("Heating station is already occupied.");
                 return;
-            }
 
             currentData = cauldron.PourToBottle();
 
             if (currentData == null)
-            {
-                Debug.Log("Failed to pour mixture from cauldron.");
                 return;
-            }
 
             UpdateVisual();
 
             heating.SetMixture(currentData);
+
             currentData = null;
             UpdateVisual();
 
@@ -69,8 +63,6 @@ namespace Crafting
             {
                 baseViewController.EnterUiView(heatingCameraPoint);
             }
-
-            Debug.Log("Mixture moved to heating stage.");
         }
 
         public string GetInteractionText(PlayerMouseInteractor interactor)

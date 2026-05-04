@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Crafting
 {
@@ -8,16 +7,83 @@ namespace Crafting
         [Header("Source")]
         public Heating heating;
 
-        [Header("Points")]
-        public Transform bottleSnapPoint;
+        [Header("Bottle Detection")]
+        public Collider bottleTrigger;
 
         [Header("Pouring")]
-        public float pourDuration = 1.5f;
+        public float fillPerSecond = 0.8f;
 
         [Header("Visual")]
         public GameObject pouringStream;
 
-        private bool isPouring = false;
+        private bool isTapHeld = false;
+        private ConveyorBottle currentConveyorBottle;
+
+        private void Reset()
+        {
+            SetupBottleTrigger();
+        }
+
+        private void OnValidate()
+        {
+            SetupBottleTrigger();
+        }
+
+        private void Start()
+        {
+            SetupBottleTrigger();
+
+            if (pouringStream != null)
+                pouringStream.SetActive(false);
+        }
+
+        private void Update()
+        {
+            bool shouldShowStream = isTapHeld
+                && currentConveyorBottle != null
+                && !currentConveyorBottle.isFilled
+                && GetReadyAlcohol() != null;
+
+            if (pouringStream != null)
+                pouringStream.SetActive(shouldShowStream);
+
+            if (!shouldShowStream)
+                return;
+
+            BottleData alcohol = GetReadyAlcohol();
+
+            currentConveyorBottle.Pour(
+                fillPerSecond * Time.deltaTime,
+                alcohol
+            );
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (!IsBottleTriggerActive())
+                return;
+
+            ConveyorBottle bottle = other.GetComponentInParent<ConveyorBottle>();
+
+            if (bottle == null)
+                return;
+
+            currentConveyorBottle = bottle;
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            if (!IsBottleTriggerActive())
+                return;
+
+            ConveyorBottle bottle = other.GetComponentInParent<ConveyorBottle>();
+
+            if (bottle == null)
+                return;
+
+            if (bottle == currentConveyorBottle)
+                currentConveyorBottle = null;
+        }
 
         public void OnHoverEnter()
         {
@@ -29,10 +95,15 @@ namespace Crafting
 
         public void OnPressStart(PlayerMouseInteractor interactor)
         {
+            isTapHeld = true;
         }
 
         public void OnPressEnd(PlayerMouseInteractor interactor)
         {
+            isTapHeld = false;
+
+            if (pouringStream != null)
+                pouringStream.SetActive(false);
         }
 
         public void OnClick(PlayerMouseInteractor interactor)
@@ -41,107 +112,34 @@ namespace Crafting
 
         public string GetInteractionText(PlayerMouseInteractor interactor)
         {
-            if (isPouring)
-                return "Rozlewanie...";
-
-            if (heating == null)
-                return "Brak Heating";
-
-            BottleData mixture = heating.GetMixture();
-
-            if (mixture == null)
-                return "Brak alkoholu";
-
-            if (mixture.stage != BrewStage.Finished)
-                return "Alkohol nie jest gotowy";
-
-            if (mixture.bottlesToFill <= 0)
-                mixture.CalculateBottleYield();
-
-            if (mixture.bottlesFilled >= mixture.bottlesToFill)
-                return "Partia rozlana";
-
-            return $"Postaw butelkę: {mixture.bottlesFilled}/{mixture.bottlesToFill}";
+            return "Przytrzymaj LPM, żeby nalać";
         }
 
-        public bool TryFillPlacedBottle(FillableBottle bottle)
+        private BottleData GetReadyAlcohol()
         {
-            if (isPouring)
-                return false;
-
-            if (bottle == null)
-                return false;
-
-            if (bottle.isFilled)
-                return false;
-
             if (heating == null)
-                return false;
+                return null;
 
             BottleData alcohol = heating.GetMixture();
 
             if (alcohol == null)
-                return false;
+                return null;
 
             if (alcohol.stage != BrewStage.Finished)
-            {
-                Debug.Log("Alkohol nie jest jeszcze gotowy.");
-                return false;
-            }
+                return null;
 
-            if (alcohol.bottlesToFill <= 0)
-                alcohol.CalculateBottleYield();
-
-            if (alcohol.bottlesFilled >= alcohol.bottlesToFill)
-            {
-                Debug.Log("Cała partia została już rozlana.");
-                return false;
-            }
-
-            StartCoroutine(FillRoutine(bottle, alcohol));
-            return true;
+            return alcohol;
         }
 
-        private IEnumerator FillRoutine(FillableBottle bottle, BottleData alcohol)
+        private void SetupBottleTrigger()
         {
-            isPouring = true;
-
-            PlaceBottle(bottle);
-            bottle.SetHeld(true);
-
-            if (pouringStream != null)
-                pouringStream.SetActive(true);
-
-            yield return new WaitForSeconds(pourDuration);
-
-            if (pouringStream != null)
-                pouringStream.SetActive(false);
-
-            alcohol.bottlesFilled++;
-
-            BottleData filledData = alcohol.CreateCopyForFilledBottle();
-
-            bottle.Fill(filledData);
-            bottle.SetHeld(false);
-
-            Debug.Log($"Napełniono butelkę {alcohol.bottlesFilled}/{alcohol.bottlesToFill}.");
-
-            if (alcohol.bottlesFilled >= alcohol.bottlesToFill)
-                Debug.Log("Cała partia alkoholu została rozlana.");
-
-            isPouring = false;
+            if (bottleTrigger != null)
+                bottleTrigger.isTrigger = true;
         }
 
-        private void PlaceBottle(FillableBottle bottle)
+        private bool IsBottleTriggerActive()
         {
-            if (bottle == null)
-                return;
-
-            if (bottleSnapPoint == null)
-                return;
-
-            bottle.transform.position = bottleSnapPoint.position;
-            bottle.transform.rotation = bottleSnapPoint.rotation;
+            return bottleTrigger == null || bottleTrigger.isTrigger;
         }
     }
 }
