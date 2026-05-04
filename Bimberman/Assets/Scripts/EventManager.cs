@@ -42,6 +42,8 @@ public static class EventManager {
 public struct PotionExplodeEvent {
 	public Vector3 position;
 	public float radius;
+	public string name;
+	public float effectTime;
 }
 
 public struct TargetHitEvent {

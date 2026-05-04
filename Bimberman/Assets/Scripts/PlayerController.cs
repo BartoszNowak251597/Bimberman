@@ -156,7 +156,22 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	public void Update() {
-		if (Camera.main) {
+        // Prevent crash if prefab is missing or destroyed
+        if (this.throwablePrefab == null)
+        {
+            Debug.LogError("Throwable prefab is missing or destroyed! Cannot throw bottle.");
+            this.throwStrengthCache = -1;  // reset throw state
+            return;
+        }
+
+        // Optional: also check throwPoint (if it's destroyed, instantiation position fails)
+        if (this.throwPoint == null)
+        {
+            Debug.LogError("Throw point transform is missing!");
+            this.throwStrengthCache = -1;
+            return;
+        }
+        if (Camera.main) {
 			Vector3 left = Vector3.Cross(Camera.main.transform.forward, Vector3.up).normalized;
 
 			Vector3 forward = Vector3.Cross(Vector3.up, left).normalized;
