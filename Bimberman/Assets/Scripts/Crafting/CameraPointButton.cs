@@ -8,6 +8,10 @@ namespace Crafting
         public BaseViewController baseViewController;
         public Transform cameraPoint;
 
+        [Header("Optional Conveyor")]
+        public BottleConveyorSpawner conveyorSpawner;
+        public bool startConveyorOnClick = false;
+
         [Header("Text")]
         public string interactionText = "Przejdź do widoku";
 
@@ -44,6 +48,21 @@ namespace Crafting
             baseViewController.EnterUiView(cameraPoint);
 
             Debug.Log("Przełączono kamerę na: " + cameraPoint.name);
+
+            if (!startConveyorOnClick)
+            {
+                Debug.Log("CameraPointButton: startConveyorOnClick jest false, nie startuję taśmy.");
+                return;
+            }
+
+            if (conveyorSpawner == null)
+            {
+                Debug.LogWarning("CameraPointButton: Brak BottleConveyorSpawner.");
+                return;
+            }
+
+            Debug.Log("CameraPointButton: odpalam BottleConveyorSpawner.StartConveyor().");
+            conveyorSpawner.StartConveyor();
         }
 
         public string GetInteractionText(PlayerMouseInteractor interactor)
