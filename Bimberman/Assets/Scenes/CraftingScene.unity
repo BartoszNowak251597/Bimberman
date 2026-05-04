@@ -5319,6 +5319,11 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!23 &1611720660 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 4408674307210052421, guid: 82f9ae1eceea24d409578c93cc26dc63, type: 3}
+  m_PrefabInstance: {fileID: 5073369296258792302}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1652229617 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7907798932587669350, guid: 82f9ae1eceea24d409578c93cc26dc63, type: 3}
@@ -7576,6 +7581,10 @@ PrefabInstance:
       propertyPath: m_ProvidesContacts
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4935442095085691682, guid: 82f9ae1eceea24d409578c93cc26dc63, type: 3}
+      propertyPath: bottleRenderer
+      value: 
+      objectReference: {fileID: 1611720660}
     - target: {fileID: 7419105993384639964, guid: 82f9ae1eceea24d409578c93cc26dc63, type: 3}
       propertyPath: m_LocalPosition.x
       value: 12.146

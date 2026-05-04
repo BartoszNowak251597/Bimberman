@@ -10,27 +10,37 @@ namespace Crafting
 
         public bool isFilled = false;
 
+        [Header("Data")]
+        [SerializeField] private BottleData filledData;
+
         [Header("Fail")]
         public bool destroyAtEnd = true;
 
-        [Header("Optional Visual")]
-        public Transform liquidVisual;
-        public Renderer liquidRenderer;
+        [Header("Bottle Visual")]
+        public Renderer bottleRenderer;
 
         private bool wasMissed = false;
 
         public System.Action<ConveyorBottle> OnBottleFilled;
         public System.Action<ConveyorBottle> OnBottleMissed;
 
+        public BottleData GetFilledData()
+        {
+            return filledData;
+        }
+
         public void Pour(float amount, BottleData alcoholData)
         {
-            if (isFilled) return;
-            if (alcoholData == null) return;
+            if (isFilled)
+                return;
+
+            if (alcoholData == null)
+                return;
 
             fillAmount += amount;
             fillAmount = Mathf.Clamp01(fillAmount);
 
-            UpdateLiquidVisual();
+            ApplyBottleColor(alcoholData.liquidColor);
 
             if (fillAmount >= 1f)
             {
@@ -40,22 +50,21 @@ namespace Crafting
 
         private void Fill(BottleData alcoholData)
         {
-            if (isFilled) return;
+            if (isFilled)
+                return;
 
             isFilled = true;
 
-            BottleData filledData = alcoholData.CreateCopyForFilledBottle();
+            filledData = alcoholData.CreateCopyForFilledBottle();
 
             FillableBottle fillableBottle = GetComponent<FillableBottle>();
+
             if (fillableBottle != null)
             {
                 fillableBottle.Fill(filledData);
             }
 
-            if (liquidRenderer != null)
-            {
-                liquidRenderer.material.color = filledData.liquidColor;
-            }
+            ApplyBottleColor(filledData.liquidColor);
 
             OnBottleFilled?.Invoke(this);
         }
@@ -74,17 +83,12 @@ namespace Crafting
             }
         }
 
-        private void UpdateLiquidVisual()
+        private void ApplyBottleColor(Color color)
         {
-            if (liquidVisual == null) return;
+            if (bottleRenderer == null)
+                return;
 
-            float yScale = Mathf.Lerp(0.05f, 1f, fillAmount);
-
-            liquidVisual.localScale = new Vector3(
-                liquidVisual.localScale.x,
-                yScale,
-                liquidVisual.localScale.z
-            );
+            bottleRenderer.material.color = color;
         }
     }
 }
