@@ -17,6 +17,7 @@ public class Skeleton : MonoBehaviour {
             EventManager.Emit(new TargetHitEvent() { target = this });
             if (!isPetrified)
             {
+                Debug.Log("Skeleton hit by petrify potion! Ingredient count: " + e.ingredientCount);
                 originalSpeed = speed;
                 if (e.ingredientCount == 1)
                 {
@@ -69,7 +70,7 @@ public class Skeleton : MonoBehaviour {
                     isPetrified = false;
                     speed = originalSpeed; 
                 }
-                return;
+                //return;
             }
             Vector3 targetPos = FindFirstObjectByType<PlayerController>().transform.position;
 
