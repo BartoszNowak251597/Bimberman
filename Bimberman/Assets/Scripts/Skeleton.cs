@@ -7,7 +7,7 @@ public class Skeleton : MonoBehaviour {
     private float originalSpeed=0.04f;
     private bool dead;
 	private float lifetimeDead;
-    private float dt = 0;
+    //private float dt = 0;
     private bool isPetrified;
     private float petrifyRemainingTime;
     private void OnPotionExplosion(PotionExplodeEvent e) {
@@ -17,13 +17,15 @@ public class Skeleton : MonoBehaviour {
             EventManager.Emit(new TargetHitEvent() { target = this });
             if (!isPetrified)
             {
-                Debug.Log("Skeleton hit by petrify potion! Ingredient count: " + e.ingredientCount);
+                //Debug.Log("Skeleton hit by petrify potion! Ingredient count: " + e.ingredientCount);
                 originalSpeed = speed;
+                originalCooldown = cooldown;
                 if (e.ingredientCount == 1)
                 {
                     //spowalnia przeciwnika i zwiêksza cooldown
                     speed *= 0.5f;
                     /// TODO: cooldown
+                    cooldown *= modifier;
                 }
                 else
                 {
@@ -68,11 +70,13 @@ public class Skeleton : MonoBehaviour {
                 if (petrifyRemainingTime <= 0)
                 {
                     isPetrified = false;
-                    speed = originalSpeed; 
+                    speed = originalSpeed;
+                    cooldown = originalCooldown;
                 }
                 //return;
             }
-            Vector3 targetPos = FindFirstObjectByType<PlayerController>().transform.position;
+            
+                Vector3 targetPos = FindFirstObjectByType<PlayerController>().transform.position;
 
 			this.transform.position = Vector3.MoveTowards(this.transform.position, targetPos, speed);
 
@@ -80,7 +84,9 @@ public class Skeleton : MonoBehaviour {
 			relPos.y = 0;
 
 			this.transform.rotation = Quaternion.Slerp(this.transform.rotation, Quaternion.LookRotation(relPos, Vector3.up), 0.05f);
-		}
+
+            AttackPlayer();
+        }
 		else {
 			this.lifetimeDead += Time.deltaTime;
 
@@ -90,7 +96,44 @@ public class Skeleton : MonoBehaviour {
 		}
 	}
 
-	public void OnEnable()
+    private float attackRange = 5f;
+    private bool alreadyAttacked = false;
+    public GameObject enemyShoot;
+    public float cooldown = 3f;
+    private float originalCooldown = 3f;
+    public float modifier = 2f;
+    private void AttackPlayer()
+    {
+        Vector3 targetPos = FindFirstObjectByType<PlayerController>().transform.position;
+        float distance = Vector3.Distance(transform.position, targetPos);
+        transform.LookAt(targetPos);
+        if (distance < attackRange * 0.8f)
+        {
+            Vector3 directionAway = (transform.position - targetPos).normalized;
+            Vector3 newPos = targetPos + directionAway * attackRange;
+           
+        }
+        else
+        {
+
+            if (!alreadyAttacked)
+            {
+                Vector3 direction = (targetPos - transform.position).normalized;
+                GameObject projectile = Instantiate(enemyShoot, transform.position + direction * 1f, Quaternion.LookRotation(direction));
+                Rigidbody rb = projectile.GetComponent<Rigidbody>();
+                rb.linearVelocity = direction * 50f;
+
+                alreadyAttacked = true;
+                Invoke(nameof(ResetAttack), cooldown);
+            }
+        }
+    }
+    private void ResetAttack()
+    {
+        alreadyAttacked = false;
+    }
+
+    public void OnEnable()
 	{
 		EventManager.Subscribe(OnPotionExplosion);
 	}

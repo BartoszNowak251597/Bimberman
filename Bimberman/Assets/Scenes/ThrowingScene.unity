@@ -1293,6 +1293,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ThrowTarget
   radius: 0.2
   speed: 0.01
+  enemyShoot: {fileID: 5234729079900706033, guid: 84803f13e9a7b614c986e3e5e2f166f9, type: 3}
+  cooldown: 3
+  modifier: 2
 --- !u!1 &1178360375 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1502877291743220047, guid: 9ce72056fc2118d9fba659f8f1fea8e0, type: 3}
