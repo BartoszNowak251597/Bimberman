@@ -9,7 +9,13 @@ public class Skeleton : MonoBehaviour {
 	private float lifetimeDead;
     //private float dt = 0;
     private bool isPetrified;
+    private bool isBurning;
     private float petrifyRemainingTime;
+    private float dotRemainingTime;
+    private int takingDamage;
+    public int hp = 100;
+    private float damageInterval;
+    private float lastDamageTime;
     private void OnPotionExplosion(PotionExplodeEvent e) {
 
         if (e.name == "Petrify" && Vector3.Distance(e.position, this.transform.position) < e.radius + this.radius)
@@ -24,7 +30,6 @@ public class Skeleton : MonoBehaviour {
                 {
                     //spowalnia przeciwnika i zwiêksza cooldown
                     speed *= 0.5f;
-                    /// TODO: cooldown
                     cooldown *= modifier;
                 }
                 else
@@ -37,8 +42,29 @@ public class Skeleton : MonoBehaviour {
                 
             }
         }
+        if (e.name == "Fire" && Vector3.Distance(e.position, this.transform.position) < e.radius + this.radius)
+        {
+            EventManager.Emit(new TargetHitEvent() { target = this });
+            //TODO
+            isBurning = true;
+            dotRemainingTime = e.effectTime;
+            takingDamage = e.damage;
+            damageInterval = e.timeInterval;
+        }
         else if(e.name == "Explosion")
         {
+            //TODO
+            if (e.special1)
+            {
+
+            }
+            if (e.special2)
+            {
+
+            }
+
+            takingDamage = e.damage;
+
             if (Vector3.Distance(e.position, this.transform.position) < e.radius + this.radius)
             {
                 EventManager.Emit(new TargetHitEvent() { target = this });
@@ -75,6 +101,30 @@ public class Skeleton : MonoBehaviour {
                 }
                 //return;
             }
+
+            if (isBurning)
+            {
+                //Debug.Log("Skeleton is burning! Remaining time: " + dotRemainingTime);
+                dotRemainingTime -= Time.deltaTime;
+                lastDamageTime += Time.deltaTime;
+                if (dotRemainingTime <= 0)
+                {
+                    isBurning = false;
+                    
+
+                }
+                else
+                {
+                    if (lastDamageTime <= damageInterval)
+                    {
+                        hp -= takingDamage;
+                    }
+                    if (hp <= 0)
+                    {
+                        Die();
+                    }
+                }
+            }
             
                 Vector3 targetPos = FindFirstObjectByType<PlayerController>().transform.position;
 
@@ -99,7 +149,7 @@ public class Skeleton : MonoBehaviour {
     private float attackRange = 5f;
     private bool alreadyAttacked = false;
     public GameObject enemyShoot;
-    public float cooldown = 3f;
+    public float cooldown = 5f;
     private float originalCooldown = 3f;
     public float modifier = 2f;
     private void AttackPlayer()
@@ -127,6 +177,11 @@ public class Skeleton : MonoBehaviour {
                 Invoke(nameof(ResetAttack), cooldown);
             }
         }
+    }
+    private void Die()
+    {
+       // Debug.Log("Skeleton died!");
+        this.dead = true;
     }
     private void ResetAttack()
     {

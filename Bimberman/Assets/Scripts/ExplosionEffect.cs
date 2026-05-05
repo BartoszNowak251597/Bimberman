@@ -13,7 +13,12 @@ public class ExplosionEffect : MonoBehaviour
             position = this.transform.position,
             radius = this.radius,
             name = this.name,
-            effectTime = 0
+            effectTime = 0,
+            ingredientCount = 1,
+            special1 = false,
+            special2 = false,
+            damage = 100,
+            timeInterval = 0
         });
     }
 

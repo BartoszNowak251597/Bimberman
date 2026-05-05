@@ -47,6 +47,8 @@ public struct PotionExplodeEvent {
 	public int ingredientCount;
 	public bool special1;
 	public bool special2;
+	public int damage;
+	public int timeInterval;
 }
 
 public struct TargetHitEvent {

@@ -1293,8 +1293,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ThrowTarget
   radius: 0.2
   speed: 0.01
+  hp: 100
   enemyShoot: {fileID: 5234729079900706033, guid: 84803f13e9a7b614c986e3e5e2f166f9, type: 3}
-  cooldown: 3
+  cooldown: 100
   modifier: 2
 --- !u!1 &1178360375 stripped
 GameObject:
@@ -1921,7 +1922,7 @@ MonoBehaviour:
   throwingArm: {fileID: 999264568}
   torso: {fileID: 1971928010}
   throwPoint: {fileID: 851545581}
-  throwablePrefab: {fileID: 1565257245489190249, guid: 397d5662c8b08404ea0e017b3e3d796c, type: 3}
+  throwablePrefab: {fileID: 729582359582164525, guid: cfaab3e0ee3ba5447af901980457f016, type: 3}
   debugText: {fileID: 1194639617}
   legMovement: 0
   legMovementSpeed: 1
