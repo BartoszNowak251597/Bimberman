@@ -44,6 +44,9 @@ public struct PotionExplodeEvent {
 	public float radius;
 	public string name;
 	public float effectTime;
+	public int ingredientCount;
+	public bool special1;
+	public bool special2;
 }
 
 public struct TargetHitEvent {

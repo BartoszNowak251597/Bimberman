@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UIElements.Experimental;
 
 public class Skeleton : MonoBehaviour {
 	public float radius;
@@ -16,10 +17,21 @@ public class Skeleton : MonoBehaviour {
             EventManager.Emit(new TargetHitEvent() { target = this });
             if (!isPetrified)
             {
-                originalSpeed = speed; 
-                speed = 0;
+                originalSpeed = speed;
+                if (e.ingredientCount == 1)
+                {
+                    //spowalnia przeciwnika i zwiêksza cooldown
+                    speed *= 0.5f;
+                    /// TODO: cooldown
+                }
+                else
+                {
+                    //zamra¿a przeciwnika ca³kowicie
+                    speed = 0;
+                }
                 isPetrified = true;
                 petrifyRemainingTime = e.effectTime;
+                
             }
         }
         else if(e.name == "Explosion")
