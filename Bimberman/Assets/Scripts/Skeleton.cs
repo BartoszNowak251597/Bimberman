@@ -50,6 +50,7 @@ public class Skeleton : MonoBehaviour {
             dotRemainingTime = e.effectTime;
             takingDamage = e.damage;
             damageInterval = e.timeInterval;
+            lastDamageTime = 0;
         }
         else if(e.name == "Explosion")
         {
@@ -110,18 +111,15 @@ public class Skeleton : MonoBehaviour {
                 if (dotRemainingTime <= 0)
                 {
                     isBurning = false;
-                    
-
+                    lastDamageTime = 0;
                 }
                 else
                 {
-                    if (lastDamageTime <= damageInterval)
+                    if (Time.time >= lastDamageTime)
                     {
                         hp -= takingDamage;
-                    }
-                    if (hp <= 0)
-                    {
-                        Die();
+                        lastDamageTime = Time.time + damageInterval;
+                        if (hp <= 0) Die();
                     }
                 }
             }
