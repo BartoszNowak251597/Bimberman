@@ -13,9 +13,23 @@ public class Skeleton : MonoBehaviour {
     private float petrifyRemainingTime;
     private float dotRemainingTime;
     private int takingDamage;
-    public int hp = 100;
+    public float hp = 100;
     private float damageInterval;
     private float lastDamageTime;
+    private float attackRange = 5f;
+    private bool alreadyAttacked = false;
+    public GameObject enemyShoot;
+    public float cooldown = 5f;
+    private float originalCooldown = 3f;
+    public float modifier = 2f;
+
+    public bool IsAlive() {
+        return !IsDead();
+    }
+
+    public bool IsDead() {
+        return dead;
+    }
 
     void Awake()
     {
@@ -38,13 +52,13 @@ public class Skeleton : MonoBehaviour {
                 originalCooldown = cooldown;
                 if (e.ingredientCount == 1)
                 {
-                    //spowalnia przeciwnika i zwiêksza cooldown
+                    //spowalnia przeciwnika i zwiï¿½ksza cooldown
                     speed *= 0.5f;
                     cooldown *= modifier;
                 }
                 else
                 {
-                    //zamra¿a przeciwnika ca³kowicie
+                    //zamraï¿½a przeciwnika caï¿½kowicie
                     speed = 0;
                 }
                 isPetrified = true;
@@ -66,12 +80,12 @@ public class Skeleton : MonoBehaviour {
         //    EventManager.Emit(new TargetHitEvent() { target = this });
         //    if (e.ingredientCount == 1)
         //    {
-        //        //1 sk³adnik: Tornado krêci siê i despawnuje pociski wrogów lec¹ce przez nie. 
+        //        //1 skï¿½adnik: Tornado krï¿½ci siï¿½ i despawnuje pociski wrogï¿½w lecï¿½ce przez nie. 
 
         //    }
         //    else
         //    {
-        //        //2 sk³adniki: Tornado krêci siê i przechwytuje pociski wrogów lec¹ce przez nie. Pociski krêc¹ siê po obwodzie tornada i mog¹ trafiæ innych przeciwników
+        //        //2 skï¿½adniki: Tornado krï¿½ci siï¿½ i przechwytuje pociski wrogï¿½w lecï¿½ce przez nie. Pociski krï¿½cï¿½ siï¿½ po obwodzie tornada i mogï¿½ trafiï¿½ innych przeciwnikï¿½w
                
         //    }
         //}
@@ -93,19 +107,9 @@ public class Skeleton : MonoBehaviour {
             {
                 EventManager.Emit(new TargetHitEvent() { target = this });
 
-                this.dead = true;
+                Die();
 
-                foreach (var box in GetComponentsInChildren<BoxCollider>(true))
-                {
-                    box.enabled = true;
-                }
-
-                foreach (var body in GetComponentsInChildren<Rigidbody>(true))
-                {
-                    body.isKinematic = false;
-
-                    body.AddExplosionForce(10, e.position, e.radius * 2, 1, ForceMode.Impulse);
-                }
+                
             }
         }
         
@@ -149,7 +153,7 @@ public class Skeleton : MonoBehaviour {
             
                 Vector3 targetPos = FindFirstObjectByType<PlayerController>().transform.position;
 
-			this.transform.position = Vector3.MoveTowards(this.transform.position, targetPos, speed);
+			this.transform.position = Vector3.MoveTowards(this.transform.position, targetPos, speed * Time.deltaTime);
 
 			Vector3 relPos = targetPos - this.transform.position;
 			relPos.y = 0;
@@ -167,12 +171,6 @@ public class Skeleton : MonoBehaviour {
 		}
 	}
 
-    private float attackRange = 5f;
-    private bool alreadyAttacked = false;
-    public GameObject enemyShoot;
-    public float cooldown = 5f;
-    private float originalCooldown = 3f;
-    public float modifier = 2f;
     private void AttackPlayer()
     {
         Vector3 targetPos = FindFirstObjectByType<PlayerController>().transform.position;
@@ -200,7 +198,7 @@ public class Skeleton : MonoBehaviour {
         }
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
         hp -= damage;
         if (hp <= 0) Die();
@@ -209,6 +207,16 @@ public class Skeleton : MonoBehaviour {
     {
         Debug.Log("Skeleton died!");
         this.dead = true;
+
+        foreach (var box in GetComponentsInChildren<BoxCollider>(true))
+        {
+            box.enabled = true;
+        }
+
+        foreach (var body in GetComponentsInChildren<Rigidbody>(true))
+        {
+            body.isKinematic = false;
+        }
     }
     private void ResetAttack()
     {
