@@ -162,9 +162,9 @@ MonoBehaviour:
   speed: 5
   dotRemainingTime: 5
   ingredientCount: 1
-  special1: 0
-  special2: 0
+  special1: 1
+  special2: 1
   explosionRenderer: {fileID: 4660746800235555542}
-  modifier: 2
-  damage: 25
+  modifier: 5
+  damage: 50
   timeInterval: 1

@@ -158,11 +158,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3087f039c370e52438027656308b95f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PetrifyScript
-  radius: 1
+  radius: 3
   speed: 5
   petrifyRemainingTime: 5
   ingredientCount: 2
   special1: 1
   special2: 1
   explosionRenderer: {fileID: 4660746800235555542}
-  modifier: 2
+  modifier: 1

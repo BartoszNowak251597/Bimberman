@@ -16,6 +16,16 @@ public class Skeleton : MonoBehaviour {
     public int hp = 100;
     private float damageInterval;
     private float lastDamageTime;
+
+    void Awake()
+    {
+        if (GetComponent<Rigidbody>() == null)
+        {
+            var rb = gameObject.AddComponent<Rigidbody>();
+            rb.isKinematic = true; 
+            rb.useGravity = false;
+        }
+    }
     private void OnPotionExplosion(PotionExplodeEvent e) {
 
         if (e.name == "Petrify" && Vector3.Distance(e.position, this.transform.position) < e.radius + this.radius)
@@ -44,14 +54,27 @@ public class Skeleton : MonoBehaviour {
         }
         if (e.name == "Fire" && Vector3.Distance(e.position, this.transform.position) < e.radius + this.radius)
         {
-            EventManager.Emit(new TargetHitEvent() { target = this });
-            //TODO
+            EventManager.Emit(new TargetHitEvent() { target = this }); 
             isBurning = true;
             dotRemainingTime = e.effectTime;
             takingDamage = e.damage;
             damageInterval = e.timeInterval;
             lastDamageTime = 0;
         }
+        //if (e.name == "Tornado" && Vector3.Distance(e.position, this.transform.position) < e.radius + this.radius)
+        //{
+        //    EventManager.Emit(new TargetHitEvent() { target = this });
+        //    if (e.ingredientCount == 1)
+        //    {
+        //        //1 sk³adnik: Tornado krêci siê i despawnuje pociski wrogów lec¹ce przez nie. 
+
+        //    }
+        //    else
+        //    {
+        //        //2 sk³adniki: Tornado krêci siê i przechwytuje pociski wrogów lec¹ce przez nie. Pociski krêc¹ siê po obwodzie tornada i mog¹ trafiæ innych przeciwników
+               
+        //    }
+        //}
         else if(e.name == "Explosion")
         {
             //TODO
@@ -176,9 +199,15 @@ public class Skeleton : MonoBehaviour {
             }
         }
     }
+
+    public void TakeDamage(int damage)
+    {
+        hp -= damage;
+        if (hp <= 0) Die();
+    }
     private void Die()
     {
-       // Debug.Log("Skeleton died!");
+        Debug.Log("Skeleton died!");
         this.dead = true;
     }
     private void ResetAttack()
