@@ -4,6 +4,7 @@ public class PlayerController : MonoBehaviour {
 	public float wobbliness;
 	public float throwWobbliness;
 	public float speed = 100;
+	public float hp = 100;
 	public float velocityThrowBoost = 1;
 	public float sidewaysWobbleFrequency;
 	public float throwWobblinessFrequency;
@@ -155,7 +156,18 @@ public class PlayerController : MonoBehaviour {
 		return -(Mathf.Cos(Mathf.PI * strength) - 1) / 2;
 	}
 
-	public void Update() {
+	public void TakeDamage(float damage)
+    {
+        this.hp -= damage;
+		Debug.Log($"Player took {damage} damage, current HP: {this.hp}");
+        if (this.hp <= 0)
+        {
+            this.hp = 0;
+            Debug.Log("Player is dead!");
+        }
+    }
+
+    public void Update() {
         // Prevent crash if prefab is missing or destroyed
         if (this.throwablePrefab == null)
         {

@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class EnemySkeleton : EnemyBase
 {
-    [SerializeField] private Transform playerTransform; 
-
     void Update()
     {
         if (!agent.enabled) return;

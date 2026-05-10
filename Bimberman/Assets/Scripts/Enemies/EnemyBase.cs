@@ -17,6 +17,7 @@ public enum States
 [RequireComponent(typeof(NavMeshAgent))]
 public class EnemyBase : MonoBehaviour
 {
+
     [Header("Movement")]
     protected NavMeshAgent agent;
     [SerializeField] protected float m_Speed = 5.0f;
@@ -42,7 +43,10 @@ public class EnemyBase : MonoBehaviour
     [Header("States")]
     public States currentState = States.PATROLLING;
     public bool isPlayerInRoom = false;
-    protected bool m_UsingAStar = false;   
+    protected bool m_UsingAStar = false;
+
+    [Header("Target")]
+    [SerializeField] protected Transform playerTransform;
 
     public Animator Animator => animator;
     protected float m_AttackAnimationDuration = 1.0f;
@@ -61,10 +65,12 @@ public class EnemyBase : MonoBehaviour
     {
         agent = GetComponent<NavMeshAgent>();
         agent.speed = m_Speed;
-        agent.angularSpeed = m_RotationSpeed * 100f; 
+        agent.angularSpeed = m_RotationSpeed * 100f;
+
+        playerTransform = GameObject.FindGameObjectWithTag("Player")?.transform;
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         currentPos = transform.position;
     }
@@ -156,12 +162,39 @@ public class EnemyBase : MonoBehaviour
         }
     }
 
+    protected Vector3 GetValidNavMeshPoint(Vector3 point, float maxDistance = 5f)
+    {
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(point, out hit, maxDistance, NavMesh.AllAreas))
+            return hit.position;
+        return point; // fallback – mo¿e byæ nadal poza NavMesh
+    }
+
+    protected Vector3 ClampToNavMesh(Vector3 point, float maxDistance = 5f)
+    {
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(point, out hit, maxDistance, NavMesh.AllAreas))
+            return hit.position;
+        return transform.position; // awaryjnie – zostañ w miejscu
+    }
     protected void DirectChase()
     {
-        float distance = Vector3.Distance(currentPos, m_TargetPosition);
-        if (distance > 0.1f)
+        if (m_TargetPosition == Vector3.zero)
         {
-            agent.SetDestination(m_TargetPosition);
+            StopMoving();
+            return;
+        }
+
+        if (!agent.enabled || !agent.isOnNavMesh)
+        {
+            Debug.LogWarning("DirectChase: agent not ready");
+            return;
+        }
+        Vector3 target = ClampToNavMesh(m_TargetPosition, 5f);
+        float distance = Vector3.Distance(transform.position, target);
+        if (distance > 0.2f)
+        {
+            agent.SetDestination(target);
         }
         else
         {
