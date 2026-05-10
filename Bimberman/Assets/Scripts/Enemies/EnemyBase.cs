@@ -68,6 +68,21 @@ public class EnemyBase : MonoBehaviour
         agent.angularSpeed = m_RotationSpeed * 100f;
 
         playerTransform = GameObject.FindGameObjectWithTag("Player")?.transform;
+
+        if (!agent.isOnNavMesh)
+        {
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(transform.position, out hit, 10f, NavMesh.AllAreas))
+            {
+                agent.Warp(hit.position);
+                Debug.Log($"{gameObject.name} warped to NavMesh at {hit.position}");
+            }
+            else
+            {
+                Debug.LogError($"{gameObject.name} is not near any NavMesh! Disabling.");
+                gameObject.SetActive(false); 
+            }
+        }
     }
 
     protected virtual void Update()

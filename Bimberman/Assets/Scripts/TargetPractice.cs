@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class TargetPractice : MonoBehaviour {
 	public GameObject throwTargetPrefab;
@@ -50,13 +51,23 @@ public class TargetPractice : MonoBehaviour {
 
 			if (targetSpawnTime < 0)
 			{
-				GameObject newTarget = Instantiate(throwTargetPrefab);
 				Vector3 targetPos = Random.onUnitSphere;
 				targetPos.y = 0;
 				targetPos = targetPos.normalized * Mathf.Lerp(minDist, maxDist, Random.value);
 				targetPos += spawnPosition;
 
-				newTarget.transform.position = targetPos;
+                NavMeshHit hit;
+                if (NavMesh.SamplePosition(targetPos, out hit, 5.0f, NavMesh.AllAreas))
+                {
+                    targetPos = hit.position;
+                }
+                else
+                {
+                    Debug.LogWarning("Spawn point not on NavMesh, using original fallback");
+                }
+
+                GameObject newTarget = Instantiate(throwTargetPrefab);
+                newTarget.transform.position = targetPos;
 				newTarget.SetActive(true);
 
 				this.readyTargets++;

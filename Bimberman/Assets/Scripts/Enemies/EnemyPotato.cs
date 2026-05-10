@@ -14,10 +14,10 @@ public class EnemyPotato : EnemyBase
     [SerializeField] private float shadowStayDuration = 2f;
 
     private GameObject currentShadow;
-    private Vector3 shadowTargetPos;
+    //private Vector3 shadowTargetPos;
 
     private bool isAttacking = false;
-    private bool madeShadow = false;
+    //private bool madeShadow = false;
 
     protected override void Awake()
     {
