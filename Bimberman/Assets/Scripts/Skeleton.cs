@@ -1,12 +1,13 @@
 using UnityEngine;
 using UnityEngine.UIElements.Experimental;
 
-public class Skeleton : MonoBehaviour {
-	public float radius;
+public class Skeleton : MonoBehaviour
+{
+    public float radius;
     public float speed = 0.04f;
-    private float originalSpeed=0.04f;
+    private float originalSpeed = 0.04f;
     private bool dead;
-	private float lifetimeDead;
+    private float lifetimeDead;
     //private float dt = 0;
     private bool isPetrified;
     private bool isBurning;
@@ -23,11 +24,13 @@ public class Skeleton : MonoBehaviour {
     private float originalCooldown = 3f;
     public float modifier = 2f;
 
-    public bool IsAlive() {
+    public bool IsAlive()
+    {
         return !IsDead();
     }
 
-    public bool IsDead() {
+    public bool IsDead()
+    {
         return dead;
     }
 
@@ -36,11 +39,59 @@ public class Skeleton : MonoBehaviour {
         if (GetComponent<Rigidbody>() == null)
         {
             var rb = gameObject.AddComponent<Rigidbody>();
-            rb.isKinematic = true; 
+            rb.isKinematic = true;
             rb.useGravity = false;
         }
     }
-    private void OnPotionExplosion(PotionExplodeEvent e) {
+
+    public void SetSpeed(float newSpeed)
+    {
+        originalSpeed = speed;
+
+        originalCooldown = cooldown;
+        this.speed = newSpeed;
+    }
+
+    public void SetEffectTime(EffectType effectName, float time)
+    {
+        if (effectName == EffectType.PETRIFY)
+        {
+            petrifyRemainingTime = time;
+        }
+        else if (effectName == EffectType.FIRE)
+        {
+            dotRemainingTime = time;
+        }
+    }
+    public float SetEffect(EffectType effectName)
+    {
+        if (effectName == EffectType.PETRIFY)
+        {
+            if (!isPetrified)
+            {
+                // originalSpeed = speed;
+                //originalCooldown = cooldown;
+                //speed *= 0.5f + 0.5f * (1 - strength);
+                // cooldown *= modifier;
+                isPetrified = true;
+                // petrifyRemainingTime = strength * modifier;
+            }
+            return petrifyRemainingTime;
+        }
+        //else if (effectName == "Fire")
+        //{
+        //    isBurning = true;
+        //    dotRemainingTime = strength * modifier;
+        //    takingDamage = Mathf.RoundToInt(strength * 20); // Przykładowa formuła na obrażenia
+        //    damageInterval = 1f; // Przykładowy interwał obrażeń
+        //    lastDamageTime = 0;
+        //    return dotRemainingTime;
+        //}
+        return 0;
+    }
+
+    private void OnPotionExplosion(PotionExplodeEvent e)
+    {
 
         if (e.name == "Petrify" && Vector3.Distance(e.position, this.transform.position) < e.radius + this.radius)
         {
@@ -63,12 +114,12 @@ public class Skeleton : MonoBehaviour {
                 }
                 isPetrified = true;
                 petrifyRemainingTime = e.effectTime;
-                
+
             }
         }
         if (e.name == "Fire" && Vector3.Distance(e.position, this.transform.position) < e.radius + this.radius)
         {
-            EventManager.Emit(new TargetHitEvent() { target = this }); 
+            EventManager.Emit(new TargetHitEvent() { target = this });
             isBurning = true;
             dotRemainingTime = e.effectTime;
             takingDamage = e.damage;
@@ -86,10 +137,10 @@ public class Skeleton : MonoBehaviour {
         //    else
         //    {
         //        //2 sk�adniki: Tornado kr�ci si� i przechwytuje pociski wrog�w lec�ce przez nie. Pociski kr�c� si� po obwodzie tornada i mog� trafi� innych przeciwnik�w
-               
+
         //    }
         //}
-        else if(e.name == "Explosion")
+        else if (e.name == "Explosion")
         {
             //TODO
             if (e.special1)
@@ -109,15 +160,16 @@ public class Skeleton : MonoBehaviour {
 
                 Die();
 
-                
+
             }
         }
-        
-	}
 
-	public void Update()
-	{
-		if (!dead) {
+    }
+
+    public void Update()
+    {
+        if (!dead)
+        {
             if (isPetrified)
             {
                 petrifyRemainingTime -= Time.deltaTime;
@@ -150,26 +202,28 @@ public class Skeleton : MonoBehaviour {
                     }
                 }
             }
-            
-                Vector3 targetPos = FindFirstObjectByType<PlayerController>().transform.position;
 
-			this.transform.position = Vector3.MoveTowards(this.transform.position, targetPos, speed * Time.deltaTime);
+            Vector3 targetPos = FindFirstObjectByType<PlayerController>().transform.position;
 
-			Vector3 relPos = targetPos - this.transform.position;
-			relPos.y = 0;
+            this.transform.position = Vector3.MoveTowards(this.transform.position, targetPos, speed * Time.deltaTime);
 
-			this.transform.rotation = Quaternion.Slerp(this.transform.rotation, Quaternion.LookRotation(relPos, Vector3.up), 0.05f);
+            Vector3 relPos = targetPos - this.transform.position;
+            relPos.y = 0;
+
+            this.transform.rotation = Quaternion.Slerp(this.transform.rotation, Quaternion.LookRotation(relPos, Vector3.up), 0.05f);
 
             AttackPlayer();
         }
-		else {
-			this.lifetimeDead += Time.deltaTime;
+        else
+        {
+            this.lifetimeDead += Time.deltaTime;
 
-			if (this.lifetimeDead > 10) {
-				Destroy(this.gameObject);
-			}
-		}
-	}
+            if (this.lifetimeDead > 10)
+            {
+                Destroy(this.gameObject);
+            }
+        }
+    }
 
     private void AttackPlayer()
     {
@@ -180,7 +234,7 @@ public class Skeleton : MonoBehaviour {
         {
             Vector3 directionAway = (transform.position - targetPos).normalized;
             Vector3 newPos = targetPos + directionAway * attackRange;
-           
+
         }
         else
         {
@@ -201,6 +255,7 @@ public class Skeleton : MonoBehaviour {
     public void TakeDamage(float damage)
     {
         hp -= damage;
+        Debug.Log("Skeleton took " + damage + " damage! Remaining HP: " + hp);
         if (hp <= 0) Die();
     }
     private void Die()
@@ -224,11 +279,12 @@ public class Skeleton : MonoBehaviour {
     }
 
     public void OnEnable()
-	{
-		EventManager.Subscribe(OnPotionExplosion);
-	}
+    {
+        EventManager.Subscribe(OnPotionExplosion);
+    }
 
-	public void OnDisable() {
-		EventManager.Unsubscribe(OnPotionExplosion);
-	}
+    public void OnDisable()
+    {
+        EventManager.Unsubscribe(OnPotionExplosion);
+    }
 }
