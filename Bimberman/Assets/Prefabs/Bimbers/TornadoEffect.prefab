@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 1156637241369039956}
   - component: {fileID: 6941511131615012468}
   - component: {fileID: 5600821200006928483}
-  - component: {fileID: 107025224185259748}
+  - component: {fileID: 7477655485402255022}
+  - component: {fileID: 6750155525801668386}
   m_Layer: 0
   m_Name: TornadoEffect
   m_TagString: Untagged
@@ -108,7 +109,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -116,7 +117,7 @@ CapsuleCollider:
   m_Height: 2.2812152
   m_Direction: 1
   m_Center: {x: -0.18697023, y: 0.1406076, z: -0.25903186}
---- !u!114 &107025224185259748
+--- !u!114 &7477655485402255022
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -125,20 +126,42 @@ MonoBehaviour:
   m_GameObject: {fileID: 950463601727712183}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e6c4f3bcff71cbd4bb0944ce2a5dfe88, type: 3}
+  m_Script: {fileID: 11500000, guid: e3f3070dacb4b7f49be4871ab193c770, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: '::'
-  radius: 1
-  speed: 5
-  tornadoRemainingTime: 5
-  ingredientCount: 2
-  special1: 1
-  special2: 1
-  explosionRenderer: {fileID: 7722094341758940728}
-  modifier: 2
-  damage: 25
-  timeInterval: 1
-  rotationSpeed: 90
+  m_EditorClassIdentifier: Assembly-CSharp::ComboExplodeTornado
+  duration: 2
+  effect1Strength: 0.044
+  maxEffect1Range: 2
+  maxEffect1Damage: 60
+  maxTornadoDuration: 3
+  maxTornadoRadius: 5
+--- !u!54 &6750155525801668386
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 950463601727712183}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &4444627519386639245
 GameObject:
   m_ObjectHideFlags: 0

@@ -32,7 +32,7 @@ public class ComboEffectBase : MonoBehaviour
         return effect1Strength * maxEffect1Damage;
     }
 
-    private void Awake()
+    protected void Awake()
     {
         effect2Strength = 1- effect1Strength;
     }
@@ -52,7 +52,7 @@ public class ComboEffectBase : MonoBehaviour
         //    Destroy(this.gameObject);
         //}
         elapsed += Time.deltaTime;
-        Debug.Log($"ComboEffectBase Update, elapsed={elapsed}, duration={duration}");
+        //Debug.Log($"ComboEffectBase Update, elapsed={elapsed}, duration={duration}");
         float factor = elapsed / duration;
         if (elapsed >= duration) Destroy(gameObject);
     }

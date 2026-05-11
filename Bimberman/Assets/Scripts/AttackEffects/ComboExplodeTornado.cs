@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ComboExplodeTornado : ComboEffectBase
@@ -17,8 +18,12 @@ public class ComboExplodeTornado : ComboEffectBase
 
     private void Awake()
     {
+        base.Awake();
+        this.transform.localScale = Vector3.one;
 
-         tornadoRadius = effect2Strength * maxTornadoRadius;
+        tornadoRadius = effect2Strength * maxTornadoRadius;
+        Debug.Log($"ComboExplodeTornado Awake, effect2Strength={effect2Strength}, tornadoRadius={tornadoRadius}");
+        this.transform.localScale = new Vector3(tornadoRadius,1,tornadoRadius);
     }
 
 
@@ -26,24 +31,23 @@ public class ComboExplodeTornado : ComboEffectBase
     {
         if (other.gameObject.TryGetComponent<Skeleton>(out Skeleton enemy))
         {
-            if (Vector3.Distance(transform.position, enemy.transform.position) <= GetRange())
-            {
+            
                 enemy.TakeDamage(GetDamage());
 
-            }
+           
         }
         if (other.gameObject.TryGetComponent<EnemyBullet>(out EnemyBullet bullet))
         {
-            if (Vector3.Distance(transform.position, bullet.transform.position) <= GetRange())
-            {
+            
+           
                 bullet.BulletInTornadoAction(transform, tornadoRadius, rotationSpeed);
-            }
+            
         }
     }
 
     private void Update()
     {
-
+        base.Update();
         transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
     }
 
