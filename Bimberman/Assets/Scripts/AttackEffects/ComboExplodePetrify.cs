@@ -12,12 +12,6 @@ public class ComboExplodePetrify : ComboEffectBase
     /// </summary>
     /// 
 
-    [Header("Petrify")]
-    public float maxPetrifyDuration = 3f;
-
-
-
-
     private void OnTriggerEnter(Collider other)
     {
        // Debug.Log($"ExplodePetrify trigger with {other.name}, range={GetRange()}");
@@ -29,7 +23,6 @@ public class ComboExplodePetrify : ComboEffectBase
            // {
                 enemy.TakeDamage(GetDamage());
                 Petrify(enemy, effect2Strength);
-                enemy.SetEffect(EffectType.PETRIFY);
           // }
         }
     }
@@ -37,14 +30,15 @@ public class ComboExplodePetrify : ComboEffectBase
     public void Petrify(Skeleton enemy, float strength)
     {
        enemy.SetSpeed(enemy.speed * (0.5f + 0.5f * (1 - strength)));
-        enemy.SetEffect(EffectType.PETRIFY);
-        enemy.SetEffectTime(EffectType.PETRIFY, maxPetrifyDuration * (1 - strength));
+        enemy.SetEffect(EffectType.PETRIFY,0);
+        enemy.SetEffectTime(EffectType.PETRIFY, duration * (1 - strength));
     }
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        base.Awake();
         transform.localScale = Vector3.one;
     }
 

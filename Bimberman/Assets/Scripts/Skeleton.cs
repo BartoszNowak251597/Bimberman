@@ -13,7 +13,7 @@ public class Skeleton : MonoBehaviour
     private bool isBurning;
     private float petrifyRemainingTime;
     private float dotRemainingTime;
-    private int takingDamage;
+    private float takingDamage;
     public float hp = 100;
     private float damageInterval;
     private float lastDamageTime;
@@ -63,7 +63,7 @@ public class Skeleton : MonoBehaviour
             dotRemainingTime = time;
         }
     }
-    public float SetEffect(EffectType effectName)
+    public float SetEffect(EffectType effectName, float damage)
     {
         if (effectName == EffectType.PETRIFY)
         {
@@ -78,15 +78,15 @@ public class Skeleton : MonoBehaviour
             }
             return petrifyRemainingTime;
         }
-        //else if (effectName == "Fire")
-        //{
-        //    isBurning = true;
-        //    dotRemainingTime = strength * modifier;
-        //    takingDamage = Mathf.RoundToInt(strength * 20); // Przykładowa formuła na obrażenia
-        //    damageInterval = 1f; // Przykładowy interwał obrażeń
-        //    lastDamageTime = 0;
-        //    return dotRemainingTime;
-        //}
+        else if (effectName == EffectType.FIRE)
+        {
+            isBurning = true;
+            //dotRemainingTime = strength * modifier;
+            takingDamage = damage; // Przykładowa formuła na obrażenia
+            damageInterval = 1f; // Przykładowy interwał obrażeń
+            lastDamageTime = 0;
+            return dotRemainingTime;
+        }
         return 0;
     }
 
@@ -184,7 +184,7 @@ public class Skeleton : MonoBehaviour
 
             if (isBurning)
             {
-                //Debug.Log("Skeleton is burning! Remaining time: " + dotRemainingTime);
+                Debug.Log("Skeleton is burning! Remaining time: " + dotRemainingTime);
                 dotRemainingTime -= Time.deltaTime;
                 lastDamageTime += Time.deltaTime;
                 if (dotRemainingTime <= 0)
