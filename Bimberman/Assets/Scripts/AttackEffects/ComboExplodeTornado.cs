@@ -11,7 +11,6 @@ public class ComboExplodeTornado : ComboEffectBase
     ///
 
     [Header("Tornado")]
-    public float maxTornadoDuration = 3f;
     public float maxTornadoRadius = 5f;
     private float rotationSpeed = 90f;
     private float tornadoRadius;

@@ -1,23 +1,24 @@
 using UnityEngine;
 
-public class ComboTornadoPetrify : ComboEffectBase
+public class ComboFireTornado : ComboEffectBase
 {
     /// <summary>
-    /// Tornado + Petrify – 
+    /// Fire + Tornado - 
+    /// Zadaje obra¿enia DOT w zale¿noœci od si³y ognia, 
     /// tornado przechwytuje pociski w pobli¿u i ma radius w zale¿noœci od si³y tornada 
-    /// Spowalnia przeciwników w poblizu tornada w zale¿noœci od si³y petrify,
     /// </summary>
-         [Header("Tornado")]
+
+    [Header("Tornado")]
     public float maxTornadoRadius = 5f;
     private float rotationSpeed = 90f;
     private float tornadoRadius;
-    
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent<Skeleton>(out Skeleton enemy))
+        if (other.gameObject.TryGetComponent<Skeleton>(out Skeleton enemy))
         {
-            Petrify(enemy, effect2Strength);
+            enemy.TakeDamage(GetDamage());
+            Burn(enemy, effect2Strength);
         }
         if (other.gameObject.TryGetComponent<EnemyBullet>(out EnemyBullet bullet))
         {
@@ -25,13 +26,11 @@ public class ComboTornadoPetrify : ComboEffectBase
         }
     }
 
-    private void Petrify(Skeleton enemy, float strength)
+    private void Burn(Skeleton enemy, float strenght)
     {
-        enemy.SetSpeed(enemy.speed * (0.5f + 0.5f * (1 - strength)));
-        enemy.SetEffect(EffectType.PETRIFY, 0);
-        enemy.SetEffectTime(EffectType.PETRIFY, duration * (1 - strength));
+        enemy.SetEffectTime(EffectType.FIRE, duration * (1 - strenght));
+        enemy.SetEffect(EffectType.FIRE, GetDamage());
     }
-
 
     void Start()
     {
@@ -45,7 +44,6 @@ public class ComboTornadoPetrify : ComboEffectBase
     void Update()
     {
         base.Update();
-
         transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
     }
 }

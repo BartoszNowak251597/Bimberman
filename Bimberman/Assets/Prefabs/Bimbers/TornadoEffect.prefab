@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6941511131615012468}
   - component: {fileID: 5600821200006928483}
   - component: {fileID: 6750155525801668386}
-  - component: {fileID: 1109569358659949031}
+  - component: {fileID: 7261926045531751978}
   m_Layer: 0
   m_Name: TornadoEffect
   m_TagString: Untagged
@@ -144,7 +144,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &1109569358659949031
+--- !u!114 &7261926045531751978
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -153,14 +153,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 950463601727712183}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1e3439220ae9dc49beb5737bb1cc8ec, type: 3}
+  m_Script: {fileID: 11500000, guid: 9bf17f0b1ef132348a7fc43e3376e07a, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ComboTornadoPetrify
+  m_EditorClassIdentifier: Assembly-CSharp::ComboFireTornado
   duration: 2
-  effect1Strength: 0.533
-  maxEffect1Range: 0
-  maxEffect1Damage: 0
-  maxTornadoDuration: 3
+  effect1Strength: 0.52
+  maxEffect1Range: 2
+  maxEffect1Damage: 60
   maxTornadoRadius: 5
 --- !u!1 &4444627519386639245
 GameObject:
