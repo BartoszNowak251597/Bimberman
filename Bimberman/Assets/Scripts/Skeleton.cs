@@ -1,3 +1,4 @@
+using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.UIElements.Experimental;
 
@@ -8,7 +9,6 @@ public class Skeleton : MonoBehaviour
     private float originalSpeed = 0.04f;
     private bool dead;
     private float lifetimeDead;
-    //private float dt = 0;
     private bool isPetrified;
     private bool isBurning;
     private float petrifyRemainingTime;
@@ -23,6 +23,12 @@ public class Skeleton : MonoBehaviour
     public float cooldown = 5f;
     private float originalCooldown = 3f;
     public float modifier = 2f;
+    Vector3 targetPos;
+    public bool IsConfused;
+    private float confuseRemainingTime;
+    private bool attackPrecisely = false;
+    private Vector3 confusedMoveTarget; 
+    private float confusionMoveCooldown;
 
     public bool IsAlive()
     {
@@ -164,6 +170,26 @@ public class Skeleton : MonoBehaviour
             }
         }
 
+        else if (e.name == "Confuse")
+        {
+            if (Vector3.Distance(e.position, transform.position) < e.radius + radius)
+            {
+                IsConfused = true;
+                confuseRemainingTime = e.effectTime;
+                IsConfused = true;
+                if (e.ingredientCount == 1)
+                {
+                    attackPrecisely = false;      
+                    confusedMoveTarget = GetRandomPointAround(); // losowy punkt
+                }
+                else
+                {
+                    attackPrecisely = true;       
+                                                 
+                }
+                EventManager.Emit(new TargetHitEvent() { target = this });
+            }
+        }
     }
 
     public void Update()
@@ -202,15 +228,53 @@ public class Skeleton : MonoBehaviour
                     }
                 }
             }
+            
+            if (IsConfused)
+            {
+                confuseRemainingTime -= Time.deltaTime;
+                if (confuseRemainingTime <= 0)
+                {
+                    IsConfused = false;
+                    attackPrecisely = false; 
+                }
+            }
 
-            Vector3 targetPos = FindFirstObjectByType<PlayerController>().transform.position;
+            Vector3 moveTargetPos;
+            if (!IsConfused)
+            {
+                moveTargetPos = FindFirstObjectByType<PlayerController>().transform.position;
+            }
+            else
+            {
+                if (!attackPrecisely)
+                {
+                    if (confusionMoveCooldown <= 0f)
+                    {
+                        confusedMoveTarget = GetRandomPointAround();
+                        confusionMoveCooldown = 0.8f;
+                    }
+                    else
+                    {
+                        confusionMoveCooldown -= Time.deltaTime;
+                    }
+                    moveTargetPos = confusedMoveTarget;
+                }
+                else
+                {
+                    Skeleton nearest = FindNearestOtherSkeleton();
+                    moveTargetPos = nearest != null ? nearest.transform.position : transform.position;
+                }
+            }
 
-            this.transform.position = Vector3.MoveTowards(this.transform.position, targetPos, speed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, moveTargetPos, speed * Time.deltaTime);
 
-            Vector3 relPos = targetPos - this.transform.position;
-            relPos.y = 0;
+            Vector3 relPos = moveTargetPos - transform.position;
+            if (relPos.magnitude > 0.01f)
+            {
+                relPos.y = 0;
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(relPos, Vector3.up), 0.05f);
+            }
 
-            this.transform.rotation = Quaternion.Slerp(this.transform.rotation, Quaternion.LookRotation(relPos, Vector3.up), 0.05f);
 
             AttackPlayer();
         }
@@ -227,21 +291,29 @@ public class Skeleton : MonoBehaviour
 
     private void AttackPlayer()
     {
-        Vector3 targetPos = FindFirstObjectByType<PlayerController>().transform.position;
-        float distance = Vector3.Distance(transform.position, targetPos);
-        transform.LookAt(targetPos);
-        if (distance < attackRange * 0.8f)
+        Vector3 attackTarget;
+        if (!IsConfused)
         {
-            Vector3 directionAway = (transform.position - targetPos).normalized;
-            Vector3 newPos = targetPos + directionAway * attackRange;
-
+            attackTarget = FindFirstObjectByType<PlayerController>().transform.position;
+        }
+        else if (!attackPrecisely)
+        {
+            attackTarget = GetRandomPointAround();
         }
         else
         {
+            Skeleton other = FindNearestOtherSkeleton();
+            attackTarget = other != null ? other.transform.position : transform.position;
+        }
 
+        float distance = Vector3.Distance(transform.position, attackTarget);
+        transform.LookAt(attackTarget); 
+
+        if (distance >= attackRange * 0.8f) 
+        {
             if (!alreadyAttacked)
             {
-                Vector3 direction = (targetPos - transform.position).normalized;
+                Vector3 direction = (attackTarget - transform.position).normalized;
                 GameObject projectile = Instantiate(enemyShoot, transform.position + direction * 1f, Quaternion.LookRotation(direction));
                 Rigidbody rb = projectile.GetComponent<Rigidbody>();
                 rb.linearVelocity = direction * 50f;
@@ -273,6 +345,32 @@ public class Skeleton : MonoBehaviour
             body.isKinematic = false;
         }
     }
+
+    private Vector3 GetRandomPointAround(float radius = 10f)
+    {
+        Vector3 randomDir = Random.insideUnitSphere * radius;
+        randomDir.y = 0; 
+        return transform.position + randomDir;
+    }
+
+    private Skeleton FindNearestOtherSkeleton()
+    {
+        Skeleton[] all = FindObjectsByType<Skeleton>(FindObjectsSortMode.None);
+        Skeleton nearest = null;
+        float minDist = float.MaxValue;
+        foreach (var sk in all)
+        {
+            if (sk == this || sk.IsDead()) continue;
+            float d = Vector3.Distance(transform.position, sk.transform.position);
+            if (d < minDist)
+            {
+                minDist = d;
+                nearest = sk;
+            }
+        }
+        return nearest;
+    }
+
     private void ResetAttack()
     {
         alreadyAttacked = false;

@@ -12,6 +12,7 @@ public class EnemyBullet : MonoBehaviour
     private float orbitSpeed; 
     private float currentAngle;
     private float orbitHeightOffset;
+    public Skeleton owner;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -79,30 +80,36 @@ public class EnemyBullet : MonoBehaviour
                 }
             }
         }
-        else if (collision.collider.CompareTag("Enemy") && isInTornado)
+        else if (collision.collider.CompareTag("Enemy"))
         {
-            Skeleton enemy = collision.collider.GetComponent<Skeleton>();
-            if (enemy == null) enemy = collision.collider.GetComponentInParent<Skeleton>();
-            if (enemy != null)
+            if (isInTornado || (owner != null && owner.IsConfused))
             {
-                enemy.TakeDamage(damage);
-                Debug.Log("Bullet hit enemy! Damage: " + damage);
+                Skeleton enemy = collision.collider.GetComponent<Skeleton>();
+                if (enemy == null) enemy = collision.collider.GetComponentInParent<Skeleton>();
+                if (enemy != null && enemy != owner) 
+                {
+                    enemy.TakeDamage(damage);
+                    Debug.Log("Bullet hit enemy! Damage: " + damage);
+                    Destroy(gameObject);
+                }
             }
-            Destroy(gameObject); // This will destroy the bullet after it hits something
         }
     }
     private void OnTriggerEnter(Collider other)
     {
-         if (other.CompareTag("Enemy") && isInTornado)
+        if (other.CompareTag("Enemy"))
         {
-            Skeleton enemy = other.GetComponent<Skeleton>();
-            if (enemy == null) enemy = other.GetComponentInParent<Skeleton>();
-            if (enemy != null)
+            if (isInTornado || (owner != null && owner.IsConfused))
             {
-                enemy.TakeDamage(damage);
-                Debug.Log("Bullet hit enemy! Damage: " + damage);
+                Skeleton enemy = other.GetComponent<Skeleton>();
+                if (enemy == null) enemy = other.GetComponentInParent<Skeleton>();
+                if (enemy != null && enemy != owner)
+                {
+                    enemy.TakeDamage(damage);
+                    Debug.Log("Bullet hit enemy! Damage: " + damage);
+                    Destroy(gameObject);
+                }
             }
-            Destroy(gameObject);
         }
     }
 }
