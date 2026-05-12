@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 1156637241369039956}
   - component: {fileID: 6941511131615012468}
   - component: {fileID: 5600821200006928483}
-  - component: {fileID: 7477655485402255022}
   - component: {fileID: 6750155525801668386}
+  - component: {fileID: 1109569358659949031}
   m_Layer: 0
   m_Name: TornadoEffect
   m_TagString: Untagged
@@ -117,24 +117,6 @@ CapsuleCollider:
   m_Height: 2.2812152
   m_Direction: 1
   m_Center: {x: -0.18697023, y: 0.1406076, z: -0.25903186}
---- !u!114 &7477655485402255022
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 950463601727712183}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3f3070dacb4b7f49be4871ab193c770, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ComboExplodeTornado
-  duration: 2
-  effect1Strength: 0.044
-  maxEffect1Range: 2
-  maxEffect1Damage: 60
-  maxTornadoDuration: 3
-  maxTornadoRadius: 5
 --- !u!54 &6750155525801668386
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -162,6 +144,24 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1109569358659949031
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 950463601727712183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1e3439220ae9dc49beb5737bb1cc8ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ComboTornadoPetrify
+  duration: 2
+  effect1Strength: 0.533
+  maxEffect1Range: 0
+  maxEffect1Damage: 0
+  maxTornadoDuration: 3
+  maxTornadoRadius: 5
 --- !u!1 &4444627519386639245
 GameObject:
   m_ObjectHideFlags: 0

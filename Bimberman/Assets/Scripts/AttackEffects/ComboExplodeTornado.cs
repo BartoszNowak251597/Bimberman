@@ -22,7 +22,6 @@ public class ComboExplodeTornado : ComboEffectBase
         this.transform.localScale = Vector3.one;
 
         tornadoRadius = effect2Strength * maxTornadoRadius;
-        Debug.Log($"ComboExplodeTornado Awake, effect2Strength={effect2Strength}, tornadoRadius={tornadoRadius}");
         this.transform.localScale = new Vector3(tornadoRadius,1,tornadoRadius);
     }
 
@@ -31,15 +30,11 @@ public class ComboExplodeTornado : ComboEffectBase
     {
         if (other.gameObject.TryGetComponent<Skeleton>(out Skeleton enemy))
         {
-            
                 enemy.TakeDamage(GetDamage());
 
-           
         }
         if (other.gameObject.TryGetComponent<EnemyBullet>(out EnemyBullet bullet))
         {
-            
-           
                 bullet.BulletInTornadoAction(transform, tornadoRadius, rotationSpeed);
             
         }
